@@ -110,28 +110,30 @@ def loadData():
     file_path : Final = "InsuranceData_Test.xlsx"
     wb = load_workbook(file_path)
     sheet = wb.active
-    row_data = [cell.value for idx, cell in enumerate(sheet[3], start=1) if idx != 6]  # sheet[3] gets all cells in row 3
 
-    insert_person = PersonDetails(Date_of_insurance=row_data[0],
-                                Customer_name = row_data[1],Make=row_data[2], Model = row_data[3], Year_of_mfg = row_data[4],
-                                Regd_No= row_data[5], Old_ID_value = row_data[6],New_ID_value= row_data[7]
-                                ,Old_OD_value=row_data[8], New_OD_value=row_data[9],
-                                    Old_final_premium=row_data[10],New_final_premium=row_data[11],Ncb=row_data[12],
-                                    Discount=row_data[13],Terms=row_data[14], Insured_Company=row_data[15],
-                                    New_Company=row_data[16],Policy_No=row_data[17], Contact_remarks=row_data[18],
-                                    Transfer_to=row_data[19])
-    #BR01BB2649
-    db.session.add(insert_person)
-    app.logger.info("One Person is Succesfully added in Database")
-    db.session.commit()
-    app.logger.info("Changes have been comitted")
+    for i in range(3,16):
+        row_data = [cell.value for idx, cell in enumerate(sheet[i], start=1) if idx != 6]  # sheet[3] gets all cells in row 3
+
+        insert_person = PersonDetails(Date_of_insurance=row_data[0],
+                                    Customer_name = row_data[1],Make=row_data[2], Model = row_data[3], Year_of_mfg = row_data[4],
+                                    Regd_No= row_data[5], Old_ID_value = row_data[6],New_ID_value= row_data[7]
+                                    ,Old_OD_value=row_data[8], New_OD_value=row_data[9],
+                                        Old_final_premium=row_data[10],New_final_premium=row_data[11],Ncb=row_data[12],
+                                        Discount=row_data[13],Terms=row_data[14], Insured_Company=row_data[15],
+                                        New_Company=row_data[16],Policy_No=row_data[17], Contact_remarks=row_data[18],
+                                        Transfer_to=row_data[19])
+        #BR01BB2649
+        db.session.add(insert_person)
+        app.logger.info("Person is Succesfully added in Database")
+        db.session.commit()
+        app.logger.info("Changes have been comitted")
 
     return "Data is succesfully uploaded"
 
 
-
 if __name__ == "__main__":
     with app.app_context():
-        db.drop_all()
+        
+        #db.drop_all()
         db.create_all()
         app.run()
