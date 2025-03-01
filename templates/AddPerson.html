@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        input[type="text"], input[type="date"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <form action="/successPage" method="post">
+
+            <label>Date of Insurance:</label>
+            <input type="date" name="date_of_insurance" required>
+            
+            <label>Customer Name:</label>
+            <input type="text" name="customer_name" required>
+            
+            <label>Make:</label>
+            <input type="text" name="make" required>
+
+            <label>Model:</label>
+            <input type="text" name="model" required>
+            
+            <label>Year of Mfg:</label>
+            <input type="number" name="year_of_mfg" required>
+            
+            <label>Registration No:</label>
+            <input type="text" name="registration_no" required>
+            
+            <label>Old ID Value:</label>
+            <input type="number" name="old_id_value" required>
+            
+            <label>New ID Value:</label>
+            <input type="number" name="new_id_value" required>
+            
+            <label>Old OD Value:</label>
+            <input type="number" name="old_od_value" required>
+            
+            <label>New OD Value:</label>
+            <input type="number" name="new_od_value" required>
+            
+            <label>Old Final Premium:</label>
+            <input type="number" name="old_final_premium" required>
+            
+            <label>New Final Premium:</label>
+            <input type="number" name="new_final_premium" required>
+            
+            <label>NCB:</label>
+            <input type="text" name="ncb" required>
+            
+            <label>Discount:</label>
+            <input type="text" name="discount" required>
+            
+            <label>Terms:</label>
+            <input type="text" name="terms" required>
+            
+            <label>Insured Company:</label>
+            <input type="text" name="insured_company" required>
+            
+            <label>New Company:</label>
+            <input type="text" name="new_company" required>
+            
+            <label>Policy No.:</label>
+            <input type="text" name="policy_no" required>
+            
+            <label>Contact/Remarks:</label>
+            <input type="text" name="contact_remarks" required>
+            
+            <label>Transfer to:</label>
+            <input type="text" name="transfer_to" required>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
