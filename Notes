@@ -1,0 +1,27 @@
+MySQL command - SHOW TABLES;
+table name - person_details
+
+CREATE TABLE person_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    Date_of_insurance DATE,
+    Customer_name VARCHAR(255) NOT NULL,
+    Model VARCHAR(255),
+    Year_of_mfg YEAR,
+    Regd_No VARCHAR(50) UNIQUE NOT NULL,
+    Old_ID_value DECIMAL(20,2),
+    New_ID_value DECIMAL(20,2),
+    Old_OD_value DECIMAL(20,2),
+    New_OD_value DECIMAL(20,2),
+    Old_final_premium DECIMAL(20,2),
+    New_final_premium DECIMAL(20,2),
+    Ncb DECIMAL(5,2),
+    Discount DECIMAL(5,2),
+    Terms VARCHAR(255) NOT NULL,
+    Insured_Company VARCHAR(255) NOT NULL,
+    New_Company VARCHAR(255) NOT NULL,
+    Policy_No VARCHAR(100) UNIQUE NOT NULL,
+    Contact_remarks VARCHAR(255) NOT NULL,
+    Transfer_to VARCHAR(255) NOT NULL
+);
+
+
