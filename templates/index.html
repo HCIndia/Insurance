@@ -99,6 +99,11 @@
         }
         .info    { background: #cce5ff; color: #004085; border: 1px solid #b8daff; }
     </style>
+    <script>
+        function redirectToPage(value) {
+            window.location.href = "/fullPersonDetails?selected=" + encodeURIComponent(value);
+        }
+    </script>
 </head>
 <body>
     <div class="top-container">
@@ -118,19 +123,19 @@
                 {% endwith %}
         {% if person_object %}
 
-            
-            <form action="/fullPersonDetails" method="post">
-                <p>Select an option:</p>
+        <form action="/fullPersonDetails" method="post">
+            <p>Select an option:</p>
 
-                {% for pobj in person_object %}
-                    <input type="radio" id="{{ pobj.Regd_No }}" name="regNo" value="{{ pobj.Regd_No }}">
-                    <label for="{{ pobj.Regd_No }}">{{ pobj.Regd_No }}</label><br>
-                {% endfor %}
+            {% for pobj in person_object %}
+                <input type="radio" id="{{ pobj.Regd_No }}" name="regNo" value="{{ pobj.Regd_No }}" onclick="redirectToPage(this.value)">
+                <label for="{{ pobj.Regd_No }}">{{ pobj.Regd_No }}</label><br>
+            {% endfor %}
 
-                <br>
-                <button type="submit">Submit</button>
-            </form>
+            <br>
+        </form>
 
+        <br>
+                
     {% endif %}
 </body>
 </html>

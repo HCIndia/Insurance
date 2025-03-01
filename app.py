@@ -65,10 +65,11 @@ def home():
 
 @app.route("/fullPersonDetails", methods=['GET', 'POST'])
 def fullPersonDetails():
-    if request.method == 'POST':
-        get_Person_Detail_by_reg_no = request.form.get("regNo")
-       
-        full_detail = PersonDetails.query.filter_by(Regd_No=get_Person_Detail_by_reg_no).first()   #exact search command 
+    #if request.method == 'POST':
+        #get_Person_Detail_by_reg_no = request.form.get("regNo")
+    get_Person_Detail_by_reg_no = request.args.get('selected')
+    
+    full_detail = PersonDetails.query.filter_by(Regd_No=get_Person_Detail_by_reg_no).first()   #exact search command 
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
 
@@ -163,6 +164,6 @@ def loadData():
 if __name__ == "__main__":
     with app.app_context():
         
-        db.drop_all()
+        #db.drop_all()
         db.create_all()
         app.run()
