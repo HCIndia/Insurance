@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from typing import Final
@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///personDetails.sqlite3'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.secret_key = 'MyInsAPP'
 '''app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://Sukant:Macbook_2020@Sukant.mysql.pythonanywhere-services.com/Sukant$personDetails'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False'''
 db = SQLAlchemy(app)
@@ -48,9 +49,13 @@ def home():
         if (search_Person_Detail_by_reg):
             app.logger.info(f"Got the data from form action :{search_Person_Detail_by_reg}")
         #person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()   #exact search command 
-        person_object = PersonDetails.query.filter(PersonDetails.Regd_No.ilike(f'%{search_Person_Detail_by_reg}%')).all()  # this is partial search
-        if (person_object):
-            app.logger.info("Got the data from database")
+            person_object = PersonDetails.query.filter(PersonDetails.Regd_No.ilike(f'%{search_Person_Detail_by_reg}%')).all()  # this is partial search
+        
+        if not person_object and search_Person_Detail_by_reg :
+            person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).all()
+
+        if not person_object or not search_Person_Detail_by_reg :
+            flash("No Records Found", "info")
 
         return render_template("index.html",person_object= person_object)
 

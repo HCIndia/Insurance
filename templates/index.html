@@ -91,29 +91,45 @@
             background-color: #f1f1f1;
             transition: 0.3s;
         }
+        .flash-message {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .info    { background: #cce5ff; color: #004085; border: 1px solid #b8daff; }
     </style>
 </head>
 <body>
     <div class="top-container">
         <form class="search-container" action="/" method="post">
-            <input type="text" placeholder="Search..." name="searchPersonDet" class="search-input">
-            <button type="submit" class="search-button">Search</button>
+            <input type="text" placeholder="Search..." name="searchPersonDet" class="search-input" required>
+            <button type="submit" class="search-button">Search by Regd. No</button>
         </form>
+
         <button class="add-person-button" onclick="window.location.href='/addPerson'">Add Person</button>
     </div>
-    {% if person_object %}
+        {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                        {% for message in messages %}
+                            <div id="regstmsg" class="flash-message info" role="alert">{{ message }}</div>
+                        {% endfor %}
+                            {% endif %}
+                {% endwith %}
+        {% if person_object %}
+
             
-        <form action="/fullPersonDetails" method="post">
-            <p>Select an option:</p>
+            <form action="/fullPersonDetails" method="post">
+                <p>Select an option:</p>
 
-            {% for pobj in person_object %}
-                <input type="radio" name="regNo" value="{{ pobj.Regd_No }}">
-                <label for="{{ pobj.Regd_No }}">{{ pobj.Regd_No }}</label><br>
-            {% endfor %}
+                {% for pobj in person_object %}
+                    <input type="radio" id="{{ pobj.Regd_No }}" name="regNo" value="{{ pobj.Regd_No }}">
+                    <label for="{{ pobj.Regd_No }}">{{ pobj.Regd_No }}</label><br>
+                {% endfor %}
 
-            <br>
-            <button type="submit">Submit</button>
-        </form>
+                <br>
+                <button type="submit">Submit</button>
+            </form>
 
     {% endif %}
 </body>
