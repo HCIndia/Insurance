@@ -33,7 +33,8 @@ class PersonDetails(db.Model):
     New_final_premium = db.Column(db.String(120))
     Ncb = db.Column(db.String(120))
     Discount = db.Column(db.String(120))
-    Terms = db.Column(db.String(120))
+    Terms_Comp = db.Column(db.String(120))
+    Terms_TP = db.Column(db.String(120))
     Insured_Company = db.Column(db.String(120))
     New_Company = db.Column(db.String(120))
     Policy_No = db.Column(db.String(120))
@@ -98,7 +99,8 @@ def SuccessPage():
         new_final_premium = request.form.get("new_final_premium")
         ncb = request.form.get("ncb")
         discount = request.form.get("discount")
-        terms = request.form.get("terms")
+        terms_comp = request.form.get("terms_comp")
+        terms_tp = request.form.get("terms_tp")
         insured_company = request.form.get("insured_company")
         new_company = request.form.get("new_company")
         policy_no = request.form.get("policy_no")
@@ -110,10 +112,9 @@ def SuccessPage():
                                     Regd_No= registration_no, Old_ID_value = old_id_value,New_ID_value= new_id_value
                                     ,Old_OD_value=old_od_value, New_OD_value=new_od_value,
                                      Old_final_premium=old_final_premium,New_final_premium=new_final_premium,Ncb=ncb,
-                                     Discount=discount,Terms=terms, Insured_Company=insured_company,
+                                     Discount=discount,Terms_Comp=terms_comp, Terms_TP = terms_tp, Insured_Company=insured_company,
                                      New_Company=new_company,Policy_No=policy_no, Contact_remarks=contact_remarks,Transfer_to=transfer_to)
         
-        app.logger.info(f"Make of the model : {make}")
         db.session.add(insert_person)
         app.logger.info("One Person is Succesfully added in Database")
         db.session.commit()
@@ -137,9 +138,9 @@ def loadData():
                                     Regd_No= row_data[5], Old_ID_value = row_data[6],New_ID_value= row_data[7]
                                     ,Old_OD_value=row_data[8], New_OD_value=row_data[9],
                                         Old_final_premium=row_data[10],New_final_premium=row_data[11],Ncb=row_data[12],
-                                        Discount=row_data[13],Terms=row_data[14], Insured_Company=row_data[15],
-                                        New_Company=row_data[16],Policy_No=row_data[17], Contact_remarks=row_data[18],
-                                        Transfer_to=row_data[19])
+                                        Discount=row_data[13],Terms_Comp=row_data[14],Terms_TP=row_data[15], Insured_Company=row_data[16],
+                                        New_Company=row_data[17],Policy_No=row_data[18], Contact_remarks=row_data[19],
+                                        Transfer_to=row_data[20])
         #BR01BB2649
         db.session.add(insert_person)
         app.logger.info("Person is Succesfully added in Database")
@@ -152,6 +153,6 @@ def loadData():
 if __name__ == "__main__":
     with app.app_context():
         
-        #db.drop_all()
+        db.drop_all()
         db.create_all()
         app.run()
