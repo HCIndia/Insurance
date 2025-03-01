@@ -11,6 +11,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///personDetails.sqlite3'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+'''app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://Sukant:Macbook_2020@Sukant.mysql.pythonanywhere-services.com/Sukant$personDetails'
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False'''
 db = SQLAlchemy(app)
 
 
@@ -45,13 +47,24 @@ def home():
         search_Person_Detail_by_reg = request.form.get("searchPersonDet")
         if (search_Person_Detail_by_reg):
             app.logger.info(f"Got the data from form action :{search_Person_Detail_by_reg}")
-        person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()
+        #person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()   #exact search command 
+        person_object = PersonDetails.query.filter(PersonDetails.Regd_No.ilike(f'%{search_Person_Detail_by_reg}%')).all()  # this is partial search
         if (person_object):
             app.logger.info("Got the data from database")
 
         return render_template("index.html",person_object= person_object)
 
     return render_template("index.html")
+
+@app.route("/fullPersonDetails", methods=['GET', 'POST'])
+def fullPersonDetails():
+    if request.method == 'POST':
+        get_Person_Detail_by_reg_no = request.form.get("regNo")
+       
+        full_detail = PersonDetails.query.filter_by(Regd_No=get_Person_Detail_by_reg_no).first()   #exact search command 
+
+    return render_template("FullPersonDetails.html", full_detail= full_detail)
+
 
 @app.route("/addPerson")
 def addPerson():

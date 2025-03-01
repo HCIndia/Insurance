@@ -103,99 +103,18 @@
     </div>
     {% if person_object %}
             
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Field</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Person Name </td>
-                            <td>{{ person_object.Customer_name }} </td>
-                        </tr>
-                        <tr>
-                            <td>Date of Insurance</td>
-                            <td>{{ person_object.Date_of_insurance }}</td>
-                        </tr>
-                        <tr>
-                            <td>Make </td>
-                            <td>{{ person_object.Make }}</td>
-                        </tr>
-                        <tr>
-                            <td>Model</td>
-                            <td>{{ person_object.Model }}</td>
-                        </tr>
-                        <tr>
-                            <td>Year of Manufacture</td>
-                            <td>{{ person_object.Year_of_mfg }}</td>
-                        </tr>
-                        <tr>
-                            <td>Registration No</td>
-                            <td>{{ person_object.Regd_No }}</td>
-                        </tr>
-                        <tr>
-                            <td>Old ID value</td>
-                            <td>{{ person_object.Old_ID_value }}</td>
-                        </tr>
-                        <tr>
-                            <td>New ID value</td>
-                            <td>{{ person_object.New_ID_value }}</td>
-                        </tr>
-                        <tr>
-                            <td>Old OD value</td>
-                            <td>{{ person_object.Old_OD_value }}</td>
-                        </tr>
+        <form action="/fullPersonDetails" method="post">
+            <p>Select an option:</p>
 
-                        <tr>
-                            <td>New OD value</td>
-                            <td>{{ person_object.New_OD_value }}</td>
-                        </tr>
-                        <tr>
-                            <td>Old Final Premium</td>
-                            <td>{{ person_object.Old_final_premium }}</td>
-                        </tr>
-                        <tr>
-                            <td>New Final Premium</td>
-                            <td>{{ person_object.New_final_premium }}</td>
-                        </tr>
-                        <tr>
-                            <td>NCB</td>
-                            <td>{{ person_object.Ncb }}</td>
-                        </tr>
-                        <tr>
-                            <td>Discount</td>
-                            <td>{{ person_object.Discount }}</td>
-                        </tr>
-                        <tr>
-                            <td>Terms</td>
-                            <td>{{ person_object.Terms }}</td>
-                        </tr>
-                        <tr>
-                            <td>Insured Company</td>
-                            <td>{{ person_object.Insured_Company }}</td>
-                        </tr>
-                        <tr>
-                            <td>New Company</td>
-                            <td>{{ person_object.New_Company }}</td>
-                        </tr>
-                        <tr>
-                            <td>Policy_No</td>
-                            <td>{{ person_object.Policy_No }}</td>
-                        </tr>
-                        <tr>
-                            <td>Contact/remarks</td>
-                            <td>{{ person_object.Contact_remarks }}</td>
-                        </tr>
-                        <tr>
-                            <td>Transfer to</td>
-                            <td>{{ person_object.Transfer_to }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            {% for pobj in person_object %}
+                <input type="radio" name="regNo" value="{{ pobj.Regd_No }}">
+                <label for="{{ pobj.Regd_No }}">{{ pobj.Regd_No }}</label><br>
+            {% endfor %}
+
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+
     {% endif %}
 </body>
 </html>

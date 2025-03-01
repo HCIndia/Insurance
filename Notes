@@ -5,6 +5,7 @@ CREATE TABLE person_details (
     id INT AUTO_INCREMENT PRIMARY KEY,
     Date_of_insurance DATE,
     Customer_name VARCHAR(255) NOT NULL,
+    Make VARCHAR(255),
     Model VARCHAR(255),
     Year_of_mfg YEAR,
     Regd_No VARCHAR(50) UNIQUE NOT NULL,

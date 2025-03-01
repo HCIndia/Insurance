@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            padding-top: 20px;
+        }
+        .top-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .search-input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+        }
+        .search-button {
+            background-color: blue;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search-button:hover {
+            background-color: darkblue;
+        }
+        .add-person-button {
+            background-color: green;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .add-person-button:hover {
+            background-color: darkgreen;
+        }
+        .table-container {
+            width: 50%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+            transition: 0.3s;
+        }
+    </style>
+</head>
+<body>
+    {% if full_detail %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Person Name </td>
+                            <td>{{ full_detail.Customer_name }} </td>
+                        </tr>
+                        <tr>
+                            <td>Date of Insurance</td>
+                            <td>{{ full_detail.Date_of_insurance }}</td>
+                        </tr>
+                        <tr>
+                            <td>Make </td>
+                            <td>{{ full_detail.Make }}</td>
+                        </tr>
+                        <tr>
+                            <td>Model</td>
+                            <td>{{ full_detail.Model }}</td>
+                        </tr>
+                        <tr>
+                            <td>Year of Manufacture</td>
+                            <td>{{ full_detail.Year_of_mfg }}</td>
+                        </tr>
+                        <tr>
+                            <td>Registration No</td>
+                            <td>{{ full_detail.Regd_No }}</td>
+                        </tr>
+                        <tr>
+                            <td>Old ID value</td>
+                            <td>{{ full_detail.Old_ID_value }}</td>
+                        </tr>
+                        <tr>
+                            <td>New ID value</td>
+                            <td>{{ full_detail.New_ID_value }}</td>
+                        </tr>
+                        <tr>
+                            <td>Old OD value</td>
+                            <td>{{ full_detail.Old_OD_value }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>New OD value</td>
+                            <td>{{ full_detail.New_OD_value }}</td>
+                        </tr>
+                        <tr>
+                            <td>Old Final Premium</td>
+                            <td>{{ full_detail.Old_final_premium }}</td>
+                        </tr>
+                        <tr>
+                            <td>New Final Premium</td>
+                            <td>{{ full_detail.New_final_premium }}</td>
+                        </tr>
+                        <tr>
+                            <td>NCB</td>
+                            <td>{{ full_detail.Ncb }}</td>
+                        </tr>
+                        <tr>
+                            <td>Discount</td>
+                            <td>{{ full_detail.Discount }}</td>
+                        </tr>
+                        <tr>
+                            <td>Terms</td>
+                            <td>{{ full_detail.Terms }}</td>
+                        </tr>
+                        <tr>
+                            <td>Insured Company</td>
+                            <td>{{ full_detail.Insured_Company }}</td>
+                        </tr>
+                        <tr>
+                            <td>New Company</td>
+                            <td>{{ full_detail.New_Company }}</td>
+                        </tr>
+                        <tr>
+                            <td>Policy_No</td>
+                            <td>{{ full_detail.Policy_No }}</td>
+                        </tr>
+                        <tr>
+                            <td>Contact/remarks</td>
+                            <td>{{ full_detail.Contact_remarks }}</td>
+                        </tr>
+                        <tr>
+                            <td>Transfer to</td>
+                            <td>{{ full_detail.Transfer_to }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+    {% endif %}
+</body>
+</html>
