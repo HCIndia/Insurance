@@ -21,9 +21,12 @@ CREATE TABLE person_details (
     Terms_tp VARCHAR(255),
     Insured_Company VARCHAR(255) ,
     New_Company VARCHAR(255) ,
-    Policy_No VARCHAR(100) UNIQUE ,
+    Policy_No VARCHAR(255),
     Contact_remarks VARCHAR(255) ,
     Transfer_to VARCHAR(255) 
 );
 
 
+Jan - 16
+Feb - 20
+Mar - 27
