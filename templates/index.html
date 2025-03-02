@@ -107,12 +107,10 @@
 </head>
 <body>
     <div class="top-container">
-        <form class="search-container" action="/" method="post">
+        <form class="search-container" action="/index" method="post">
             <input type="text" placeholder="Search..." name="searchPersonDet" class="search-input" required>
-            <button type="submit" class="search-button">Search by Regd. No</button>
+            <button type="submit" class="search-button">Search</button>
         </form>
-
-        <button class="add-person-button" onclick="window.location.href='/addPerson'">Add Person</button>
     </div>
         {% with messages = get_flashed_messages() %}
                 {% if messages %}

@@ -4,6 +4,9 @@ import logging
 from typing import Final
 from openpyxl import load_workbook
 from pathlib import Path
+from flask_cors import CORS
+from datetime import datetime
+
 
 
 app = Flask(__name__)
@@ -13,6 +16,10 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///personDetails.sqlite3'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = 'MyInsAPP'
+
+logging.basicConfig(level=logging.DEBUG)
+
+CORS(app)  # Enable CORS for cross-origin requests
 '''app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://Sukant:Macbook_2020@Sukant.mysql.pythonanywhere-services.com/Sukant$personDetails'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False'''
 db = SQLAlchemy(app)
@@ -42,9 +49,11 @@ class PersonDetails(db.Model):
     Contact_remarks = db.Column(db.String(120))
     Transfer_to = db.Column(db.String(120))
 
+@app.route("/")
+def start():
+    return render_template("StartPage.html")
 
-
-@app.route("/",  methods=['GET', 'POST'])
+@app.route("/index",  methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
         search_Person_Detail_by_reg = request.form.get("searchPersonDet")
@@ -73,6 +82,67 @@ def fullPersonDetails():
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
 
+
+
+'''@app.route("/searchByMonth", methods=['GET', 'POST'])
+def searchByMonth():
+    
+    if request.is_json:
+        data = request.get_json()
+        app.logger.info(f"Data : {data}")
+        month_name = data.get("month")
+        app.logger.info(f"Month : {month_name}")
+
+        month_number = datetime.strptime(month_name, "%B").month
+
+        app.logger.info(f"Month_number : {month_number}")
+
+        results = PersonDetails.query.filter(db.extract('month', PersonDetails.Date_of_insurance) == month_number).all()
+        app.logger.info(f"result : {results}")
+
+        reg_list = [ res.Regd_No for res in results]
+        app.logger.info(f"Reg List : {reg_list}")
+
+        return render_template("SearchByMonth.html",reg_list= reg_list)
+
+    return render_template("SearchByMonth.html")'''
+
+
+@app.route("/searchByMonth", methods=['GET', 'POST'])
+def searchByMonth():
+    if request.method == "POST":
+        if request.is_json:
+            data = request.get_json()
+        else:
+            data = request.form  # Handles form submissions
+
+        app.logger.info(f"Received Data: {data}")
+
+        month_name = data.get("month")
+        if not month_name:
+            return render_template("SearchByMonth.html", error="Month is required")
+
+        try:
+            month_number = datetime.strptime(month_name, "%B").month
+            app.logger.info(f"Converted Month Name '{month_name}' to Number: {month_number}")
+        except ValueError:
+            return render_template("SearchByMonth.html", error="Invalid month name")
+
+        results = PersonDetails.query.filter(
+            db.extract('month', PersonDetails.Date_of_insurance) == month_number
+        ).all()
+
+        app.logger.info(f"Query Results: {results}")
+
+        if not results:
+            return render_template("SearchByMonth.html", error="No records found for this month")
+
+        reg_list = [res.Regd_No for res in results]
+        app.logger.info(f"Extracted Registration Numbers: {reg_list}")
+
+        return render_template("SearchByMonth.html", result=results)
+
+    return render_template("SearchByMonth.html")
 
 @app.route("/addPerson")
 def addPerson():
@@ -166,4 +236,4 @@ if __name__ == "__main__":
         
         #db.drop_all()
         db.create_all()
-        app.run()
+        app.run(debug=True)

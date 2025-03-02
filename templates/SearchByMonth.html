@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Month</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            padding-top: 50px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function sendMonth() {
+            var selectedMonth = document.getElementById("monthSelect").value;
+            
+            fetch("/searchByMonth", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ month: selectedMonth })
+            })
+            .then(response => response.json())
+            .then(data => alert("Selected Month: " + data.month))
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+    <script>
+        function redirectToPage(value) {
+            window.location.href = "/fullPersonDetails?selected=" + encodeURIComponent(value);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Select a Month</h2>
+        <select id="monthSelect" onchange="sendMonth()">
+            <option value="">--Select a Month--</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+        </select>
+
+    </div>
+    {% if result %}
+    <p>Select an Option:</p>
+    {% for pobj in result %}
+        <input type="radio" id="{{ pobj.Regd_No }}" name="regNo" value="{{ pobj.Regd_No }}" onclick="redirectToPage(this.value)">
+        <label for="{{ pobj.Regd_No }}">{{ pobj.Regd_No }}</label><br>
+    {% endfor %}
+        <br>
+    {% endif %}
+        
+
+
+</body>
+</html>
