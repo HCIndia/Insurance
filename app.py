@@ -83,31 +83,6 @@ def fullPersonDetails():
     return render_template("FullPersonDetails.html", full_detail= full_detail)
 
 
-
-'''@app.route("/searchByMonth", methods=['GET', 'POST'])
-def searchByMonth():
-    
-    if request.is_json:
-        data = request.get_json()
-        app.logger.info(f"Data : {data}")
-        month_name = data.get("month")
-        app.logger.info(f"Month : {month_name}")
-
-        month_number = datetime.strptime(month_name, "%B").month
-
-        app.logger.info(f"Month_number : {month_number}")
-
-        results = PersonDetails.query.filter(db.extract('month', PersonDetails.Date_of_insurance) == month_number).all()
-        app.logger.info(f"result : {results}")
-
-        reg_list = [ res.Regd_No for res in results]
-        app.logger.info(f"Reg List : {reg_list}")
-
-        return render_template("SearchByMonth.html",reg_list= reg_list)
-
-    return render_template("SearchByMonth.html")'''
-
-
 @app.route("/searchByMonth", methods=['GET', 'POST'])
 def searchByMonth():
     if request.method == "POST":
@@ -139,7 +114,6 @@ def searchByMonth():
 
         reg_list = [res.Regd_No for res in results]
         app.logger.info(f"Extracted Registration Numbers: {reg_list}")
-
         return render_template("SearchByMonth.html", result=results)
 
     return render_template("SearchByMonth.html")
@@ -237,3 +211,5 @@ if __name__ == "__main__":
         #db.drop_all()
         db.create_all()
         app.run(debug=True)
+
+
