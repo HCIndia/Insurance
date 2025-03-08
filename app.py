@@ -16,6 +16,10 @@ Development should be done on this branch.
 Later should be merge with the main branch. 
 """
 
+"""
+Adding some more spice to it.
+"""
+
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///personDetails.sqlite3'
