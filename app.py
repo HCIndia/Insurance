@@ -11,6 +11,9 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+# okay now this si going good ! this should result in conflict
+
+
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///personDetails.sqlite3'
