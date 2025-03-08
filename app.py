@@ -11,6 +11,10 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+"""
+This is the main branch and should be used in production
+"""
+
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///personDetails.sqlite3'
