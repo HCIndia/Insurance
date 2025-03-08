@@ -17,9 +17,7 @@ Later should be merge with the main branch.
 """
 
 """
-Adding some more spice to it.
-Some more spice
-this is the last
+Diverging branches
 """
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
