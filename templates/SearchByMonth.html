@@ -21,13 +21,6 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        select {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-        }
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -41,6 +34,119 @@
         button:hover {
             background-color: #0056b3;
         }
+        .container {
+        max-width: 350px;
+        margin: 50px auto;
+        text-align: center;
+        font-family: 'Arial', sans-serif;
+    }
+
+    /* Heading Style */
+    .container h2 {
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 12px;
+    }
+
+    /* Select Dropdown Styling */
+    select {
+        position: relative;
+        z-index: 999999;
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 16px;
+        font-weight: 500;
+        border: 2px solid #007BFF;
+        border-radius: 8px;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        
+    }
+
+    /* Dropdown Arrow Customization */
+    select:focus, select:hover {
+        border-color: #0056b3;
+        box-shadow: 0 0 10px rgba(0, 86, 179, 0.4);
+    }
+
+    /* Option Styling */
+    option {
+        font-size: 16px;
+        background: white;
+        color: #333;
+    }
+
+    /* Disabled First Option */
+    select option:first-child {
+        color: #999;
+        font-style: italic;
+    }
+    input[type="radio"] {
+        display: none;
+    }
+
+    /* Custom radio button container */
+    input[type="radio"] + label {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 18px;  /* Increased font size for better readability */
+        font-weight: 600;  /* Made the text bolder */
+        color: #222;  /* Darker text for contrast */
+        padding: 14px 20px;  /* Added more padding for a spacious look */
+        border-radius: 30px;
+        border: 2px solid #ddd;
+        background: #f9f9f9;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Custom circle indicator */
+    input[type="radio"] + label::before {
+        content: "";
+        width: 22px;
+        height: 22px;
+        border: 2px solid #007BFF;
+        border-radius: 50%;
+        margin-right: 14px;
+        display: inline-block;
+        background: white;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    /* Hover effect */
+    input[type="radio"] + label:hover {
+        border-color: #007BFF;
+        box-shadow: 0 0 12px rgba(0, 123, 255, 0.4);
+    }
+
+    /* Selected radio button effect */
+    input[type="radio"]:checked + label {
+        background: #007BFF;
+        color: white;
+        border-color: #007BFF;
+        box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+        transform: scale(1.05);
+    }
+
+    /* Inner dot effect when selected */
+    input[type="radio"]:checked + label::before {
+        background: #fff;
+        box-shadow: inset 0 0 0 6px #007BFF;
+    }
+
+
+   
+
+    
     </style>
     <script>
         function sendMonth() {
@@ -53,8 +159,12 @@
                 },
                 body: JSON.stringify({ month: selectedMonth })
             })
-            .then(response => response.json())
-            .then(data => alert("Selected Month: " + data.month))
+            .then(response => response.text())  // ✅ Expect HTML, not JSON
+            .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            })
             .catch(error => console.error("Error:", error));
         }
     </script>
@@ -67,7 +177,7 @@
 <body>
     <div class="container">
         <h2>Select a Month</h2>
-        <select id="monthSelect" onchange="sendMonth()">
+        <select id="monthSelect" onclick="sendMonth()">
             <option value="">--Select a Month--</option>
             <option value="January">January</option>
             <option value="February">February</option>
@@ -90,6 +200,9 @@
         <input type="radio" id="{{ pobj.Regd_No }}" name="regNo" value="{{ pobj.Regd_No }}" onclick="redirectToPage(this.value)">
         <label for="{{ pobj.Regd_No }}">{{ pobj.Regd_No }}</label><br>
     {% endfor %}
+        <br>
+    {% else %}
+    
         <br>
     {% endif %}
         
