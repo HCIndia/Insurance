@@ -225,9 +225,9 @@
                 <div class="radio-group">
                     {% for pobj in person_object %}
                         <label class="radio-label">
-                            <input type="radio" id="{{ pobj.Regd_No }}" name="regNo" value="{{ pobj.Regd_No }}" onclick="redirectToPage(this.value)">
+                            <input type="radio" id="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}" name="regNo" value="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}" onclick="redirectToPage(this.value)">
                             <span class="radio-custom"></span>
-                            {{ pobj.Regd_No }}
+                            {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
                         </label>
                     {% endfor %}
                 </div>

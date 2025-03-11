@@ -36,7 +36,7 @@ db = SQLAlchemy(app)
 
 class PersonDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Date_of_insurance = db.Column(db.String(40))
+    Date_of_insurance = db.Column(db.DateTime)
     Type_of_insurance = db.Column(db.String(40))
     Customer_name = db.Column(db.String(40))
     Customer_Contact_No= db.Column(db.String(40))
@@ -94,11 +94,19 @@ def home():
 def fullPersonDetails():
     #if request.method == 'POST':
         #get_Person_Detail_by_reg_no = request.form.get("regNo")
-    get_Person_Detail_by_reg_no = request.args.get('selected') # getting JH-10-BJ-9977
-
-    get_Person_Detail_by_reg_no_database = "".join(get_Person_Detail_by_reg_no.split("-")) # converted to JH10BJ9977
+    getFPD = request.args.get('selected').split("+")
+    app.logger.info(f"FPD = {getFPD}")
+    get_Person_Detail_by_name , get_Person_Detail_by_reg_no = getFPD[0] , getFPD[1] # getting JH-10-BJ-9977
     
-    full_detail = PersonDetails.query.filter_by(Regd_No_Database=get_Person_Detail_by_reg_no_database).first()   #exact search command 
+    if get_Person_Detail_by_reg_no == "NA":
+
+        full_detail = PersonDetails.query.filter_by(Customer_name=get_Person_Detail_by_name).first()
+        app.logger.info("Passing details from Customer Name")
+    else:
+        get_Person_Detail_by_reg_no_database = "".join(get_Person_Detail_by_reg_no.split("-")) # converted to JH10BJ9977
+        
+        full_detail = PersonDetails.query.filter_by(Regd_No_Database=get_Person_Detail_by_reg_no_database).first()   #exact search command 
+        app.logger.info("Passing details from Registration no")
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
 
