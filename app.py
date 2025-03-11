@@ -37,11 +37,14 @@ db = SQLAlchemy(app)
 class PersonDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Date_of_insurance = db.Column(db.String(40))
+    Type_of_insurance = db.Column(db.String(40))
     Customer_name = db.Column(db.String(40))
+    Customer_Contact_No= db.Column(db.String(40))
     Make = db.Column(db.String(40))
     Model = db.Column(db.String(40), nullable=False)
     Year_of_mfg = db.Column(db.String(120))
     Regd_No = db.Column(db.String(120))
+    Regd_No_Database = db.Column(db.String(120))
     Old_ID_value = db.Column(db.String(120))
     New_ID_value = db.Column(db.String(120))
     Old_OD_value = db.Column(db.String(120))
@@ -53,9 +56,15 @@ class PersonDetails(db.Model):
     Terms_Comp = db.Column(db.String(120))
     Terms_TP = db.Column(db.String(120))
     Insured_Company = db.Column(db.String(120))
+    Insurer_Code = db.Column(db.String(120))
     New_Company = db.Column(db.String(120))
     Policy_No = db.Column(db.String(120))
-    Contact_remarks = db.Column(db.String(120))
+    Add_Ons = db.Column(db.String(120))
+    Ckyc_No = db.Column(db.String(120))
+    Reference_1 = db.Column(db.String(120))
+    Reference_Contact_1 = db.Column(db.String(120))
+    Reference_2 = db.Column(db.String(120))
+    Reference_Contact_2 = db.Column(db.String(120))
     Transfer_to = db.Column(db.String(120))
 
 @app.route("/")
@@ -69,7 +78,7 @@ def home():
         if (search_Person_Detail_by_reg):
             app.logger.info(f"Got the data from form action :{search_Person_Detail_by_reg}")
         #person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()   #exact search command 
-            person_object = PersonDetails.query.filter(PersonDetails.Regd_No.ilike(f'%{search_Person_Detail_by_reg}%')).all()  # this is partial search
+            person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()  # this is partial search
         
         if not person_object and search_Person_Detail_by_reg :
             person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).all()
@@ -85,9 +94,11 @@ def home():
 def fullPersonDetails():
     #if request.method == 'POST':
         #get_Person_Detail_by_reg_no = request.form.get("regNo")
-    get_Person_Detail_by_reg_no = request.args.get('selected')
+    get_Person_Detail_by_reg_no = request.args.get('selected') # getting JH-10-BJ-9977
+
+    get_Person_Detail_by_reg_no_database = "".join(get_Person_Detail_by_reg_no.split("-")) # converted to JH10BJ9977
     
-    full_detail = PersonDetails.query.filter_by(Regd_No=get_Person_Detail_by_reg_no).first()   #exact search command 
+    full_detail = PersonDetails.query.filter_by(Regd_No_Database=get_Person_Detail_by_reg_no_database).first()   #exact search command 
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
 
@@ -138,10 +149,17 @@ def SuccessPage():
     if new car then dispaly a message that you data is saved in db
     and a click bar to goto index/search page
     db operations 
-    1.search , 2.save/commit''' 
+    1.search , 2.save/commit'''
+
+    """ New added Fields :
+    Type_of_insurance , Customer_Contact_No , Regd_No_Database , Insurer_Code , Add_Ons , Ckyc_No , Reference_1
+    Reference_Contact_1 , Reference_2 , Reference_Contact_2 ,
+    """ 
     if request.method == 'POST':
         date_of_insurance = request.form.get("date_of_insurance")
+        type_of_insurance = request.form.get("type_of_insurance")
         customer_name = request.form.get("customer_name")
+        customer_contact_no = request.form.get("customer_contact_no")
         make = request.form.get("make")
         model = request.form.get("model")
         year_of_mfg = request.form.get("year_of_mfg")
@@ -157,18 +175,26 @@ def SuccessPage():
         terms_comp = request.form.get("terms_comp")
         terms_tp = request.form.get("terms_tp")
         insured_company = request.form.get("insured_company")
+        insurer_code = request.form.get("insurer_code")
         new_company = request.form.get("new_company")
         policy_no = request.form.get("policy_no")
-        contact_remarks = request.form.get("contact_remarks")
+        add_ons = request.form.get("add_ons")
+        ckyc_no = request.form.get("ckyc_no")
+        reference_1 = request.form.get("reference_1")
+        reference_contact_1 = request.form.get("reference_contact_1")
+        reference_2 = request.form.get("reference_2")
+        reference_contact_2 = request.form.get("reference_contact_2")
         transfer_to = request.form.get("transfer_to")
-
-        insert_person = PersonDetails(Date_of_insurance=date_of_insurance,
-                                    Customer_name = customer_name,Make=make, Model = model, Year_of_mfg = year_of_mfg,
-                                    Regd_No= registration_no, Old_ID_value = old_id_value,New_ID_value= new_id_value
-                                    ,Old_OD_value=old_od_value, New_OD_value=new_od_value,
-                                     Old_final_premium=old_final_premium,New_final_premium=new_final_premium,Ncb=ncb,
-                                     Discount=discount,Terms_Comp=terms_comp, Terms_TP = terms_tp, Insured_Company=insured_company,
-                                     New_Company=new_company,Policy_No=policy_no, Contact_remarks=contact_remarks,Transfer_to=transfer_to)
+        ''' Write code to convert a string to hyphen separated string based on the reg no'''
+        insert_person = PersonDetails(Date_of_insurance=date_of_insurance,Type_of_insurance =type_of_insurance,
+                                    Customer_name = customer_name,Customer_Contact_No = customer_contact_no,Make=make, Model = model, Year_of_mfg = year_of_mfg,
+                                    Regd_No= registration_no,Regd_No_Database= registration_no, Old_ID_value = old_id_value,New_ID_value= new_id_value,
+                                    Old_OD_value=old_od_value, New_OD_value=new_od_value,
+                                    Old_final_premium=old_final_premium,New_final_premium=new_final_premium,Ncb=ncb,
+                                    Discount=discount,Terms_Comp=terms_comp, Terms_TP = terms_tp, Insured_Company=insured_company,Insurer_Code = insurer_code,
+                                    New_Company=new_company,Policy_No=policy_no,Add_Ons = add_ons, Ckyc_No= ckyc_no, 
+                                    Reference_1= reference_1, Reference_Contact_1 = reference_contact_1, Reference_2 = reference_2,
+                                    Reference_Contact_2 = reference_contact_2 , Transfer_to=transfer_to)
         
         db.session.add(insert_person)
         app.logger.info("One Person is Succesfully added in Database")
@@ -193,18 +219,19 @@ def loadData():
         ws = wb.active  # Select the active sheet
 
         # Iterate through rows (values only)
-        for row in ws.iter_rows(min_row=3, values_only=True):
-            row_data = row[:5] + row[6:] 
+        for row_data in ws.iter_rows(min_row=3, values_only=True):
             if any(row_data):  # Checks if the row has at least one non-empty cell
 
-                insert_person = PersonDetails(Date_of_insurance=row_data[0],
-                                            Customer_name = row_data[1],Make=row_data[2], Model = row_data[3], Year_of_mfg = row_data[4],
-                                            Regd_No= row_data[5], Old_ID_value = row_data[6],New_ID_value= row_data[7]
-                                            ,Old_OD_value=row_data[8], New_OD_value=row_data[9],
-                                                Old_final_premium=row_data[10],New_final_premium=row_data[11],Ncb=row_data[12],
-                                                Discount=row_data[13],Terms_Comp=row_data[14],Terms_TP=row_data[15], Insured_Company=row_data[16],
-                                                New_Company=row_data[17],Policy_No=row_data[18], Contact_remarks=row_data[19],
-                                                Transfer_to=row_data[20])
+                insert_person = PersonDetails(Date_of_insurance=row_data[0],Type_of_insurance=row_data[1],
+                                            Customer_name = row_data[2],Customer_Contact_No=row_data[3],Make=row_data[4], Model = row_data[5], Year_of_mfg = row_data[6],
+                                            Regd_No= row_data[7],Regd_No_Database= row_data[8], Old_ID_value = row_data[9],New_ID_value= row_data[10],
+                                            Old_OD_value=row_data[11], New_OD_value=row_data[12],
+                                            Old_final_premium=row_data[13],New_final_premium=row_data[14],Ncb=row_data[15],
+                                            Discount=row_data[16],Terms_Comp=row_data[17],Terms_TP=row_data[18], Insured_Company=row_data[19],
+                                            Insurer_Code=row_data[20] , New_Company=row_data[21],Policy_No=row_data[22], 
+                                            Add_Ons= row_data[23],Ckyc_No = row_data[24] ,Reference_1 = row_data[25], Reference_Contact_1= row_data[26],
+                                             Reference_2= row_data[27],
+                                            Reference_Contact_2= row_data[28] , Transfer_to=row_data[29])
                 #BR01BB2649
                 db.session.add(insert_person)
                 app.logger.info("Person is Succesfully added in Database")

@@ -4,11 +4,14 @@ table name - person_details
 CREATE TABLE person_details (
     id INT AUTO_INCREMENT PRIMARY KEY,
     Date_of_insurance DATE,
-    Customer_name VARCHAR(255) NOT NULL,
+    Type_of_insurance VARCHAR(255),
+    Customer_name VARCHAR(255),
+    Customer_Contact_No VARCHAR(255),
     Make VARCHAR(255),
     Model VARCHAR(255),
     Year_of_mfg VARCHAR(255),
-    Regd_No VARCHAR(255) UNIQUE,
+    Regd_No VARCHAR(255) ,
+    Regd_No_Database VARCHAR(255),
     Old_ID_value VARCHAR(255),
     New_ID_value VARCHAR(255),
     Old_OD_value VARCHAR(255),
@@ -20,13 +23,15 @@ CREATE TABLE person_details (
     Terms_comp VARCHAR(255) ,
     Terms_tp VARCHAR(255),
     Insured_Company VARCHAR(255) ,
+    Insurer_Code VARCHAR(255) ,
     New_Company VARCHAR(255) ,
     Policy_No VARCHAR(255),
-    Contact_remarks VARCHAR(255) ,
+    Add_Ons VARCHAR(255),
+    Ckyc_No VARCHAR(255),
+    Reference_1 VARCHAR(255),
+    Reference_Contact_1 VARCHAR(255),
+    Reference_2 VARCHAR(255),
+    Reference_Contact_2 VARCHAR(255),
     Transfer_to VARCHAR(255) 
 );
 
-
-Jan - 16
-Feb - 20
-Mar - 27
