@@ -14,7 +14,9 @@
             margin: 0;
             font-family: Arial, sans-serif;
             padding-top: 20px;
+            background-color: #f8f9fa;
         }
+
         .top-container {
             display: flex;
             flex-direction: column;
@@ -23,25 +25,26 @@
         }
         
         .table-container {
-            position: relative;
-            width: 50%;
-            background: #fff;
+            width: 90%;
+            max-width: 800px;
+            background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-top:20px;
+            margin-top: 20px;
+            overflow-x: auto; /* Enables scrolling on small screens */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            
         }
 
         th, td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
+            white-space: nowrap; /* Prevents text from breaking awkwardly */
         }
 
         th {
@@ -58,165 +61,180 @@
             background-color: #f1f1f1;
             transition: 0.3s;
         }
+
         .edit-btn, .save-btn {
-            padding: 8px 15px;
+            padding: 10px 18px;
             border: none;
             cursor: pointer;
             font-size: 14px;
             border-radius: 5px;
+            margin: 10px;
         }
+
         .edit-btn {
             background-color: #007bff;
             color: white;
         }
+
         .save-btn {
             background-color: #28a745;
             color: white;
-            display: none; /* Initially hidden */
+            display: none;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 480px) {
+            body {
+                padding-top: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            th, td {
+                padding: 6px;
+                font-size: 12px;
+            }
+
+            .edit-btn, .save-btn {
+                padding: 10px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <button class="edit-btn" id="editButton">Edit</button>
-    <button class="save-btn" id="saveButton">Save</button>
-    {% if full_detail %}
-            <div class="table-container">
-                
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Field</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Person Name </td>
-                            <td>{{ full_detail.Customer_name }} </td>
-                        </tr>
-                        <tr>
-                            <td>Person Contact No. </td>
-                            <td>{{ full_detail.Customer_Contact_No }} </td>
-                        </tr>
-                        <tr>
-                            <td>Date of Insurance</td>
-                            <td>{{ full_detail.Date_of_insurance }}</td>
-                        </tr>
-                        <tr>
-                            <td>Insurance Type</td>
-                            <td>{{ full_detail.Type_of_insurance }}</td>
-                        </tr>
-                        <tr>
-                            <td>Make </td>
-                            <td>{{ full_detail.Make }}</td>
-                        </tr>
-                        <tr>
-                            <td>Model</td>
-                            <td>{{ full_detail.Model }}</td>
-                        </tr>
-                        <tr>
-                            <td>Year of Manufacture</td>
-                            <td>{{ full_detail.Year_of_mfg }}</td>
-                        </tr>
-                        <tr>
-                            <td>Registration No</td>
-                            <td>{{ full_detail.Regd_No }}</td>
-                        </tr>
-                        <!--
-                        <tr>
-                            <td>Registration No For Query</td>
-                            <td>{{ full_detail.Regd_No_Database }}</td>
-                        </tr>
-                         -->
-                        <tr>
-                            <td>Old ID value (&#8377;)</td>
-                            <td> {{ full_detail.Old_ID_value }}</td>
-                        </tr>
-                        <tr>
-                            <td>New ID value (&#8377;)</td>
-                            <td>{{ full_detail.New_ID_value }}</td>
-                        </tr>
-                        <tr>
-                            <td>Old OD value (&#8377;)</td>
-                            <td>{{ full_detail.Old_OD_value }}</td>
-                        </tr>
 
-                        <tr>
-                            <td>New OD value (&#8377;)</td>
-                            <td>{{ full_detail.New_OD_value }}</td>
-                        </tr>
-                        <tr>
-                            <td>Old Final Premium (&#8377;)</td>
-                            <td>{{ full_detail.Old_final_premium }}</td>
-                        </tr>
-                        <tr>
-                            <td>New Final Premium (&#8377;)</td>
-                            <td>{{ full_detail.New_final_premium }}</td>
-                        </tr>
-                        <tr>
-                            <td>NCB (%)</td>
-                            <td>{{ full_detail.Ncb }}</td>
-                        </tr>
-                        <tr>
-                            <td>Discount (%)</td>
-                            <td>{{ full_detail.Discount }}</td>
-                        </tr>
-                        <tr>
-                            <td>Terms COMP</td>
-                            <td>{{ full_detail.Terms_Comp }}</td>
-                        </tr>
-                        <tr>
-                            <td>Terms TP</td>
-                            <td>{{ full_detail.Terms_TP }}</td>
-                        </tr>
-                        <tr>
-                            <td>Insured Company</td>
-                            <td>{{ full_detail.Insured_Company }}</td>
-                        </tr>
-                        <tr>
-                            <td>Insuredr Code</td>
-                            <td>{{ full_detail.Insurer_Code }}</td>
-                        </tr>
-                        <tr>
-                            <td>New Company</td>
-                            <td>{{ full_detail.New_Company }}</td>
-                        </tr>
-                        <tr>
-                            <td>Policy_No</td>
-                            <td>{{ full_detail.Policy_No }}</td>
-                        </tr>
-                        <tr>
-                            <td>Add Ons</td>
-                            <td>{{ full_detail.Add_Ons }}</td>
-                        </tr>
-                        <tr>
-                            <td>CKYC No.</td>
-                            <td>{{ full_detail.Ckyc_No }}</td>
-                        </tr>
-                        <tr>
-                            <td>Reference 1</td>
-                            <td>{{ full_detail.Reference_1 }}</td>
-                        </tr>
-                        <tr>
-                            <td>Reference 1 Contact</td>
-                            <td>{{ full_detail.Reference_Contact_1 }}</td>
-                        </tr>
-                        <tr>
-                            <td>Reference 2</td>
-                            <td>{{ full_detail.Reference_2 }}</td>
-                        </tr>
-                        <tr>
-                            <td>Reference 2 Contact</td>
-                            <td>{{ full_detail.Reference_Contact_2 }}</td>
-                        </tr>
-                        <tr>
-                            <td>Transfer to</td>
-                            <td>{{ full_detail.Transfer_to }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-            </div>
+    {% if full_detail %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Person Name</td>
+                        <td>{{ full_detail.Customer_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Contact No.</td>
+                        <td>{{ full_detail.Customer_Contact_No }}</td>
+                    </tr>
+                    <tr>
+                        <td>Date of Insurance</td>
+                        <td>{{ full_detail.Date_of_insurance }}</td>
+                    </tr>
+                    <tr>
+                        <td>Insurance Type</td>
+                        <td>{{ full_detail.Type_of_insurance }}</td>
+                    </tr>
+                    <tr>
+                        <td>Make</td>
+                        <td>{{ full_detail.Make }}</td>
+                    </tr>
+                    <tr>
+                        <td>Model</td>
+                        <td>{{ full_detail.Model }}</td>
+                    </tr>
+                    <tr>
+                        <td>Year of Manufacture</td>
+                        <td>{{ full_detail.Year_of_mfg }}</td>
+                    </tr>
+                    <tr>
+                        <td>Registration No</td>
+                        <td>{{ full_detail.Regd_No }}</td>
+                    </tr>
+                    <tr>
+                        <td>Old ID value (&#8377;)</td>
+                        <td>{{ full_detail.Old_ID_value }}</td>
+                    </tr>
+                    <tr>
+                        <td>New ID value (&#8377;)</td>
+                        <td>{{ full_detail.New_ID_value }}</td>
+                    </tr>
+                    <tr>
+                        <td>Old OD value (&#8377;)</td>
+                        <td>{{ full_detail.Old_OD_value }}</td>
+                    </tr>
+                    <tr>
+                        <td>New OD value (&#8377;)</td>
+                        <td>{{ full_detail.New_OD_value }}</td>
+                    </tr>
+                    <tr>
+                        <td>Old Final Premium (&#8377;)</td>
+                        <td>{{ full_detail.Old_final_premium }}</td>
+                    </tr>
+                    <tr>
+                        <td>New Final Premium (&#8377;)</td>
+                        <td>{{ full_detail.New_final_premium }}</td>
+                    </tr>
+                    <tr>
+                        <td>NCB (%)</td>
+                        <td>{{ full_detail.Ncb }}</td>
+                    </tr>
+                    <tr>
+                        <td>Discount (%)</td>
+                        <td>{{ full_detail.Discount }}</td>
+                    </tr>
+                    <tr>
+                        <td>Terms COMP</td>
+                        <td>{{ full_detail.Terms_Comp }}</td>
+                    </tr>
+                    <tr>
+                        <td>Terms TP</td>
+                        <td>{{ full_detail.Terms_TP }}</td>
+                    </tr>
+                    <tr>
+                        <td>Insured Company</td>
+                        <td>{{ full_detail.Insured_Company }}</td>
+                    </tr>
+                    <tr>
+                        <td>Insurer Code</td>
+                        <td>{{ full_detail.Insurer_Code }}</td>
+                    </tr>
+                    <tr>
+                        <td>New Company</td>
+                        <td>{{ full_detail.New_Company }}</td>
+                    </tr>
+                    <tr>
+                        <td>Policy No</td>
+                        <td>{{ full_detail.Policy_No }}</td>
+                    </tr>
+                    <tr>
+                        <td>Add Ons</td>
+                        <td>{{ full_detail.Add_Ons }}</td>
+                    </tr>
+                    <tr>
+                        <td>CKYC No.</td>
+                        <td>{{ full_detail.Ckyc_No }}</td>
+                    </tr>
+                    <tr>
+                        <td>Reference 1</td>
+                        <td>{{ full_detail.Reference_1 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Reference 1 Contact</td>
+                        <td>{{ full_detail.Reference_Contact_1 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Reference 2</td>
+                        <td>{{ full_detail.Reference_2 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Reference 2 Contact</td>
+                        <td>{{ full_detail.Reference_Contact_2 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Transfer to</td>
+                        <td>{{ full_detail.Transfer_to }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     {% endif %}
 </body>
 </html>
