@@ -6,27 +6,47 @@
     <title>Insurance Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
     <style>
+        /* Background Animation */
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
             font-family: 'Arial', sans-serif;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             height: 100vh;
             padding-top: 50px;
+            overflow: hidden;
+            animation: gradientBG 10s ease infinite alternate;
         }
 
+        /* Smooth Gradient Transition */
+        @keyframes gradientBG {
+            0% { background: linear-gradient(135deg, #87CEEB, #4682B4); } /*LightSkyBlue to SteelBlue */
+            100% { background: linear-gradient(135deg, #00BFFF, #1E90FF); } /* DeepSkyBlue to DodgerBlue */
+            /* 100% { background: linear-gradient(135deg, #87CEFA, #5F9EA0); } LightBlue to CadetBlue */
+        }
+
+        /* Card Styling */
         .card {
             max-width: 450px;
             width: 100%;
             padding: 25px;
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             text-align: center;
+            animation: fadeIn 1s ease-in-out;
         }
 
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Heading */
         .card h1 {
             font-size: 24px;
             font-weight: bold;
@@ -34,6 +54,7 @@
             color: #333;
         }
 
+        /* Button Styling */
         .btn-custom {
             width: 100%;
             padding: 14px;
@@ -41,34 +62,41 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease-in-out;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         .btn-custom i {
             font-size: 20px;
         }
 
+        /* Primary Button */
         .btn-primary {
-            background-color: #007bff;
+            background: linear-gradient(135deg, #007bff, #0056b3);
             color: white;
         }
 
         .btn-primary:hover {
-            background-color: #0056b3;
+            background: linear-gradient(135deg, #0056b3, #003f7f);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 91, 187, 0.4);
         }
 
+        /* Success Button */
         .btn-success {
-            background-color: #28a745;
+            background: linear-gradient(135deg, #28a745, #1e7e34);
             color: white;
         }
 
         .btn-success:hover {
-            background-color: #1e7e34;
+            background: linear-gradient(135deg, #1e7e34, #146524);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
         }
 
         /* Responsive Adjustments */
