@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search by Type</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            padding-top: 50px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .container {
+        max-width: 350px;
+        margin: 50px auto;
+        text-align: center;
+        font-family: 'Arial', sans-serif;
+    }
+
+    /* Heading Style */
+    .container h2 {
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 12px;
+    }
+
+    /* Select Dropdown Styling */
+    select {
+        position: relative;
+        z-index: 999999;
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 16px;
+        font-weight: 500;
+        border: 2px solid #007BFF;
+        border-radius: 8px;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        
+    }
+
+    /* Dropdown Arrow Customization */
+    select:focus, select:hover {
+        border-color: #0056b3;
+        box-shadow: 0 0 10px rgba(0, 86, 179, 0.4);
+    }
+
+    /* Option Styling */
+    option {
+        font-size: 16px;
+        background: white;
+        color: #333;
+    }
+
+    /* Disabled First Option */
+    select option:first-child {
+        color: #999;
+        font-style: italic;
+    }
+    .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s, transform 0.2s;
+}
+
+.radio-label:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.02);
+}
+
+.radio-label input {
+    display: none;
+}
+
+.radio-custom {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    position: relative;
+    transition: 0.2s;
+}
+
+.radio-custom::after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    background: #007bff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+input:checked + .radio-custom::after {
+    opacity: 1;
+}
+
+    
+    </style>
+    <script>
+        function sendMonth() {
+            var selectedMonth = document.getElementById("monthSelect").value;
+            
+            fetch("/searchByType", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ month: selectedMonth })
+            })
+            .then(response => response.text())  // ✅ Expect HTML, not JSON
+            .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+    <script>
+        function redirectToPage(value) {
+            window.location.href = "/fullPersonDetails?selected=" + encodeURIComponent(value);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <select id="monthSelect" onchange="sendMonth()">
+            <option value="">--Select a Option--</option>
+            {% for gat in getAllType %}
+                <option value="{{ gat }}">{{ gat }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+    {% if result %}
+    <p>Select an Option:</p>
+    <div class="radio-group">
+        {% for pobj in result %}
+            <label class="radio-label">
+                <input type="radio" id="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" name="regNo" value="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" onclick="redirectToPage(this.value)">
+                <span class="radio-custom"></span>
+                {{ pobj.Date_of_insurance.strftime('%d/%m/%Y') }}, {{ pobj.Customer_name }}, {{ pobj.Regd_No }}
+            </label>
+        {% endfor %}
+    </div>
+{% endif %}
+        
+
+
+</body>
+</html>
