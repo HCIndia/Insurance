@@ -96,11 +96,14 @@ def fullPersonDetails():
         #get_Person_Detail_by_reg_no = request.form.get("regNo")
     getFPD = request.args.get('selected').split("+")
     app.logger.info(f"FPD = {getFPD}")
-    get_Person_Detail_by_name , get_Person_Detail_by_reg_no = getFPD[0] , getFPD[1] # getting JH-10-BJ-9977
+    get_Person_Detail_by_name , get_Person_Detail_by_reg_no, get_person_detail_by_type = getFPD[0] , getFPD[1], getFPD[2] # getting JH-10-BJ-9977
     
     if get_Person_Detail_by_reg_no == "NA":
 
-        full_detail = PersonDetails.query.filter_by(Customer_name=get_Person_Detail_by_name).first()
+        full_detail = db.session.query(PersonDetails).filter(
+                                                    PersonDetails.Customer_name == get_Person_Detail_by_name,
+                                                    PersonDetails.Type_of_insurance == get_person_detail_by_type
+                                                ).first()
         app.logger.info("Passing details from Customer Name")
     else:
         get_Person_Detail_by_reg_no_database = "".join(get_Person_Detail_by_reg_no.split("-")) # converted to JH10BJ9977
@@ -145,6 +148,23 @@ def searchByMonth():
         return render_template("SearchByMonth.html", result=results)
 
     return render_template("SearchByMonth.html")
+
+
+@app.route("/searchByType", methods=['GET', 'POST'])
+def searchByType():
+
+    getAllTypeTuple = db.session.query(PersonDetails.Type_of_insurance).distinct().all()
+    getAllType = [value[0] for value in getAllTypeTuple]
+    getAllType.remove("NA")
+    if request.method == "POST":
+        data = request.get_json()
+        type_name = data.get("month")
+
+        result = db.session.query(PersonDetails).filter(PersonDetails.Type_of_insurance == type_name).all()
+        return render_template("SearchByType.html", result = result, getAllType = getAllType)
+
+    return render_template("SearchByType.html", getAllType = getAllType)
+
 
 @app.route("/addPerson")
 def addPerson():

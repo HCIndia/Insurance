@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Month</title>
+    <title>Search by Type</title>
     <style>
         body {
             display: flex;
@@ -149,7 +149,7 @@ input:checked + .radio-custom::after {
         function sendMonth() {
             var selectedMonth = document.getElementById("monthSelect").value;
             
-            fetch("/searchByMonth", {
+            fetch("/searchByType", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -173,21 +173,11 @@ input:checked + .radio-custom::after {
 </head>
 <body>
     <div class="container">
-        <h2>Select a Month</h2>
         <select id="monthSelect" onchange="sendMonth()">
-            <option value="">--Select a Month--</option>
-            <option value="January">January</option>
-            <option value="February">February</option>
-            <option value="March">March</option>
-            <option value="April">April</option>
-            <option value="May">May</option>
-            <option value="June">June</option>
-            <option value="July">July</option>
-            <option value="August">August</option>
-            <option value="September">September</option>
-            <option value="October">October</option>
-            <option value="November">November</option>
-            <option value="December">December</option>
+            <option value="">--Select a Option--</option>
+            {% for gat in getAllType %}
+                <option value="{{ gat }}">{{ gat }}</option>
+            {% endfor %}
         </select>
 
     </div>
@@ -196,7 +186,7 @@ input:checked + .radio-custom::after {
     <div class="radio-group">
         {% for pobj in result %}
             <label class="radio-label">
-                <input type="radio" id = "{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" name="regNo" value="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" onclick="redirectToPage(this.value)">
+                <input type="radio" id="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" name="regNo" value="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" onclick="redirectToPage(this.value)">
                 <span class="radio-custom"></span>
                 {{ pobj.Date_of_insurance.strftime('%d/%m/%Y') }}, {{ pobj.Customer_name }}, {{ pobj.Regd_No }}
             </label>
