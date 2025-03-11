@@ -3,54 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insurance</title>
+    <title>Insurance Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             height: 100vh;
-            background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
             padding-top: 50px;
         }
-        .button-container {
-            display: flex;
-            gap: 15px;
+
+        .card {
+            max-width: 450px;
+            width: 100%;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
-        .btn {
-            padding: 12px 24px;
-            font-size: 16px;
+
+        .card h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .btn-custom {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             transition: 0.3s;
-            background-color: #007BFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-custom i {
+            font-size: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
             color: white;
         }
-        .btn:hover {
+
+        .btn-primary:hover {
             background-color: #0056b3;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 480px) {
+            body {
+                padding-top: 20px;
+            }
+
+            .card {
+                max-width: 90%;
+                padding: 20px;
+            }
+
+            .card h1 {
+                font-size: 20px;
+            }
+
+            .btn-custom {
+                font-size: 16px;
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="mb-4">Welcome to Your App</h1>
-        <div class="mt-4">
-            <a onclick="window.location.href='/index'" class="btn btn-primary btn-lg btn-block">Search by Regd.No / Name </a>
-            <br>
-            <br>
-            <a onclick="window.location.href='/searchByMonth'" class="btn btn-primary btn-lg btn-block">Search by Month</a>
-            <br>
-            <br>
-            <a onclick="window.location.href='/addPerson'" class="btn btn-primary btn-lg btn-block">Add Person</a>
-            <br>
-            <br>
-        </div>
+
+    <div class="card">
+        <h1>Welcome to the Insurance Portal</h1>
+        <a href="/index" class="btn btn-primary btn-custom"><i class="fas fa-search"></i> Search by Regd.No / Name</a>
+        <a href="/searchByMonth" class="btn btn-primary btn-custom"><i class="far fa-calendar-alt"></i> Search by Month</a>
+        <a href="/addPerson" class="btn btn-success btn-custom"><i class="fas fa-user-plus"></i> Add Person</a>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
