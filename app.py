@@ -117,38 +117,30 @@ def fullPersonDetails():
 
 @app.route("/searchByMonth", methods=['GET', 'POST'])
 def searchByMonth():
-    if request.method == "POST":
-        if request.is_json:
-            data = request.get_json()
-        else:
-            data = request.form  # Handles form submissions
-
-        app.logger.info(f"Received Data: {data}")
-
-        month_name = data.get("month")
-        if not month_name:
-            return render_template("SearchByMonth.html", error="Month is required")
-
-        try:
-            month_number = datetime.strptime(month_name, "%B").month
-            app.logger.info(f"Converted Month Name '{month_name}' to Number: {month_number}")
-        except ValueError:
-            return render_template("SearchByMonth.html", error="Invalid month name")
-
-        results = PersonDetails.query.filter(
-            db.extract('month', PersonDetails.Date_of_insurance) == month_number
-        ).order_by(PersonDetails.Date_of_insurance).all()
-
-        app.logger.info(f"Query Results: {results}")
-
-        if not results:
-            return render_template("SearchByMonth.html", error="No records found for this month")
-
-        reg_list = [res.Regd_No for res in results]
-        app.logger.info(f"Extracted Registration Numbers: {reg_list}")
-        return render_template("SearchByMonth.html", result=results)
-
     return render_template("SearchByMonth.html")
+
+@app.route("/searchByMonthAndYear", methods=["GET",'POST'])
+def search():
+    month = request.args.get("month")
+    year = request.args.get("year")
+
+    if not month or not year:
+        return jsonify({"error": "Both month and year are required"}), 400
+
+    try:
+        month_number = datetime.strptime(month, "%B").month
+        year = int(year)
+    except ValueError:
+        return jsonify({"error": "Invalid month or year"}), 400
+
+    # Query database to filter by month and year
+    results = PersonDetails.query.filter(
+        db.extract('month', PersonDetails.Date_of_insurance) == month_number,
+        db.extract('year', PersonDetails.Date_of_insurance) == year
+    ).order_by(PersonDetails.Date_of_insurance).all()
+    print(results)
+    return render_template("SearchByMonth.html", result=results)
+    
 
 @app.route("/searchByType", methods=['GET', 'POST'])
 def searchByType():

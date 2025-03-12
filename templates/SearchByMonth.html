@@ -14,6 +14,13 @@
             font-family: Arial, sans-serif;
             padding-top: 50px;
         }
+        .selection-container {
+        display: flex;
+        gap: 20px; /* Space between month & year */
+        align-items: center; /* Align them properly */
+        justify-content: center; /* Center the selection on the page */
+        flex-wrap: wrap; /* Wrap items if screen is small */
+     }
         .container {
             background: white;
             padding: 20px;
@@ -142,29 +149,67 @@
 input:checked + .radio-custom::after {
     opacity: 1;
 }
+.search-btn {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .search-btn:disabled {
+        background-color: gray;
+        cursor: not-allowed;
+    }
+    /* Responsive Styling */
+@media (max-width: 768px) {
+    .selection-container {
+        flex-direction: column; /* Stack items on small screens */
+        gap: 1px;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 400px;
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 18px; /* Reduce heading size on small screens */
+    }
+
+    select {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .search-btn {
+        width: 90%;
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .radio-group {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .radio-label {
+        width: 90%;
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
 
     
     </style>
-    <script>
-        function sendMonth() {
-            var selectedMonth = document.getElementById("monthSelect").value;
-            
-            fetch("/searchByMonth", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ month: selectedMonth })
-            })
-            .then(response => response.text())  // ✅ Expect HTML, not JSON
-            .then(html => {
-                document.open();
-                document.write(html);
-                document.close();
-            })
-            .catch(error => console.error("Error:", error));
-        }
-    </script>
     <script>
         function redirectToPage(value) {
             window.location.href = "/fullPersonDetails?selected=" + encodeURIComponent(value);
@@ -172,25 +217,113 @@ input:checked + .radio-custom::after {
     </script>
 </head>
 <body>
-    <div class="container">
-        <h2>Select a Month</h2>
-        <select id="monthSelect" onchange="sendMonth()">
-            <option value="">--Select a Month--</option>
-            <option value="January">January</option>
-            <option value="February">February</option>
-            <option value="March">March</option>
-            <option value="April">April</option>
-            <option value="May">May</option>
-            <option value="June">June</option>
-            <option value="July">July</option>
-            <option value="August">August</option>
-            <option value="September">September</option>
-            <option value="October">October</option>
-            <option value="November">November</option>
-            <option value="December">December</option>
-        </select>
-
+    <div class="selection-container">
+        <div class="container">
+            <h2>Select a Month</h2>
+            <select id="monthSelect" onchange="checkSelection()">
+                <option value="">--Select a Month--</option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </select>
+        </div>
+    
+        <div class="container">
+            <h2>Select a Year</h2>
+            <select id="yearSelect" onchange="checkSelection()">
+                <option value="">--Select a Year--</option>
+            </select>
+        </div>
+    
+        <button id="search-btn" class="search-btn" disabled onclick="sendData()">Search</button>
     </div>
+
+    <script>
+        // Ensure the script runs after the DOM is fully loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            populateYearDropdown();
+        });
+
+        // Populate Year Dropdown (from 2000 to current year)
+        function populateYearDropdown() {
+            const yearSelect = document.getElementById("yearSelect");
+
+            // Clear existing options (prevents duplication)
+            yearSelect.innerHTML = '<option value="">--Select a Year--</option>';
+
+            const currentYear = new Date().getFullYear();
+            for (let year = 2020; year <= currentYear; year++) {
+                let option = document.createElement("option");
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+        }
+
+        // Re-populate dropdown when coming back from history
+        window.addEventListener("pageshow", function () {
+            populateYearDropdown();
+        });
+
+    </script>
+
+    <script>
+        // Populate Year Dropdown (2000 - Current Year)
+        // const yearSelect = document.getElementById("yearSelect");
+        // const currentYear = new Date().getFullYear();
+    
+        // for (let year = 2020; year <= currentYear; year++) {
+        //     let option = document.createElement("option");
+        //     option.value = year;
+        //     option.textContent = year;
+        //     yearSelect.appendChild(option);
+        // }
+    
+        function checkSelection() {
+            let month = document.getElementById("monthSelect").value;
+            let year = document.getElementById("yearSelect").value;
+            let searchBtn = document.getElementById("search-btn");
+    
+            // Enable button only if both fields are selected
+            searchBtn.disabled = !(month && year);
+        }
+    
+        function sendData() {
+            let month = document.getElementById("monthSelect").value;
+            let year = document.getElementById("yearSelect").value;
+    
+            if (!month || !year) {
+                alert("Please select both Month and Year before searching!");
+                return;
+            }
+    
+            // Simulate sending data (modify as needed)
+            console.log("Sending Data:", { month, year });
+    
+            // Example: Sending Data via Fetch API (Modify as per your backend)
+            fetch(`/searchByMonthAndYear?month=${month}&year=${year}`)
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.text();
+            })
+            .then(html => {
+                        document.open();
+                        document.write(html);
+                        document.close();
+                    })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+    </script>
+
     {% if result %}
     <p>Select an Option:</p>
     <div class="radio-group">
