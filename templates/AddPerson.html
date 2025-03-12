@@ -37,13 +37,22 @@
             color: #333;
             margin-bottom: 5px;
         }
-        input[type="text"], input[type="date"], input[type="number"] {
+        input[type="text"], input[type="date"], input[type="number"], select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 6px;
             font-size: 16px;
             background: #fffaf0;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+        }
+        select {
+            background: #fffaf0 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 12px center;
+            background-size: 16px;
+            padding-right: 30px;
         }
         button {
             padding: 12px;
@@ -64,7 +73,7 @@
             .form-container {
                 padding: 20px;
             }
-            input, button {
+            input, button, select {
                 font-size: 14px;
             }
         }
@@ -80,7 +89,14 @@
             </div>
             <div class="form-group">
                 <label>Type of Insurance:</label>
-                <input type="text" name="type_of_insurance" required>
+                <select name="type_of_insurance" required>
+                    <option value="">Select Type</option>
+                    <option value="Fweel">4 Wheeler</option>
+                    <option value="Tweel">2 Wheeler</option>
+                    <option value="General">General Insurance</option>
+                    <option value="Life">Life Insurance</option>
+                    <option value="Mediclaim">Mediclaim</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Customer Name:</label>
