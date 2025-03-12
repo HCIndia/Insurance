@@ -102,10 +102,58 @@
                 font-size: 14px;
             }
         }
+
+        
     </style>
 </head>
 <body>
 
+    <script>
+        function enableEditing() {
+            document.querySelectorAll("td[contenteditable]").forEach(cell => {
+                cell.style.backgroundColor = "#fff3cd"; // Highlight editable cells
+            });
+            document.getElementById("save-btn").style.display = "inline-block";
+        }
+    
+        function saveChanges() {
+
+    let tableData = {};
+    let rows = document.querySelectorAll("tbody tr");
+
+    rows.forEach(row => {
+        if (row.cells.length >= 2) {
+            let key = row.cells[0].dataset.key || row.cells[0].innerText.trim();
+            let value = row.cells[1].innerText.trim();
+            if (key) tableData[key] = value;
+        }
+    });
+
+    fetch("/updatePerson", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(tableData)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        return response.text();
+    })
+    .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+}
+
+
+    </script>
+
+    <button id="save-btn" class="save-btn" onclick="saveChanges()">Save Changes</button>
+
+    
     {% if full_detail %}
         <div class="table-container">
             <table>
@@ -122,11 +170,11 @@
                     </tr>
                     <tr>
                         <td>Contact No.</td>
-                        <td>{{ full_detail.Customer_Contact_No }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Customer_Contact_No }}</td>
                     </tr>
                     <tr>
                         <td>Date of Insurance</td>
-                        <td>{{ full_detail.Date_of_insurance }}</td>
+                        <td>{{ full_detail.Date_of_insurance.strftime('%d/%m/%Y') }}</td>
                     </tr>
                     <tr>
                         <td>Insurance Type</td>
@@ -154,7 +202,7 @@
                     </tr>
                     <tr>
                         <td>New ID value (&#8377;)</td>
-                        <td>{{ full_detail.New_ID_value }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.New_ID_value or NA}}</td>
                     </tr>
                     <tr>
                         <td>Old OD value (&#8377;)</td>
@@ -162,7 +210,7 @@
                     </tr>
                     <tr>
                         <td>New OD value (&#8377;)</td>
-                        <td>{{ full_detail.New_OD_value }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.New_OD_value or NA}}</td>
                     </tr>
                     <tr>
                         <td>Old Final Premium (&#8377;)</td>
@@ -214,11 +262,11 @@
                     </tr>
                     <tr>
                         <td>Reference 1</td>
-                        <td>{{ full_detail.Reference_1 }}</td>
+                        <td >{{ full_detail.Reference_1 }}</td>
                     </tr>
                     <tr>
                         <td>Reference 1 Contact</td>
-                        <td>{{ full_detail.Reference_Contact_1 }}</td>
+                        <td contenteditable="true" onclick="enableEditing()" >{{ full_detail.Reference_Contact_1 }}</td>
                     </tr>
                     <tr>
                         <td>Reference 2</td>
@@ -226,7 +274,7 @@
                     </tr>
                     <tr>
                         <td>Reference 2 Contact</td>
-                        <td>{{ full_detail.Reference_Contact_2 }}</td>
+                        <td contenteditable="true" onclick="enableEditing()" >{{ full_detail.Reference_Contact_2 }}</td>
                     </tr>
                     <tr>
                         <td>Transfer to</td>

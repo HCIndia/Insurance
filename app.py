@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from typing import Final
@@ -6,6 +6,7 @@ from openpyxl import load_workbook
 from pathlib import Path
 from flask_cors import CORS
 from datetime import datetime
+import json
 
 
 
@@ -96,8 +97,7 @@ def fullPersonDetails():
         #get_Person_Detail_by_reg_no = request.form.get("regNo")
     getFPD = request.args.get('selected').split("+")
     app.logger.info(f"FPD = {getFPD}")
-    get_Person_Detail_by_name , get_Person_Detail_by_reg_no, get_person_detail_by_type = getFPD[0] , getFPD[1], getFPD[2] # getting JH-10-BJ-9977
-    
+    get_Person_Detail_by_name , get_Person_Detail_by_reg_no, get_person_detail_by_type = getFPD[0].strip() , getFPD[1].strip(), getFPD[2].strip() # getting JH-10-BJ-9977
     if get_Person_Detail_by_reg_no == "NA":
 
         full_detail = db.session.query(PersonDetails).filter(
@@ -107,8 +107,9 @@ def fullPersonDetails():
         app.logger.info("Passing details from Customer Name")
     else:
         get_Person_Detail_by_reg_no_database = "".join(get_Person_Detail_by_reg_no.split("-")) # converted to JH10BJ9977
-        
+        app.logger.info(get_Person_Detail_by_reg_no_database)
         full_detail = PersonDetails.query.filter_by(Regd_No_Database=get_Person_Detail_by_reg_no_database).first()   #exact search command 
+        print(f"full details : {full_detail}")
         app.logger.info("Passing details from Registration no")
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
@@ -116,39 +117,30 @@ def fullPersonDetails():
 
 @app.route("/searchByMonth", methods=['GET', 'POST'])
 def searchByMonth():
-    if request.method == "POST":
-        if request.is_json:
-            data = request.get_json()
-        else:
-            data = request.form  # Handles form submissions
-
-        app.logger.info(f"Received Data: {data}")
-
-        month_name = data.get("month")
-        if not month_name:
-            return render_template("SearchByMonth.html", error="Month is required")
-
-        try:
-            month_number = datetime.strptime(month_name, "%B").month
-            app.logger.info(f"Converted Month Name '{month_name}' to Number: {month_number}")
-        except ValueError:
-            return render_template("SearchByMonth.html", error="Invalid month name")
-
-        results = PersonDetails.query.filter(
-            db.extract('month', PersonDetails.Date_of_insurance) == month_number
-        ).all()
-
-        app.logger.info(f"Query Results: {results}")
-
-        if not results:
-            return render_template("SearchByMonth.html", error="No records found for this month")
-
-        reg_list = [res.Regd_No for res in results]
-        app.logger.info(f"Extracted Registration Numbers: {reg_list}")
-        return render_template("SearchByMonth.html", result=results)
-
     return render_template("SearchByMonth.html")
 
+@app.route("/searchByMonthAndYear", methods=["GET",'POST'])
+def search():
+    month = request.args.get("month")
+    year = request.args.get("year")
+
+    if not month or not year:
+        return jsonify({"error": "Both month and year are required"}), 400
+
+    try:
+        month_number = datetime.strptime(month, "%B").month
+        year = int(year)
+    except ValueError:
+        return jsonify({"error": "Invalid month or year"}), 400
+
+    # Query database to filter by month and year
+    results = PersonDetails.query.filter(
+        db.extract('month', PersonDetails.Date_of_insurance) == month_number,
+        db.extract('year', PersonDetails.Date_of_insurance) == year
+    ).order_by(PersonDetails.Date_of_insurance).all()
+    print(results)
+    return render_template("SearchByMonth.html", result=results)
+    
 
 @app.route("/searchByType", methods=['GET', 'POST'])
 def searchByType():
@@ -165,6 +157,43 @@ def searchByType():
 
     return render_template("SearchByType.html", getAllType = getAllType)
 
+@app.route("/updatePerson",  methods=['POST'])
+def updatePerson():
+
+    data = request.json  # Receive edited data as a dictionary
+    print("Received Data:", data)  # Debugging
+
+    #First query the person
+    person = db.session.query(PersonDetails).filter(
+                            PersonDetails.Customer_name == data.get("Person Name"),
+                            PersonDetails.Type_of_insurance == data.get("Insurance Type"),
+                            PersonDetails.Policy_No == data.get("Policy No")
+                        ).first()
+    print(person)
+    if person:
+        person.Customer_Contact_No = data.get("Contact No.")
+        person.New_ID_value = data.get("New ID value (₹)")
+        person.New_OD_value = data.get("New OD value (₹)")
+        person.Reference_Contact_1 = data.get("Reference 1 Contact")
+        person.Reference_Contact_2 = data.get("Reference 2 Contact")
+        
+        print(person.New_ID_value)
+        db.session.commit()
+
+    db.session.refresh(person)
+
+    # ✅ Ensure fresh data is fetched by expiring the session
+    db.session.expire(person)
+
+    person_updated = db.session.query(PersonDetails).filter(
+                            PersonDetails.Customer_name == data["Person Name"],
+                            PersonDetails.Type_of_insurance == data["Insurance Type"],
+                            PersonDetails.Policy_No == data["Policy No"]
+                        ).first()
+    print(person_updated)
+    app.logger.info(f"updated Person iD value : {person_updated.New_ID_value}")
+    app.logger.info(f"updated Person oD value : {person_updated.New_OD_value}")
+    return render_template("FullPersonDetails.html", full_detail = person_updated)
 
 @app.route("/addPerson")
 def addPerson():
