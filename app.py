@@ -97,8 +97,7 @@ def fullPersonDetails():
         #get_Person_Detail_by_reg_no = request.form.get("regNo")
     getFPD = request.args.get('selected').split("+")
     app.logger.info(f"FPD = {getFPD}")
-    get_Person_Detail_by_name , get_Person_Detail_by_reg_no, get_person_detail_by_type = getFPD[0] , getFPD[1], getFPD[2] # getting JH-10-BJ-9977
-    
+    get_Person_Detail_by_name , get_Person_Detail_by_reg_no, get_person_detail_by_type = getFPD[0].strip() , getFPD[1].strip(), getFPD[2].strip() # getting JH-10-BJ-9977
     if get_Person_Detail_by_reg_no == "NA":
 
         full_detail = db.session.query(PersonDetails).filter(
@@ -108,8 +107,9 @@ def fullPersonDetails():
         app.logger.info("Passing details from Customer Name")
     else:
         get_Person_Detail_by_reg_no_database = "".join(get_Person_Detail_by_reg_no.split("-")) # converted to JH10BJ9977
-        
+        app.logger.info(get_Person_Detail_by_reg_no_database)
         full_detail = PersonDetails.query.filter_by(Regd_No_Database=get_Person_Detail_by_reg_no_database).first()   #exact search command 
+        print(f"full details : {full_detail}")
         app.logger.info("Passing details from Registration no")
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
