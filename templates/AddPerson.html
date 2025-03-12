@@ -90,7 +90,7 @@
             <div class="form-group">
                 <label>Type of Insurance:</label>
                 <select name="type_of_insurance" required>
-                    <option value="">Select Type</option>
+                    <option value="" disabled selected>Select Make</option>
                     <option value="Fweel">4 Wheeler</option>
                     <option value="Tweel">2 Wheeler</option>
                     <option value="General">General Insurance</option>
@@ -108,12 +108,31 @@
             </div>
             <div class="form-group">
                 <label>Make:</label>
-                <input type="text" name="make" required>
+                <select name="make" id="make" required>
+                    <option value="" disabled selected>Select Make</option>
+                    <option value="Maruti">Maruti</option>
+                    <option value="Tata">Tata</option>
+                    <option value="Hyundai">Hyundai</option>
+                    <option value="Mahindra">Mahindra</option>
+                    <option value="Kia">Kia</option>
+                    <option value="Honda">Honda</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Renault">Renault</option>
+                    <option value="Nissan">Nissan Motors</option>
+                    <option value="MG">MG</option>
+                    <option value="Skoda">Skoda</option>
+                    <option value="Volkswagen">Volkswagen</option>
+                    <option value="Others">Others</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Model:</label>
-                <input type="text" name="model" required>
+                <select name="model" id="model" required>
+                    <option value="" disabled selected>Select Model</option>
+                </select>
             </div>
+            
+
             <div class="form-group">
                 <label>Year of Mfg:</label>
                 <input type="number" name="year_of_mfg" required>
@@ -181,5 +200,54 @@
             <button type="submit">Submit</button>
         </form>
     </div>
+    <script defer>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("JavaScript Loaded Successfully!");
+
+            const modelsByMake = {
+                "Maruti": ["Alto", "Swift", "Baleno", "WagonR", "Dzire"],
+                "Tata": ["Nexon", "Harrier", "Safari", "Punch"],
+                "Hyundai": ["i10", "i20", "Creta", "Verna"],
+                "Mahindra": ["Thar", "Scorpio", "XUV700"],
+                "Kia": ["Seltos", "Sonet", "Carens"],
+                "Honda": ["City", "Amaze", "WR-V"],
+                "Toyota": ["Innova", "Fortuner", "Glanza"],
+                "Renault": ["Kwid", "Duster", "Triber"],
+                "Nissan": ["Magnite", "Kicks"],
+                "MG": ["Hector", "Gloster"],
+                "Skoda": ["Slavia", "Kushaq"],
+                "Volkswagen": ["Virtus", "Taigun"],
+                "Others": ["Other Model"]
+            };
+
+            const makeDropdown = document.getElementById("make");
+            const modelDropdown = document.getElementById("model");
+
+            if (!makeDropdown || !modelDropdown) {
+                console.error("Dropdown elements not found!");
+                return;
+            }
+
+            makeDropdown.addEventListener("change", function () {
+                const selectedMake = this.value;
+                console.log("Selected Make:", selectedMake);
+
+                modelDropdown.innerHTML = '<option value="" disabled selected>Select Model</option>'; // Reset
+
+                if (modelsByMake[selectedMake]) {
+                    modelsByMake[selectedMake].forEach(model => {
+                        const option = document.createElement("option");
+                        option.value = model;
+                        option.textContent = model;
+                        modelDropdown.appendChild(option);
+                    });
+
+                    console.log("Models Added:", modelsByMake[selectedMake]);
+                } else {
+                    console.log("No models found for:", selectedMake);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
