@@ -171,8 +171,12 @@ def updatePerson():
                         ).first()
     print(person)
     if person:
+        person.Customer_Contact_No = data.get("Contact No.")
         person.New_ID_value = data.get("New ID value (₹)")
         person.New_OD_value = data.get("New OD value (₹)")
+        person.Reference_Contact_1 = data.get("Reference 1 Contact")
+        person.Reference_Contact_2 = data.get("Reference 2 Contact")
+        
         print(person.New_ID_value)
         db.session.commit()
 

@@ -170,7 +170,7 @@
                     </tr>
                     <tr>
                         <td>Contact No.</td>
-                        <td>{{ full_detail.Customer_Contact_No }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Customer_Contact_No }}</td>
                     </tr>
                     <tr>
                         <td>Date of Insurance</td>
@@ -262,11 +262,11 @@
                     </tr>
                     <tr>
                         <td>Reference 1</td>
-                        <td>{{ full_detail.Reference_1 }}</td>
+                        <td >{{ full_detail.Reference_1 }}</td>
                     </tr>
                     <tr>
                         <td>Reference 1 Contact</td>
-                        <td>{{ full_detail.Reference_Contact_1 }}</td>
+                        <td contenteditable="true" onclick="enableEditing()" >{{ full_detail.Reference_Contact_1 }}</td>
                     </tr>
                     <tr>
                         <td>Reference 2</td>
@@ -274,7 +274,7 @@
                     </tr>
                     <tr>
                         <td>Reference 2 Contact</td>
-                        <td>{{ full_detail.Reference_Contact_2 }}</td>
+                        <td contenteditable="true" onclick="enableEditing()" >{{ full_detail.Reference_Contact_2 }}</td>
                     </tr>
                     <tr>
                         <td>Transfer to</td>
