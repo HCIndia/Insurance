@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from typing import Final
@@ -6,6 +6,7 @@ from openpyxl import load_workbook
 from pathlib import Path
 from flask_cors import CORS
 from datetime import datetime
+import json
 
 
 
@@ -136,7 +137,7 @@ def searchByMonth():
 
         results = PersonDetails.query.filter(
             db.extract('month', PersonDetails.Date_of_insurance) == month_number
-        ).all()
+        ).order_by(PersonDetails.Date_of_insurance).all()
 
         app.logger.info(f"Query Results: {results}")
 
@@ -148,7 +149,6 @@ def searchByMonth():
         return render_template("SearchByMonth.html", result=results)
 
     return render_template("SearchByMonth.html")
-
 
 @app.route("/searchByType", methods=['GET', 'POST'])
 def searchByType():
@@ -165,6 +165,39 @@ def searchByType():
 
     return render_template("SearchByType.html", getAllType = getAllType)
 
+@app.route("/updatePerson",  methods=['POST'])
+def updatePerson():
+
+    data = request.json  # Receive edited data as a dictionary
+    print("Received Data:", data)  # Debugging
+
+    #First query the person
+    person = db.session.query(PersonDetails).filter(
+                            PersonDetails.Customer_name == data.get("Person Name"),
+                            PersonDetails.Type_of_insurance == data.get("Insurance Type"),
+                            PersonDetails.Policy_No == data.get("Policy No")
+                        ).first()
+    print(person)
+    if person:
+        person.New_ID_value = data.get("New ID value (₹)")
+        person.New_OD_value = data.get("New OD value (₹)")
+        print(person.New_ID_value)
+        db.session.commit()
+
+    db.session.refresh(person)
+
+    # ✅ Ensure fresh data is fetched by expiring the session
+    db.session.expire(person)
+
+    person_updated = db.session.query(PersonDetails).filter(
+                            PersonDetails.Customer_name == data["Person Name"],
+                            PersonDetails.Type_of_insurance == data["Insurance Type"],
+                            PersonDetails.Policy_No == data["Policy No"]
+                        ).first()
+    print(person_updated)
+    app.logger.info(f"updated Person iD value : {person_updated.New_ID_value}")
+    app.logger.info(f"updated Person oD value : {person_updated.New_OD_value}")
+    return render_template("FullPersonDetails.html", full_detail = person_updated)
 
 @app.route("/addPerson")
 def addPerson():
