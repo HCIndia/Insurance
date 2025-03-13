@@ -242,64 +242,82 @@
             <button type="submit">Submit</button>
         </form>
     </div>
-    <script defer>
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
-            console.log("JavaScript Loaded Successfully!");
-
-            const modelsByMake = {
-                "Maruti": ['800 Duo', '1000', 'A Star', 'Alto', 'Alto 800', 'Alto K10', 'Baleno', 'Brezza', 'Celerio', 
-                            'Celerio X', 'Ciaz', 'Dzire', 'Eeco', 'Ertiga', 'Esteem', 'Estilo 1.0 New', 'Fronx', 
-                            'Grand Vitara', 'Gypsy', 'Ignis', 'Invicto', 'Jimny', 'Kizashi', 'Omni', 'Ritz', 'S Cross', 
-                            'S-Presso', 'Stingray', 'Swift', 'Swift KB', 'Swift Dzire', 'Swift Dzire KB', 
-                            'Swift Range Extender', 'SX4', 'Versa', 'Vitara Brezza', 'Wagon R', 'XL6', 'Zen']
-                            ,
-                "Tata": ['Altroz DCA', 'Aria', 'Bolt', 'Curvv', 'Harrier', 'Hexa', 'Indica', 'Indica eV2 CR4', 
-                            'Indica eV2 Xeta', 'Indica V2', 'Indica V2 Dicor', 'Indica V2 Turbo', 'Indica V2 Xeta', 
-                            'Indica Vista', 'Indigo', 'Indigo CS', 'Indigo eCS', 'Indigo Manza', 'Indigo Marina', 
-                            'Indigo V Series', 'Indigo XL', 'Movus', 'Nano', 'Nano GenX', 'Nexon', 'Nexon EV Max', 
-                            'Nexon EV Prime', 'Punch', 'Safari', 'Safari Dicor 2.2 VTT', 'Safari Dicor 3.0 L', 
-                            'Safari Petrol', 'Siera', 'Spacio', 'Sumo', 'Sumo Gold', 'Sumo Grande', 'Sumo Victa', 
-                            'Tiago', 'Tiago EV', 'Tiago NRG', 'Tigor', 'Vista Tech', 'Venture', 'Xenon', 'Xenon XT', 'Zest'],
-                "Hyundai": ["i10", "i20", "Creta", "Verna"],
-                "Mahindra": ["Thar", "Scorpio", "XUV700"],
-                "Kia": ["Seltos", "Sonet", "Carens"],
-                "Honda": ["City", "Amaze", "WR-V"],
-                "Toyota": ["Innova", "Fortuner", "Glanza"],
-                "Renault": ["Kwid", "Duster", "Triber"],
-                "Nissan": ["Magnite", "Kicks"],
-                "MG": ["Hector", "Gloster"],
-                "Skoda": ["Slavia", "Kushaq"],
-                "Volkswagen": ["Virtus", "Taigun"],
-                "Others": ["Other Model"]
-            };
-
+            const insuranceTypeDropdown = document.querySelector('select[name="type_of_insurance"]');
             const makeDropdown = document.getElementById("make");
             const modelDropdown = document.getElementById("model");
-
-            if (!makeDropdown || !modelDropdown) {
-                console.error("Dropdown elements not found!");
-                return;
+    
+            const modelsByMake = {
+                    "Maruti": ['800 Duo', '1000', 'A Star', 'Alto', 'Alto 800', 'Alto K10', 'Baleno', 'Brezza', 'Celerio', 
+                                'Celerio X', 'Ciaz', 'Dzire', 'Eeco', 'Ertiga', 'Esteem', 'Estilo 1.0 New', 'Fronx', 
+                                'Grand Vitara', 'Gypsy', 'Ignis', 'Invicto', 'Jimny', 'Kizashi', 'Omni', 'Ritz', 'S Cross', 
+                                'S-Presso', 'Stingray', 'Swift', 'Swift KB', 'Swift Dzire', 'Swift Dzire KB', 
+                                'Swift Range Extender', 'SX4', 'Versa', 'Vitara Brezza', 'Wagon R', 'XL6', 'Zen']
+                                ,
+                    "Tata": ['Altroz DCA', 'Aria', 'Bolt', 'Curvv', 'Harrier', 'Hexa', 'Indica', 'Indica eV2 CR4', 
+                                'Indica eV2 Xeta', 'Indica V2', 'Indica V2 Dicor', 'Indica V2 Turbo', 'Indica V2 Xeta', 
+                                'Indica Vista', 'Indigo', 'Indigo CS', 'Indigo eCS', 'Indigo Manza', 'Indigo Marina', 
+                                'Indigo V Series', 'Indigo XL', 'Movus', 'Nano', 'Nano GenX', 'Nexon', 'Nexon EV Max', 
+                                'Nexon EV Prime', 'Punch', 'Safari', 'Safari Dicor 2.2 VTT', 'Safari Dicor 3.0 L', 
+                                'Safari Petrol', 'Siera', 'Spacio', 'Sumo', 'Sumo Gold', 'Sumo Grande', 'Sumo Victa', 
+                                'Tiago', 'Tiago EV', 'Tiago NRG', 'Tigor', 'Vista Tech', 'Venture', 'Xenon', 'Xenon XT', 'Zest'],
+                    "Hyundai": ["i10", "i20", "Creta", "Verna"],
+                    "Mahindra": ["Thar", "Scorpio", "XUV700"],
+                    "Kia": ["Seltos", "Sonet", "Carens"],
+                    "Honda": ["City", "Amaze", "WR-V"],
+                    "Toyota": ["Innova", "Fortuner", "Glanza"],
+                    "Renault": ["Kwid", "Duster", "Triber"],
+                    "Nissan": ["Magnite", "Kicks"],
+                    "MG": ["Hector", "Gloster"],
+                    "Skoda": ["Slavia", "Kushaq"],
+                    "Volkswagen": ["Virtus", "Taigun"],
+                    "Others": ["Other Model"]
+                };
+    
+            // Function to update Make & Model based on Insurance Type
+            function updateMakeAndModel() {
+                if (insuranceTypeDropdown.value === "Fweel") {
+                    makeDropdown.innerHTML = `<option value="" disabled selected>Select Make</option>`;
+                    Object.keys(modelsByMake).forEach(make => {
+                        let option = document.createElement("option");
+                        option.value = make;
+                        option.textContent = make;
+                        makeDropdown.appendChild(option);
+                    });
+    
+                    makeDropdown.disabled = false;
+                    modelDropdown.disabled = false;
+                } else {
+                    // Default to "NA" for non-4 Wheeler insurance
+                    makeDropdown.innerHTML = `<option value="NA" selected>NA</option>`;
+                    modelDropdown.innerHTML = `<option value="NA" selected>NA</option>`;
+                    makeDropdown.disabled = true;
+                    modelDropdown.disabled = true;
+                }
             }
-
-            makeDropdown.addEventListener("change", function () {
-                const selectedMake = this.value;
-                console.log("Selected Make:", selectedMake);
-
-                modelDropdown.innerHTML = '<option value="" disabled selected>Select Model</option>'; // Reset
-
+    
+            // Function to update the Model dropdown based on selected Make
+            function updateModelDropdown() {
+                const selectedMake = makeDropdown.value;
+                modelDropdown.innerHTML = `<option value="" disabled selected>Select Model</option>`;
+    
                 if (modelsByMake[selectedMake]) {
                     modelsByMake[selectedMake].forEach(model => {
-                        const option = document.createElement("option");
+                        let option = document.createElement("option");
                         option.value = model;
                         option.textContent = model;
                         modelDropdown.appendChild(option);
                     });
-
-                    console.log("Models Added:", modelsByMake[selectedMake]);
-                } else {
-                    console.log("No models found for:", selectedMake);
                 }
-            });
+            }
+    
+            // Event Listeners
+            insuranceTypeDropdown.addEventListener("change", updateMakeAndModel);
+            makeDropdown.addEventListener("change", updateModelDropdown);
+    
+            // Set default state on page load
+            updateMakeAndModel();
         });
     </script>
 </body>
