@@ -72,9 +72,32 @@
         }
 
         .edit-btn {
-            background-color: #007bff;
-            color: white;
-        }
+        padding: 12px 24px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 8px;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, #007bff, #00c6ff);
+        color: white;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+    }
+
+    /* Hover Effect - Glow */
+    .edit-btn:hover {
+        background: linear-gradient(135deg, #0056b3, #0090c0);
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 123, 255, 0.8);
+    }
+
+    /* Click Effect */
+    .edit-btn:active {
+        transform: scale(0.95);
+        box-shadow: 0 0 15px rgba(0, 123, 255, 1);
+    }
+
 
         .save-btn {
             background-color: #28a745;
@@ -152,7 +175,7 @@
     </script>
 
     <button id="save-btn" class="save-btn" onclick="saveChanges()">Save Changes</button>
-
+    <button  class="edit-btn" onclick="enableEditing()">Edit</button>
     
     {% if full_detail %}
         <div class="table-container">
