@@ -5,76 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Insurance Form</title>
     <style>
+        /* Beach-Themed Background */
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            background: linear-gradient(to bottom, #fddbb8, #ffebcc, #b2e4db, #78c4d4);
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
             margin: 0;
             padding: 20px;
         }
+
+        /* Form Container */
         .form-container {
-            background: white;
-            padding: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 60px;
             border-radius: 12px;
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
+            max-width: 450px;
             width: 100%;
-            border-left: 8px solid #ff6b6b;
+            border-left: 3px solid #ff9f1c;
+            animation: fadeIn 0.5s ease-in-out;
+            box-sizing: border-box;
         }
+
+        /* Header */
         h2 {
             text-align: center;
-            color: #ff6b6b;
+            color: #0077b6;
             margin-bottom: 20px;
-            font-size: 24px;
+            font-size: 26px;
+            font-weight: bold;
         }
+
+        /* Form Group */
         .form-group {
             display: flex;
             flex-direction: column;
             margin-bottom: 15px;
         }
+
+        /* Labels */
         label {
             font-weight: bold;
-            color: #333;
+            color: #004466;
             margin-bottom: 5px;
             font-size: 14px;
         }
+
+        /* Inputs and Selects */
         input, select {
-            width: 100%;
+            width: 100%; /* Full width within the form container */
+            max-width: 100%; /* Prevents overflow */
             padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             font-size: 16px;
-            background: #fffaf0;
+            background: #fdfaf5;
             transition: all 0.3s ease-in-out;
+            box-sizing: border-box; /* Prevents overflow beyond container */
         }
+
+        /* Focus Effect */
         input:focus, select:focus {
-            border-color: #ff6b6b;
-            box-shadow: 0px 0px 5px rgba(255, 107, 107, 0.5);
+            border-color: #0077b6;
+            box-shadow: 0px 0px 8px rgba(0, 119, 182, 0.5);
             outline: none;
+            background: #fff;
         }
+
+        /* Submit Button */
         button {
             padding: 14px;
-            background: #ff6b6b;
+            background: linear-gradient(135deg, #0077b6, #00a6fb);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 18px;
             cursor: pointer;
             width: 100%;
             margin-top: 15px;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 119, 182, 0.3);
         }
+
         button:hover {
-            background: #e63946;
+            background: linear-gradient(135deg, #005a8d, #0090e0);
+            box-shadow: 0 6px 15px rgba(0, 119, 182, 0.5);
+            transform: scale(1.02);
         }
+
+        /* Responsive Design */
         @media (max-width: 600px) {
             .form-container {
                 padding: 20px;
+                width: 100%;
             }
             input, button, select {
                 font-size: 14px;
+                padding : 10px;
+            }
+        }
+
+        /* Fade-In Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
