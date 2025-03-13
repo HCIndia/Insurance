@@ -62,7 +62,7 @@
             transition: 0.3s;
         }
 
-        .edit-btn, .save-btn {
+        .edit-btn, .save-btn,.renew-btn {
             padding: 10px 18px;
             border: none;
             cursor: pointer;
@@ -110,6 +110,22 @@
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(40, 167, 69, 0.8);
     }
+    .renew-btn {
+        background: linear-gradient(135deg, #ff4e50, #fc913a);
+        color: white;
+        box-shadow: 0 0 10px rgba(255, 78, 80, 0.5);
+    }
+
+    .renew-btn:hover {
+        background: linear-gradient(135deg, #d72638, #ff5700);
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255, 78, 80, 0.8);
+    }
+    .button-container {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
 
 
         /* Responsive Adjustments */
@@ -127,7 +143,7 @@
                 font-size: 12px;
             }
 
-            .edit-btn, .save-btn {
+            .edit-btn, .save-btn,.renew-btn {
                 padding: 10px;
                 font-size: 14px;
             }
@@ -141,6 +157,7 @@
     <script>
         function enableEditing() {
             document.getElementById("edit-btn").style.display = "none";
+            document.getElementById("renew-btn").style.display = "none";
             document.getElementById("save-btn").style.display = "inline-block";
             document.querySelectorAll("td[contenteditable]").forEach(cell => {
                 cell.style.backgroundColor = "#fff3cd"; // Highlight editable cells
@@ -182,10 +199,11 @@
 
 
     </script>
-
-    <button id="save-btn" class="save-btn" onclick="saveChanges()">Save Changes</button>
-    <button  id="edit-btn" class="edit-btn" onclick="enableEditing()">Edit</button>
-    
+    <div class="button-container">
+        <button id="renew-btn" class="renew-btn" onclick="renew()">Renew</button>
+        <button id="save-btn" class="save-btn" onclick="saveChanges()">Save Changes</button>
+        <button  id="edit-btn" class="edit-btn" onclick="enableEditing()">Edit</button>
+    </div>
     {% if full_detail %}
         <div class="table-container">
             <table>
