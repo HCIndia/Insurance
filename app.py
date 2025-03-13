@@ -170,11 +170,44 @@ def updatePerson():
                             PersonDetails.Policy_No == data.get("Policy No")
                         ).first()
     print(person)
+
+    """ sample response
+    {'Person Name': 'Mahabir K. Moti Hut', 'Contact No.': '765432876098765', 'Date of Insurance': '08/01/2024', 
+    'Insurance Type': '4 Wheeler', 'Make': 'Maruti', 'Model': 'Ecco AC/Heater', 'Year of Manufacture': '2011', 
+    'Registration No': 'BR-01-BB-2649', 'Old ID value (₹)': 'TP', 'New ID value (₹)': 'mko', 'Old OD value (₹)': '3416', 
+    'New OD value (₹)': '9876', 'Old Final Premium (₹)': '4030', 'New Final Premium (₹)': 'NA98766', 'NCB (%)': 'NA',
+     'Discount (%)': 'NA', 'Term COMP': 'NA', 'Term TP': 'NA', 'Insured Company': 'ROYAL SUNDARAM', 'Insurer Code': 'RB', 
+     'New Company': 'NA', 'Policy No': 'UPTP462770000100', 'Add Ons': 'NA', 'CKYC No.': 'NA', 
+     'Reference 1': 'C/o Carmart', 'Reference 1 Contact': 'NA', 'Reference 2': 'NA', 'Reference 2 Contact': 'NA', 'Transfer to': 'NA'}
+    """
+    Discount = db.Column(db.String(120))
+    Terms_Comp = db.Column(db.String(120))
+    Terms_TP = db.Column(db.String(120))
+    Insured_Company = db.Column(db.String(120))
+    Insurer_Code = db.Column(db.String(120))
+    New_Company = db.Column(db.String(120))
+    Policy_No = db.Column(db.String(120))
+    Add_Ons = db.Column(db.String(120))
+    Ckyc_No = db.Column(db.String(120))
+    Reference_1 = db.Column(db.String(120))
+    Reference_Contact_1 = db.Column(db.String(120))
+    Reference_2 = db.Column(db.String(120))
+    Reference_Contact_2 = db.Column(db.String(120))
+    Transfer_to = db.Column(db.String(120))
     if person:
         person.Customer_Contact_No = data.get("Contact No.")
         person.New_ID_value = data.get("New ID value (₹)")
         person.New_OD_value = data.get("New OD value (₹)")
+        person.New_final_premium = data.get("New Final Premium (₹)")
+        person.Ncb = data.get("NCB (%)")
+        person.Discount = data.get("Discount (%)")
+        person.Insured_Company = data.get("Insured Company")
+        person.Insurer_Code = data.get("Insurer Code")
+        person.New_Company = data.get("New Company")
+        person.Add_Ons = data.get("Add Ons")
+        person.Reference_1 = data.get("Reference 1")
         person.Reference_Contact_1 = data.get("Reference 1 Contact")
+        person.Reference_2 = data.get("Reference 2")
         person.Reference_Contact_2 = data.get("Reference 2 Contact")
         
         print(person.New_ID_value)
