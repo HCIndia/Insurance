@@ -98,12 +98,19 @@
         box-shadow: 0 0 15px rgba(0, 123, 255, 1);
     }
 
+    .save-btn {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        display: none;
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+    }
 
-        .save-btn {
-            background-color: #28a745;
-            color: white;
-            display: none;
-        }
+    .save-btn:hover {
+        background: linear-gradient(135deg, #1e7e34, #17a2b8);
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.8);
+    }
+
 
         /* Responsive Adjustments */
         @media (max-width: 480px) {
@@ -133,10 +140,12 @@
 
     <script>
         function enableEditing() {
+            document.getElementById("edit-btn").style.display = "none";
+            document.getElementById("save-btn").style.display = "inline-block";
             document.querySelectorAll("td[contenteditable]").forEach(cell => {
                 cell.style.backgroundColor = "#fff3cd"; // Highlight editable cells
             });
-            document.getElementById("save-btn").style.display = "inline-block";
+            
         }
     
         function saveChanges() {
@@ -175,7 +184,7 @@
     </script>
 
     <button id="save-btn" class="save-btn" onclick="saveChanges()">Save Changes</button>
-    <button  class="edit-btn" onclick="enableEditing()">Edit</button>
+    <button  id="edit-btn" class="edit-btn" onclick="enableEditing()">Edit</button>
     
     {% if full_detail %}
         <div class="table-container">
