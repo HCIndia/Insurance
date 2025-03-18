@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Page</title>
+    <title>Renew Page</title>
     <style>
         body {
             display: flex;
@@ -193,8 +193,6 @@
     <script>
         function enableEditing() {
             document.getElementById("edit-btn").style.display = "none";
-            document.getElementById("renew-btn").style.display = "none";
-            document.getElementById("delete-btn").style.display = "none";
             document.getElementById("save-btn").style.display = "inline-block";
             document.querySelectorAll("td[contenteditable]").forEach(cell => {
                 cell.style.backgroundColor = "#fff3cd"; // Highlight editable cells
@@ -215,7 +213,7 @@
                 }
             });
 
-            fetch("/updatePerson", {
+            fetch("/renewPerson", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(tableData)
@@ -232,38 +230,13 @@
             .catch(error => {
                 console.error("Error:", error);
             });
-        }
+}
+
 
     </script>
-    <script>
-        function goToRenewPage() {
-                let hiddenRow = document.querySelector(".uniqueID"); // Get hidden row
-                let key = hiddenRow.cells[0].innerText;  // Get first column (Key)
-                let value = hiddenRow.cells[1].innerText; // Get second column (Value)
-    
-                // Send request to Flask to delete all data from database
-                fetch('/renewPage', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key: key, value: value })
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    return response.text();
-                })
-                .then(html => {
-                            document.open();
-                            document.write(html);
-                            document.close();
-                        })
-                .catch(error => console.error('Error:', error));
-        }
-    </script>
     <div class="button-container">
-        <button id="renew-btn" class="renew-btn" onclick="goToRenewPage()">Renew</button>
         <button id="save-btn" class="save-btn" onclick="saveChanges()">Save Changes</button>
-        <button  id="edit-btn" class="edit-btn" onclick="enableEditing()">Edit</button>
-        <button  id="delete-btn" class="delete-btn" onclick="deleteTableData()">Delete</button>
+        <button  id="edit-btn" class="edit-btn" onclick="enableEditing()">Click to Renew</button>
     </div>
     {% if full_detail %}
         <div id = "ins-table" class="table-container">
@@ -399,32 +372,6 @@
             </table>
         </div>
     {% endif %}
-    <script>
-        function deleteTableData() {
-            if (confirm("Are you sure you want to delete the entire table? This action cannot be undone!")) {
-                let hiddenRow = document.querySelector(".uniqueID"); // Get hidden row
-                let key = hiddenRow.cells[0].innerText;  // Get first column (Key)
-                let value = hiddenRow.cells[1].innerText; // Get second column (Value)
-    
-                // Send request to Flask to delete all data from database
-                fetch('/deleteRecord', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key: key, value: value })
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    return response.text();
-                })
-                .then(html => {
-                            document.open();
-                            document.write(html);
-                            document.close();
-                        })
-                .catch(error => console.error('Error:', error));
-            }
-        }
-    </script>
     
 </body>
 </html>

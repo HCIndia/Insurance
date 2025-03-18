@@ -96,24 +96,12 @@ def home():
 
 @app.route("/fullPersonDetails", methods=['GET', 'POST'])
 def fullPersonDetails():
-    #if request.method == 'POST':
-        #get_Person_Detail_by_reg_no = request.form.get("regNo")
-    getFPD = request.args.get('selected').split("+")
+    
+    getFPD = request.args.get('selected')
     app.logger.info(f"FPD = {getFPD}")
-    get_Person_Detail_by_name , get_Person_Detail_by_reg_no, get_person_detail_by_type = getFPD[0].strip() , getFPD[1].strip(), getFPD[2].strip() # getting JH-10-BJ-9977
-    if get_Person_Detail_by_reg_no == "NA":
-
-        full_detail = db.session.query(PersonDetails).filter(
-                                                    PersonDetails.Customer_name == get_Person_Detail_by_name,
-                                                    PersonDetails.Type_of_insurance == get_person_detail_by_type
-                                                ).first()
-        app.logger.info("Passing details from Customer Name")
-    else:
-        get_Person_Detail_by_reg_no_database = "".join(get_Person_Detail_by_reg_no.split("-")) # converted to JH10BJ9977
-        app.logger.info(get_Person_Detail_by_reg_no_database)
-        full_detail = PersonDetails.query.filter_by(Regd_No_Database=get_Person_Detail_by_reg_no_database).first()   #exact search command 
-        print(f"full details : {full_detail}")
-        app.logger.info("Passing details from Registration no")
+    full_detail = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == getFPD
+                        ).first()
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
 
@@ -173,7 +161,7 @@ def updatePerson():
     print(person)
 
     """ sample response
-    {'unique_customer_id': '10','Person Name': 'Mahabir K. Moti Hut', 'Contact No.': '765432876098765', 'Date of Insurance': '08/01/2024', 
+    {'Person Name': 'Mahabir K. Moti Hut', 'Contact No.': '765432876098765', 'Date of Insurance': '08/01/2024', 
     'Insurance Type': '4 Wheeler', 'Make': 'Maruti', 'Model': 'Ecco AC/Heater', 'Year of Manufacture': '2011', 
     'Registration No': 'BR-01-BB-2649', 'Old ID value (₹)': 'TP', 'New ID value (₹)': 'mko', 'Old OD value (₹)': '3416', 
     'New OD value (₹)': '9876', 'Old Final Premium (₹)': '4030', 'New Final Premium (₹)': 'NA98766', 'NCB (%)': 'NA',
@@ -230,6 +218,66 @@ def updatePerson():
                         ).first()
     print(person_updated)
     return render_template("FullPersonDetails.html", full_detail = person_updated)
+
+@app.route("/renewPage", methods= ["POST"])
+def renewPage():
+    data = request.json
+    key = data.get("key")
+    value = data.get("value")
+
+    print(key)
+    print(value)
+
+    record_to_renew = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == value).first()
+    return render_template("Renew.html", full_detail = record_to_renew)
+
+@app.route("/renewPerson",  methods=['POST'])
+def renewPerson():
+
+        data = request.json  # Receive edited data as a dictionary
+        print("Received Data:", data)  # Debugging
+
+        new_entry = PersonDetails(
+            Date_of_insurance=datetime.strptime(data["Date of Insurance"], "%d/%m/%Y") if data.get("Date of Insurance") else None,
+            Type_of_insurance=data.get("Insurance Type", ""),
+            Customer_name=data.get("Person Name", ""),
+            Customer_Contact_No=data.get("Contact No.", ""),
+            Make=data.get("Make", ""),
+            Model=data.get("Model", ""),
+            Year_of_mfg=data.get("Year of Manufacture", ""),
+            Regd_No=data.get("Registration No", ""),
+            Old_ID_value=data.get("Old ID value (₹)", ""),
+            New_ID_value=data.get("New ID value (₹)", ""),
+            Old_OD_value=data.get("Old OD value (₹)", ""),
+            New_OD_value=data.get("New OD value (₹)", ""),
+            Old_final_premium=data.get("Old Final Premium (₹)", ""),
+            New_final_premium=data.get("New Final Premium (₹)", ""),
+            Ncb=data.get("NCB (%)", ""),
+            Discount=data.get("Discount (%)", ""),
+            Terms_Comp=data.get("Term COMP", ""),
+            Terms_TP=data.get("Term TP", ""),
+            Insured_Company=data.get("Insured Company", ""),
+            Insurer_Code=data.get("Insurer Code", ""),
+            New_Company=data.get("New Company", ""),
+            Policy_No=data.get("Policy No", ""),
+            Add_Ons=data.get("Add Ons", ""),
+            Ckyc_No=data.get("CKYC No.", ""),
+            Reference_1=data.get("Reference 1", ""),
+            Reference_Contact_1=data.get("Reference 1 Contact", ""),
+            Reference_2=data.get("Reference 2", ""),
+            Reference_Contact_2=data.get("Reference 2 Contact", ""),
+            Transfer_to=data.get("Transfer to", ""),)
+
+        db.session.add(new_entry)
+        db.session.commit()
+
+        person = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == new_entry.id
+                        ).first()
+    
+        return render_template("FullPersonDetails.html", full_detail = person)
+
 
 @app.route("/addPerson")
 def addPerson():
