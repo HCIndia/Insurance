@@ -62,7 +62,7 @@
             transition: 0.3s;
         }
 
-        .edit-btn, .save-btn,.renew-btn ,.copy-btn{
+        .edit-btn, .save-btn,.renew-btn ,.delete-btn{
             padding: 10px 18px;
             border: none;
             cursor: pointer;
@@ -121,14 +121,14 @@
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(255, 78, 80, 0.8);
     }
-    .copy-btn {
+    .delete-btn {
         background: linear-gradient(135deg, #1b0202, #e90808);
         color: white;
         font-weight: bold;
         box-shadow: 0 0 10px rgba(255, 78, 80, 0.5);
     }
 
-    .copy-btn:hover {
+    .delete-btn:hover {
         background: linear-gradient(135deg, #ff0019, #000000);
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(255, 78, 80, 0.8);
@@ -175,7 +175,7 @@
                 font-size: 12px;
             }
 
-            .edit-btn, .save-btn,.renew-btn .copy-btn{
+            .edit-btn, .save-btn,.renew-btn .delete-btn{
                 padding: 10px;
                 font-size: 14px;
             }
@@ -194,7 +194,7 @@
         function enableEditing() {
             document.getElementById("edit-btn").style.display = "none";
             document.getElementById("renew-btn").style.display = "none";
-            document.getElementById("copy-btn").style.display = "none";
+            document.getElementById("delete-btn").style.display = "none";
             document.getElementById("save-btn").style.display = "inline-block";
             document.querySelectorAll("td[contenteditable]").forEach(cell => {
                 cell.style.backgroundColor = "#fff3cd"; // Highlight editable cells
@@ -240,7 +240,7 @@
         <button id="renew-btn" class="renew-btn" onclick="renew()">Renew</button>
         <button id="save-btn" class="save-btn" onclick="saveChanges()">Save Changes</button>
         <button  id="edit-btn" class="edit-btn" onclick="enableEditing()">Edit</button>
-        <button  id="copy-btn" class="copy-btn" onclick="copyTableData()">Copy</button>
+        <button  id="delete-btn" class="delete-btn" onclick="deleteTableData()">Delete</button>
     </div>
     {% if full_detail %}
         <div id = "ins-table" class="table-container">
@@ -252,6 +252,10 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr class= "uniqueID" style="display: none;">
+                        <td>Unique ID of customer</td>
+                        <td>{{ full_detail.id }}</td>
+                    </tr>
                     <tr>
                         <td>Person Name</td>
                         <td>{{ full_detail.Customer_name }}</td>
@@ -374,37 +378,32 @@
     {% endif %}
     
     <div class="alert" id="customAlert">Form data copied as JSON!</div>
-
     <script>
-        function copyTableData() {
-            let table = document.getElementById("ins-table");
-            let rows = table.getElementsByTagName("tr");
-            let jsonData = {};
+        function deleteTableData() {
+            if (confirm("Are you sure you want to delete the entire table? This action cannot be undone!")) {
+                let hiddenRow = document.querySelector(".uniqueID"); // Get hidden row
+                let key = hiddenRow.cells[0].innerText;  // Get first column (Key)
+                let value = hiddenRow.cells[1].innerText; // Get second column (Value)
     
-            for (let i = 1; i < rows.length; i++) {  // Skips the header row
-                let cells = rows[i].getElementsByTagName("td");
-                if (cells.length > 1) {
-                        jsonData[cells[0].innerText] = cells[1].innerText;
-                    };
-                
-                }
-            let jsonString = JSON.stringify(jsonData, null, 2);
-            navigator.clipboard.writeText(jsonString).then(() => {
-                showCustomAlert("Person Details copied");
-            }).catch(err => {
-                console.error("Failed to copy: ", err);
-            });
-     }
-
-     function showCustomAlert(message) {
-        let alertBox = document.getElementById("customAlert");
-        alertBox.innerText = message;
-        alertBox.classList.add("show");
-
-        setTimeout(() => {
-            alertBox.classList.remove("show");
-        }, 1000);  // Auto-close after 1 second
-    }
+                // Send request to Flask to delete all data from database
+                fetch('/deleteRecord', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: key, value: value })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.text();
+                })
+                .then(html => {
+                            document.open();
+                            document.write(html);
+                            document.close();
+                        })
+                .catch(error => console.error('Error:', error));
+            }
+        }
     </script>
+    
 </body>
 </html>

@@ -257,6 +257,35 @@ def addPerson():
 
     return render_template("AddPerson.html",dropdown_json=json.dumps(dropdown_data))
 
+
+@app.route("/deleteRecord", methods = ["POST"])
+def deleteRecord():
+    
+    data = request.json
+    key = data.get("key")
+    value = data.get("value")
+
+    print(key)
+    print(value)
+
+    record_to_delete = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == value).first()
+
+    print((record_to_delete.Customer_name))
+    print((record_to_delete.Customer_Contact_No))
+
+    if record_to_delete:
+        db.session.delete(record_to_delete)
+        db.session.commit()
+    else:
+        err_message = "Unable to Delete table"
+        return render_template("Delete.html", err_message = err_message)
+
+    return render_template("Delete.html")
+
+
+    
+
 @app.route("/successPage", methods=['GET', 'POST'])
 def SuccessPage():
     '''Here we will first chekc if the the same car number is alreday registered.
