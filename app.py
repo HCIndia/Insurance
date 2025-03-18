@@ -80,10 +80,12 @@ def home():
         if (search_Person_Detail_by_reg):
             app.logger.info(f"Got the data from form action :{search_Person_Detail_by_reg}")
         #person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()   #exact search command 
-            person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()  # this is partial search
+            person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()
+                                                 # this is partial search
         
         if not person_object and search_Person_Detail_by_reg :
-            person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).all()
+            person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).order_by(PersonDetails.Date_of_insurance.desc()).all() 
+                            
 
         if not person_object or not search_Person_Detail_by_reg :
             flash("No Records Found", "info")
