@@ -253,12 +253,12 @@
                 </thead>
                 <tbody>
                     <tr class= "uniqueID" style="display: none;">
-                        <td>Unique ID of customer</td>
+                        <td>unique_customer_id</td>
                         <td>{{ full_detail.id }}</td>
                     </tr>
                     <tr>
                         <td>Person Name</td>
-                        <td>{{ full_detail.Customer_name }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Customer_name }}</td>
                     </tr>
                     <tr>
                         <td>Contact No.</td>
@@ -266,31 +266,31 @@
                     </tr>
                     <tr>
                         <td>Date of Insurance</td>
-                        <td>{{ full_detail.Date_of_insurance.strftime('%d/%m/%Y') }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Date_of_insurance.strftime('%d/%m/%Y') }}</td>
                     </tr>
                     <tr>
                         <td>Insurance Type</td>
-                        <td>{{ full_detail.Type_of_insurance }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Type_of_insurance }}</td>
                     </tr>
                     <tr>
                         <td>Make</td>
-                        <td>{{ full_detail.Make }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Make }}</td>
                     </tr>
                     <tr>
                         <td>Model</td>
-                        <td>{{ full_detail.Model }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Model }}</td>
                     </tr>
                     <tr>
                         <td>Year of Manufacture</td>
-                        <td>{{ full_detail.Year_of_mfg }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Year_of_mfg }}</td>
                     </tr>
                     <tr>
                         <td>Registration No</td>
-                        <td>{{ full_detail.Regd_No }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Regd_No }}</td>
                     </tr>
                     <tr>
                         <td>Old ID value (&#8377;)</td>
-                        <td>{{ full_detail.Old_ID_value }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Old_ID_value }}</td>
                     </tr>
                     <tr>
                         <td>New ID value (&#8377;)</td>
@@ -298,7 +298,7 @@
                     </tr>
                     <tr>
                         <td>Old OD value (&#8377;)</td>
-                        <td>{{ full_detail.Old_OD_value }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Old_OD_value }}</td>
                     </tr>
                     <tr>
                         <td>New OD value (&#8377;)</td>
@@ -306,7 +306,7 @@
                     </tr>
                     <tr>
                         <td>Old Final Premium (&#8377;)</td>
-                        <td>{{ full_detail.Old_final_premium }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Old_final_premium }}</td>
                     </tr>
                     <tr>
                         <td>New Final Premium (&#8377;)</td>
@@ -322,11 +322,11 @@
                     </tr>
                     <tr>
                         <td>Term COMP</td>
-                        <td>{{ full_detail.Terms_Comp }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Terms_Comp }}</td>
                     </tr>
                     <tr>
                         <td>Term TP</td>
-                        <td>{{ full_detail.Terms_TP }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Terms_TP }}</td>
                     </tr>
                     <tr>
                         <td>Insured Company</td>
@@ -342,7 +342,7 @@
                     </tr>
                     <tr>
                         <td>Policy No</td>
-                        <td>{{ full_detail.Policy_No }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Policy_No }}</td>
                     </tr>
                     <tr>
                         <td>Add Ons</td>
@@ -350,7 +350,7 @@
                     </tr>
                     <tr>
                         <td>CKYC No.</td>
-                        <td>{{ full_detail.Ckyc_No }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Ckyc_No }}</td>
                     </tr>
                     <tr>
                         <td>Reference 1</td>

@@ -166,14 +166,12 @@ def updatePerson():
 
     #First query the person
     person = db.session.query(PersonDetails).filter(
-                            PersonDetails.Customer_name == data.get("Person Name"),
-                            PersonDetails.Type_of_insurance == data.get("Insurance Type"),
-                            PersonDetails.Policy_No == data.get("Policy No")
+                            PersonDetails.id == data.get("unique_customer_id")
                         ).first()
     print(person)
 
     """ sample response
-    {'Person Name': 'Mahabir K. Moti Hut', 'Contact No.': '765432876098765', 'Date of Insurance': '08/01/2024', 
+    {'unique_customer_id': '10','Person Name': 'Mahabir K. Moti Hut', 'Contact No.': '765432876098765', 'Date of Insurance': '08/01/2024', 
     'Insurance Type': '4 Wheeler', 'Make': 'Maruti', 'Model': 'Ecco AC/Heater', 'Year of Manufacture': '2011', 
     'Registration No': 'BR-01-BB-2649', 'Old ID value (₹)': 'TP', 'New ID value (₹)': 'mko', 'Old OD value (₹)': '3416', 
     'New OD value (₹)': '9876', 'Old Final Premium (₹)': '4030', 'New Final Premium (₹)': 'NA98766', 'NCB (%)': 'NA',
@@ -181,37 +179,43 @@ def updatePerson():
      'New Company': 'NA', 'Policy No': 'UPTP462770000100', 'Add Ons': 'NA', 'CKYC No.': 'NA', 
      'Reference 1': 'C/o Carmart', 'Reference 1 Contact': 'NA', 'Reference 2': 'NA', 'Reference 2 Contact': 'NA', 'Transfer to': 'NA'}
     """
-    Discount = db.Column(db.String(120))
-    Terms_Comp = db.Column(db.String(120))
-    Terms_TP = db.Column(db.String(120))
-    Insured_Company = db.Column(db.String(120))
-    Insurer_Code = db.Column(db.String(120))
-    New_Company = db.Column(db.String(120))
-    Policy_No = db.Column(db.String(120))
-    Add_Ons = db.Column(db.String(120))
-    Ckyc_No = db.Column(db.String(120))
-    Reference_1 = db.Column(db.String(120))
-    Reference_Contact_1 = db.Column(db.String(120))
-    Reference_2 = db.Column(db.String(120))
-    Reference_Contact_2 = db.Column(db.String(120))
-    Transfer_to = db.Column(db.String(120))
+
     if person:
+        person.Type_of_insurance= data.get("Insurance Type")
+        date_of_insurance = data.get("Date of Insurance")
+
+        if date_of_insurance:
+            date_obj = pd.to_datetime(date_of_insurance, dayfirst=True)
+            person.Date_of_insurance = date_obj
+
+        person.Customer_name = data.get("Person Name")
         person.Customer_Contact_No = data.get("Contact No.")
+        person.Make = data.get("Make")
+        person.Model = data.get("Model")
+        person.Year_of_mfg = data.get("Year of Manufacture")
+        person.Regd_No = data.get("Registration No")
+        person.Regd_No_Database = "".join((data.get("Registration No")).split("-"))
+        person.Old_ID_value = data.get("Old ID value (₹)")
         person.New_ID_value = data.get("New ID value (₹)")
+        person.Old_OD_value = data.get("Old OD value (₹)")
         person.New_OD_value = data.get("New OD value (₹)")
+        person.Old_final_premium = data.get("Old Final Premium (₹)")
         person.New_final_premium = data.get("New Final Premium (₹)")
         person.Ncb = data.get("NCB (%)")
         person.Discount = data.get("Discount (%)")
+        person.Terms_Comp = data.get("Term COMP")
+        person.Terms_TP = data.get("Term TP")
         person.Insured_Company = data.get("Insured Company")
         person.Insurer_Code = data.get("Insurer Code")
         person.New_Company = data.get("New Company")
         person.Add_Ons = data.get("Add Ons")
+        person.Policy_No = data.get("Policy No")
+        person.Ckyc_No = data.get("CKYC No.")
         person.Reference_1 = data.get("Reference 1")
         person.Reference_Contact_1 = data.get("Reference 1 Contact")
         person.Reference_2 = data.get("Reference 2")
         person.Reference_Contact_2 = data.get("Reference 2 Contact")
-        
-        print(person.New_ID_value)
+        person.Transfer_to = data.get("Transfer to")
         db.session.commit()
 
     db.session.refresh(person)
@@ -220,13 +224,9 @@ def updatePerson():
     db.session.expire(person)
 
     person_updated = db.session.query(PersonDetails).filter(
-                            PersonDetails.Customer_name == data["Person Name"],
-                            PersonDetails.Type_of_insurance == data["Insurance Type"],
-                            PersonDetails.Policy_No == data["Policy No"]
+                            PersonDetails.id == data.get("unique_customer_id")
                         ).first()
     print(person_updated)
-    app.logger.info(f"updated Person iD value : {person_updated.New_ID_value}")
-    app.logger.info(f"updated Person oD value : {person_updated.New_OD_value}")
     return render_template("FullPersonDetails.html", full_detail = person_updated)
 
 @app.route("/addPerson")
