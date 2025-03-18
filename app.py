@@ -7,6 +7,7 @@ from pathlib import Path
 from flask_cors import CORS
 from datetime import datetime
 import json
+import pandas as pd
 
 
 
@@ -230,7 +231,31 @@ def updatePerson():
 
 @app.route("/addPerson")
 def addPerson():
-    return render_template("AddPerson.html")
+    file_path = "1_4 Wheeler Make, Model, Fuel Type, Variant.xlsx"
+    df = pd.read_excel(file_path, sheet_name="Sheet1")
+
+    df.ffill(inplace=True)  # Fill NaN values to maintain hierarchy
+
+    dropdown_data = {}
+    for _, row in df.iterrows():
+        type_ = row["Type"]
+        make = row["Make"]
+        model = row["Model"]
+        fuel_type = row["Fuel Type"]
+        variant = row["Variant"]
+
+        if type_ not in dropdown_data:
+            dropdown_data[type_] = {}
+        if make not in dropdown_data[type_]:
+            dropdown_data[type_][make] = {}
+        if model not in dropdown_data[type_][make]:
+            dropdown_data[type_][make][model] = {}
+        if fuel_type not in dropdown_data[type_][make][model]:
+            dropdown_data[type_][make][model][fuel_type] = []
+
+        dropdown_data[type_][make][model][fuel_type].append(variant)
+
+    return render_template("AddPerson.html",dropdown_json=json.dumps(dropdown_data))
 
 @app.route("/successPage", methods=['GET', 'POST'])
 def SuccessPage():
@@ -247,11 +272,13 @@ def SuccessPage():
     """ 
     if request.method == 'POST':
         date_of_insurance = request.form.get("date_of_insurance")
-        type_of_insurance = request.form.get("type_of_insurance")
         customer_name = request.form.get("customer_name")
         customer_contact_no = request.form.get("customer_contact_no")
+        type_of_insurance = request.form.get("type")
         make = request.form.get("make")
         model = request.form.get("model")
+        fuel = request.form.get("fuel")
+        varient = request.form.get("varient")
         year_of_mfg = request.form.get("year_of_mfg")
         registration_no = request.form.get("registration_no")
         old_id_value = request.form.get("old_id_value")
@@ -277,8 +304,15 @@ def SuccessPage():
         transfer_to = request.form.get("transfer_to")
 
 
+        if date_of_insurance:
+            date_of_insurance = datetime.strptime(date_of_insurance, "%Y-%m-%d")
+        else:
+            date_of_insurance = None 
         # handling Add on list
         add_ons = ",".join(add_ons)
+
+        make = make +""+ model
+        model = varient + "[" + fuel +"]"
 
         ''' TODO Write code to convert a string to hyphen separated string based on the reg no'''
         insert_person = PersonDetails(Date_of_insurance=date_of_insurance,Type_of_insurance =type_of_insurance,

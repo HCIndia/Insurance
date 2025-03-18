@@ -85,6 +85,7 @@
             font-size: 18px;
             cursor: pointer;
             width: 100%;
+            max-width: 100%;
             margin-top: 15px;
             transition: all 0.3s ease;
             box-sizing: border-box;
@@ -99,8 +100,8 @@
         .dropdown {
             position: relative;
             display: inline-block;
-            width: 410px;
-            max-width: 410px;
+            width: 330px;
+            max-width: 330px;
         }
 
         .dropdown-btn {
@@ -115,6 +116,7 @@
             font-size: 16px;
             font-weight: 500;
             display: flex;
+            box-sizing: border-box;
             justify-content: space-between;
             align-items: center;
         }
@@ -201,50 +203,48 @@
                 <input type="date" name="date_of_insurance" required>
             </div>
             <div class="form-group">
-                <label>Type of Insurance:</label>
-                <select name="type_of_insurance" required>
-                    <option value="" disabled selected>Select Type</option>
-                    <option value="Fweel">4 Wheeler</option>
-                    <option value="Tweel">2 Wheeler</option>
-                    <option value="General">General Insurance</option>
-                    <option value="Life">Life Insurance</option>
-                    <option value="Mediclaim">Mediclaim</option>
-                </select>
-            </div>
-            <div class="form-group">
                 <label>Customer Name:</label>
                 <input type="text" name="customer_name" required>
             </div>
             <div class="form-group">
                 <label>Customer Contact:</label>
                 <input type="tel" name="customer_contact_no" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" placeholder="Enter 10-digit Mobile Number" required>
-            </div>            
+            </div>
+
             <div class="form-group">
-                <label>Make:</label>
-                <select name="make" id="make" required>
-                    <option value="" disabled selected>Select Make</option>
-                    <option value="Maruti">Maruti</option>
-                    <option value="Tata">Tata</option>
-                    <option value="Hyundai">Hyundai</option>
-                    <option value="Mahindra">Mahindra</option>
-                    <option value="Kia">Kia</option>
-                    <option value="Honda">Honda</option>
-                    <option value="Toyota">Toyota</option>
-                    <option value="Renault">Renault</option>
-                    <option value="Nissan">Nissan Motors</option>
-                    <option value="MG">MG</option>
-                    <option value="Skoda">Skoda</option>
-                    <option value="Volkswagen">Volkswagen</option>
-                    <option value="Others">Others</option>
+                <label for="type">Type:</label>
+                <select id="type" name="type" onchange="updateMake()">
+                    <option value="" selected disabled>Select Type</option>
                 </select>
             </div>
+        
             <div class="form-group">
-                <label>Model:</label>
-                <select name="model" id="model" required>
-                    <option value="" disabled selected>Select Model</option>
+                <label for="make">Make:</label>
+                <select id="make" name="make" onchange="updateModel()" disabled>
+                    <option value="" selected disabled>Select Make</option>
                 </select>
             </div>
-            
+        
+            <div class="form-group">
+                <label for="model">Model:</label>
+                <select id="model" name="model" onchange="updateFuelType()" disabled>
+                    <option value="" selected disabled>Select Model</option>
+                </select>
+            </div>
+        
+            <div class="form-group">
+                <label for="fuel">Fuel Type:</label>
+                <select id="fuel" name="fuel" onchange="updateVariant()" disabled>
+                    <option value="" selected disabled>Select Fuel Type</option>
+                </select>
+            </div>
+        
+            <div class="form-group">
+                <label for="variant">Variant:</label>
+                <select id="variant" name="varient" disabled>
+                    <option value="" selected disabled>Select Variant</option>
+                </select>
+            </div>
 
             <div class="form-group">
                 <label>Year of Mfg:</label>
@@ -305,7 +305,7 @@
                 <label>Insurer Code:</label>
                 <input type="text" name="insurer_code" required>
             </div>
-            
+
             <div class="form-group">
                 <label>New Company:</label>
                 <input type="text" name="new_company" required>
@@ -375,84 +375,6 @@
         </form>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const insuranceTypeDropdown = document.querySelector('select[name="type_of_insurance"]');
-            const makeDropdown = document.getElementById("make");
-            const modelDropdown = document.getElementById("model");
-    
-            const modelsByMake = {
-                    "Maruti": ['800 Duo', '1000', 'A Star', 'Alto', 'Alto 800', 'Alto K10', 'Baleno', 'Brezza', 'Celerio', 
-                                'Celerio X', 'Ciaz', 'Dzire', 'Eeco', 'Ertiga', 'Esteem', 'Estilo 1.0 New', 'Fronx', 
-                                'Grand Vitara', 'Gypsy', 'Ignis', 'Invicto', 'Jimny', 'Kizashi', 'Omni', 'Ritz', 'S Cross', 
-                                'S-Presso', 'Stingray', 'Swift', 'Swift KB', 'Swift Dzire', 'Swift Dzire KB', 
-                                'Swift Range Extender', 'SX4', 'Versa', 'Vitara Brezza', 'Wagon R', 'XL6', 'Zen']
-                                ,
-                    "Tata": ['Altroz DCA', 'Aria', 'Bolt', 'Curvv', 'Harrier', 'Hexa', 'Indica', 'Indica eV2 CR4', 
-                                'Indica eV2 Xeta', 'Indica V2', 'Indica V2 Dicor', 'Indica V2 Turbo', 'Indica V2 Xeta', 
-                                'Indica Vista', 'Indigo', 'Indigo CS', 'Indigo eCS', 'Indigo Manza', 'Indigo Marina', 
-                                'Indigo V Series', 'Indigo XL', 'Movus', 'Nano', 'Nano GenX', 'Nexon', 'Nexon EV Max', 
-                                'Nexon EV Prime', 'Punch', 'Safari', 'Safari Dicor 2.2 VTT', 'Safari Dicor 3.0 L', 
-                                'Safari Petrol', 'Siera', 'Spacio', 'Sumo', 'Sumo Gold', 'Sumo Grande', 'Sumo Victa', 
-                                'Tiago', 'Tiago EV', 'Tiago NRG', 'Tigor', 'Vista Tech', 'Venture', 'Xenon', 'Xenon XT', 'Zest'],
-                    "Hyundai": ["i10", "i20", "Creta", "Verna"],
-                    "Mahindra": ["Thar", "Scorpio", "XUV700"],
-                    "Kia": ["Seltos", "Sonet", "Carens"],
-                    "Honda": ["City", "Amaze", "WR-V"],
-                    "Toyota": ["Innova", "Fortuner", "Glanza"],
-                    "Renault": ["Kwid", "Duster", "Triber"],
-                    "Nissan": ["Magnite", "Kicks"],
-                    "MG": ["Hector", "Gloster"],
-                    "Skoda": ["Slavia", "Kushaq"],
-                    "Volkswagen": ["Virtus", "Taigun"],
-                    "Others": ["Other Model"]
-                };
-    
-            // Function to update Make & Model based on Insurance Type
-            function updateMakeAndModel() {
-                if (insuranceTypeDropdown.value === "Fweel") {
-                    makeDropdown.innerHTML = `<option value="" disabled selected>Select Make</option>`;
-                    Object.keys(modelsByMake).forEach(make => {
-                        let option = document.createElement("option");
-                        option.value = make;
-                        option.textContent = make;
-                        makeDropdown.appendChild(option);
-                    });
-    
-                    makeDropdown.disabled = false;
-                    modelDropdown.disabled = false;
-                } else {
-                    // Default to "NA" for non-4 Wheeler insurance
-                    makeDropdown.innerHTML = `<option value="NA" selected>NA</option>`;
-                    modelDropdown.innerHTML = `<option value="NA" selected>NA</option>`;
-                    makeDropdown.disabled = true;
-                    modelDropdown.disabled = true;
-                }
-            }
-    
-            // Function to update the Model dropdown based on selected Make
-            function updateModelDropdown() {
-                const selectedMake = makeDropdown.value;
-                modelDropdown.innerHTML = `<option value="" disabled selected>Select Model</option>`;
-    
-                if (modelsByMake[selectedMake]) {
-                    modelsByMake[selectedMake].forEach(model => {
-                        let option = document.createElement("option");
-                        option.value = model;
-                        option.textContent = model;
-                        modelDropdown.appendChild(option);
-                    });
-                }
-            }
-    
-            // Event Listeners
-            insuranceTypeDropdown.addEventListener("change", updateMakeAndModel);
-            makeDropdown.addEventListener("change", updateModelDropdown);
-    
-            // Set default state on page load
-            updateMakeAndModel();
-        });
-    </script>
-    <script>
         let yearInput = document.getElementById("year_of_mfg");
     
         yearInput.addEventListener("input", function () {
@@ -495,6 +417,71 @@
                 selectedItemsDiv.innerText = "No Add-Ons Selected";
             }
         });
+    });
+</script>
+<script>
+    const dropdownData = JSON.parse(`{{dropdown_json | safe}}`);
+
+    function populateDropdown(dropdown, options) {
+        dropdown.innerHTML = '<option value="" selected disabled>Select</option>';
+        options.forEach(option => {
+            let opt = document.createElement("option");
+            opt.value = option;
+            opt.textContent = option;
+            dropdown.appendChild(opt);
+        });
+        dropdown.disabled = options.length === 0;
+    }
+
+    function updateMake() {
+        let type = document.getElementById("type").value;
+        let makeDropdown = document.getElementById("make");
+        let modelsDropdown = document.getElementById("model");
+        let fuelDropdown = document.getElementById("fuel");
+        let variantDropdown = document.getElementById("variant");
+
+        populateDropdown(makeDropdown, Object.keys(dropdownData[type] || {}));
+        modelsDropdown.innerHTML = fuelDropdown.innerHTML = variantDropdown.innerHTML = '<option value="" selected disabled>Select</option>';
+        modelsDropdown.disabled = fuelDropdown.disabled = variantDropdown.disabled = true;
+    }
+
+    function updateModel() {
+        let type = document.getElementById("type").value;
+        let make = document.getElementById("make").value;
+        let modelDropdown = document.getElementById("model");
+        let fuelDropdown = document.getElementById("fuel");
+        let variantDropdown = document.getElementById("variant");
+
+        populateDropdown(modelDropdown, Object.keys(dropdownData[type][make] || {}));
+        fuelDropdown.innerHTML = variantDropdown.innerHTML = '<option value="" selected disabled>Select</option>';
+        fuelDropdown.disabled = variantDropdown.disabled = true;
+    }
+
+    function updateFuelType() {
+        let type = document.getElementById("type").value;
+        let make = document.getElementById("make").value;
+        let model = document.getElementById("model").value;
+        let fuelDropdown = document.getElementById("fuel");
+        let variantDropdown = document.getElementById("variant");
+
+        populateDropdown(fuelDropdown, Object.keys(dropdownData[type][make][model] || {}));
+        variantDropdown.innerHTML = '<option value="" selected disabled>Select</option>';
+        variantDropdown.disabled = true;
+    }
+
+    function updateVariant() {
+        let type = document.getElementById("type").value;
+        let make = document.getElementById("make").value;
+        let model = document.getElementById("model").value;
+        let fuel = document.getElementById("fuel").value;
+        let variantDropdown = document.getElementById("variant");
+
+        populateDropdown(variantDropdown, dropdownData[type][make][model][fuel] || []);
+    }
+
+    // Populate the "Type" dropdown on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        populateDropdown(document.getElementById("type"), Object.keys(dropdownData));
     });
 </script>
     
