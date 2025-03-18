@@ -146,7 +146,7 @@
             </div>
             <div class="form-group">
                 <label>Customer Contact:</label>
-                <input type="tel" name="customer_contact_no" pattern="[0-9]*" inputmode="numeric" required>
+                <input type="tel" name="customer_contact_no" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" placeholder="Enter 10-digit Mobile Number" required>
             </div>            
             <div class="form-group">
                 <label>Make:</label>
@@ -177,7 +177,8 @@
 
             <div class="form-group">
                 <label>Year of Mfg:</label>
-                <input type="number" name="year_of_mfg" required>
+                <input type="number" name="year_of_mfg" pattern="[0-9]{4}" min="1900" max="2099" inputmode="numeric" required>
+                <span id="year-error" style="color: red; display: none;">Enter a valid 4-digit year</span>
             </div>
             <div class="form-group">
                 <label>Registration No:</label>
@@ -193,11 +194,11 @@
             </div>
             <div class="form-group">
                 <label>NCB:</label>
-                <input type="text" name="ncb" required>
+                <input type="number" name="ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" required>
             </div>
             <div class="form-group">
-                <label>Discount:</label>
-                <input type="text" name="discount" required>
+                <label>Discount (%):</label>
+                <input type="number" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" name="discount" required>
             </div>
             <div class="form-group">
                 <label>Insured Company:</label>
@@ -216,6 +217,10 @@
                 <input type="text" name="terms_tp" required>
             </div>
             <div class="form-group">
+                <label>Add Ons:</label>
+                <input type="text" name="add_ons" required>
+            </div>
+            <div class="form-group">
                 <label>CKYC No.:</label>
                 <input type="text" name="ckyc_no" required>
             </div>
@@ -225,7 +230,7 @@
             </div>
             <div class="form-group">
                 <label>Reference 1 Contact:</label>
-                <input type="text" name="reference_contact_1" required>
+                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric"  name="reference_contact_1" required>
             </div>
             <div class="form-group">
                 <label>Reference 2:</label>
@@ -233,7 +238,7 @@
             </div>
             <div class="form-group">
                 <label>Reference 2 Contact:</label>
-                <input type="text" name="reference_contact_2" required>
+                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" name="reference_contact_2" required>
             </div>
             <div class="form-group">
                 <label>Transfer to:</label>
@@ -320,5 +325,17 @@
             updateMakeAndModel();
         });
     </script>
+    <script>
+        let yearInput = document.getElementById("year_of_mfg");
+    
+        yearInput.addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, ""); // Remove any non-numeric input
+    
+            if (this.value.length > 4) {
+                this.value = this.value.slice(0, 4); // Prevent entering more than 4 digits
+            }
+        });
+    </script>
+    
 </body>
 </html>
