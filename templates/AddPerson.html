@@ -202,19 +202,45 @@
             </div>
             <div class="form-group">
                 <label>Insured Company:</label>
-                <input type="text" name="insured_company" required>
+                <select name="insured_company" required>
+                    <option value="" disabled selected>Select Insurance Company</option>
+                    <option value="Bajaj Allianz General Insurance Co. Ltd.">Bajaj Allianz General Insurance Co. Ltd.</option>
+                    <option value="Cholamandalam MS General Insurance Co. Ltd.">Cholamandalam MS General Insurance Co. Ltd.</option>
+                    <option value="Future Generali India Insurance Co. Ltd.">Future Generali India Insurance Co. Ltd.</option>
+                    <option value="Go Digit General Insurance Ltd.">Go Digit General Insurance Ltd.</option>
+                    <option value="HDFC ERGO General Insurance Co. Ltd.">HDFC ERGO General Insurance Co. Ltd.</option>
+                    <option value="ICICI LOMBARD General Insurance Co. Ltd.">ICICI LOMBARD General Insurance Co. Ltd.</option>
+                    <option value="IFFCO TOKIO General Insurance Co. Ltd.">IFFCO TOKIO General Insurance Co. Ltd.</option>
+                    <option value="Kotak Mahindra General Insurance Co. Ltd.">Kotak Mahindra General Insurance Co. Ltd.</option>
+                    <option value="Liberty General Insurance Ltd.">Liberty General Insurance Ltd.</option>
+                    <option value="Magma HDI General Insurance Co. Ltd.">Magma HDI General Insurance Co. Ltd.</option>
+                    <option value="National Insurance Co. Ltd.">National Insurance Co. Ltd.</option>
+                    <option value="Navi General Insurance Ltd.">Navi General Insurance Ltd.</option>
+                    <option value="Raheja QBE General Insurance Co. Ltd.">Raheja QBE General Insurance Co. Ltd.</option>
+                    <option value="Reliance General Insurance Co. Ltd.">Reliance General Insurance Co. Ltd.</option>
+                    <option value="Royal Sundaram General Insurance Co. Ltd.">Royal Sundaram General Insurance Co. Ltd.</option>
+                    <option value="SBI General Insurance Co. Ltd.">SBI General Insurance Co. Ltd.</option>
+                    <option value="Shriram General Insurance Co. Ltd.">Shriram General Insurance Co. Ltd.</option>
+                    <option value="Tata AIG General Insurance Co. Ltd.">Tata AIG General Insurance Co. Ltd.</option>
+                    <option value="The New India Assurance Co. Ltd.">The New India Assurance Co. Ltd.</option>
+                    <option value="The Oriental Insurance Co. Ltd.">The Oriental Insurance Co. Ltd.</option>
+                    <option value="United India Insurance Co. Ltd.">United India Insurance Co. Ltd.</option>
+                    <option value="Universal Sompo General Insurance Co. Ltd.">Universal Sompo General Insurance Co. Ltd.</option>
+                    <option value="Zuno General Insurance Limited (Formerly Edelweiss General Insurance Co. Ltd.)">Zuno General Insurance Limited (Formerly Edelweiss General Insurance Co. Ltd.)</option>
+                </select>
             </div>
+            
             <div class="form-group">
                 <label>Policy No.:</label>
                 <input type="text" name="policy_no" required>
             </div>
             <div class="form-group">
                 <label>Term COMP:</label>
-                <input type="text" name="terms_comp" required>
+                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_comp" required>
             </div>
             <div class="form-group">
                 <label>Term TP:</label>
-                <input type="text" name="terms_tp" required>
+                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_tp" required>
             </div>
             <div class="form-group">
                 <label>Add Ons:</label>
