@@ -314,7 +314,7 @@ input:checked + .radio-custom::after {
     <div class="radio-group">
         {% for pobj in result %}
             <label class="radio-label">
-                <input type="radio" id = "{{ pobj.id }}" onclick="redirectToPage(this.value)">
+                <input type="radio" id = "{{ pobj.id }}" name="regNo" value="{{ pobj.id }}" onclick="redirectToPage(this.value)">
                 <span class="radio-custom"></span>
                 {{ pobj.Date_of_insurance.strftime('%d/%m/%Y') }}, {{ pobj.Customer_name }}, {{ pobj.Regd_No }}
             </label>
