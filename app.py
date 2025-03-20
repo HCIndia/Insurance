@@ -18,10 +18,6 @@ Development should be done on this branch.
 Later should be merge with the main branch. 
 """
 
-"""
-Diverging branches
-"""
-
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///personDetails.sqlite3'
@@ -82,10 +78,10 @@ def home():
         #person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()   #exact search command 
             person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()
                                                  # this is partial search
-        
+            print(f"This is from reg no search {person_object}")
         if not person_object and search_Person_Detail_by_reg :
             person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).order_by(PersonDetails.Date_of_insurance.desc()).all() 
-                            
+            print(f"This is from person search {person_object}")             
 
         if not person_object or not search_Person_Detail_by_reg :
             flash("No Records Found", "info")
@@ -96,7 +92,7 @@ def home():
 
 @app.route("/fullPersonDetails", methods=['GET', 'POST'])
 def fullPersonDetails():
-    
+
     getFPD = request.args.get('selected')
     app.logger.info(f"FPD = {getFPD}")
     full_detail = db.session.query(PersonDetails).filter(
@@ -210,7 +206,7 @@ def updatePerson():
 
     db.session.refresh(person)
 
-    # ✅ Ensure fresh data is fetched by expiring the session
+    #Ensure fresh data is fetched by expiring the session
     db.session.expire(person)
 
     person_updated = db.session.query(PersonDetails).filter(
@@ -285,6 +281,7 @@ def addPerson():
     df = pd.read_excel(file_path, sheet_name="Sheet1")
 
     df.ffill(inplace=True)  # Fill NaN values to maintain hierarchy
+    df.loc[df["Type"].isin(["General Insurance", "Life Insurance", "Mediclaim"]), ["Make", "Model", "Fuel Type", "Variant"]] = "NA"
 
     dropdown_data = {}
     for _, row in df.iterrows():
