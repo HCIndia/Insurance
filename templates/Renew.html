@@ -72,16 +72,16 @@
         }
 
         .edit-btn {
-        padding: 12px 24px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #007bff, #00c6ff);
-        color: white;
-        transition: all 0.3s ease-in-out;
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #007bff, #00c6ff);
+            color: white;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
     }
 
     /* Hover Effect - Glow */
@@ -176,6 +176,12 @@
             background: linear-gradient(135deg,  #959595, #000000);
             box-shadow: 0 4px 20px rgba(0, 212, 255, 0.8);
             transform: translateY(-2px);
+        }
+        .wrap-text {
+            word-wrap: break-word;  /* Ensures text wraps inside the cell */
+            white-space: pre-wrap;  /* Preserves spaces and wraps lines */
+            max-width: 200px;       /* Adjust width to prevent overflow */
+            overflow-wrap: break-word; /* Breaks long words */
         }
 
         /* Responsive Adjustments */
@@ -285,7 +291,7 @@
                     </tr>
                     <tr>
                         <td>Insurance Type</td>
-                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Type_of_insurance }}</td>
+                        <td class="wrap-text" contenteditable="true" onclick="enableEditing()">{{ full_detail.Type_of_insurance }}</td>
                     </tr>
                     <tr>
                         <td>Make</td>
@@ -361,7 +367,7 @@
                     </tr>
                     <tr>
                         <td>Add Ons</td>
-                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Add_Ons }}</td>
+                        <td class="wrap-text" contenteditable="true" onclick="enableEditing()">{{ full_detail.Add_Ons }}</td>
                     </tr>
                     <tr>
                         <td>CKYC No.</td>

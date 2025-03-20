@@ -178,6 +178,13 @@
             transform: translateY(-2px);
         }
 
+        .wrap-text {
+            word-wrap: break-word;  /* Ensures text wraps inside the cell */
+            white-space: pre-wrap;  /* Preserves spaces and wraps lines */
+            max-width: 200px;       /* Adjust width to prevent overflow */
+            overflow-wrap: break-word; /* Breaks long words */
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 480px) {
             body {
@@ -373,7 +380,7 @@
                     </tr>
                     <tr>
                         <td>Insured Company</td>
-                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Insured_Company }}</td>
+                        <td class="wrap-text" contenteditable="true" onclick="enableEditing()">{{ full_detail.Insured_Company }}</td>
                     </tr>
                     <tr>
                         <td>Insurer Code</td>
@@ -389,7 +396,7 @@
                     </tr>
                     <tr>
                         <td>Add Ons</td>
-                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Add_Ons }}</td>
+                        <td class="wrap-text" contenteditable="true" onclick="enableEditing()">{{ full_detail.Add_Ons }}</td>
                     </tr>
                     <tr>
                         <td>CKYC No.</td>
