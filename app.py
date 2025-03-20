@@ -331,8 +331,6 @@ def deleteRecord():
     return render_template("Delete.html")
 
 
-    
-
 @app.route("/successPage", methods=['GET', 'POST'])
 def SuccessPage():
     '''Here we will first chekc if the the same car number is alreday registered.
