@@ -7,6 +7,7 @@ from pathlib import Path
 from flask_cors import CORS
 from datetime import datetime
 import json
+import pandas as pd
 
 
 
@@ -15,10 +16,6 @@ app = Flask(__name__)
 """
 Development should be done on this branch.
 Later should be merge with the main branch. 
-"""
-
-"""
-Diverging branches
 """
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -79,10 +76,12 @@ def home():
         if (search_Person_Detail_by_reg):
             app.logger.info(f"Got the data from form action :{search_Person_Detail_by_reg}")
         #person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()   #exact search command 
-            person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()  # this is partial search
-        
+            person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()
+                                                 # this is partial search
+            print(f"This is from reg no search {person_object}")
         if not person_object and search_Person_Detail_by_reg :
-            person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).all()
+            person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).order_by(PersonDetails.Date_of_insurance.desc()).all() 
+            print(f"This is from person search {person_object}")             
 
         if not person_object or not search_Person_Detail_by_reg :
             flash("No Records Found", "info")
@@ -93,24 +92,12 @@ def home():
 
 @app.route("/fullPersonDetails", methods=['GET', 'POST'])
 def fullPersonDetails():
-    #if request.method == 'POST':
-        #get_Person_Detail_by_reg_no = request.form.get("regNo")
-    getFPD = request.args.get('selected').split("+")
-    app.logger.info(f"FPD = {getFPD}")
-    get_Person_Detail_by_name , get_Person_Detail_by_reg_no, get_person_detail_by_type = getFPD[0].strip() , getFPD[1].strip(), getFPD[2].strip() # getting JH-10-BJ-9977
-    if get_Person_Detail_by_reg_no == "NA":
 
-        full_detail = db.session.query(PersonDetails).filter(
-                                                    PersonDetails.Customer_name == get_Person_Detail_by_name,
-                                                    PersonDetails.Type_of_insurance == get_person_detail_by_type
-                                                ).first()
-        app.logger.info("Passing details from Customer Name")
-    else:
-        get_Person_Detail_by_reg_no_database = "".join(get_Person_Detail_by_reg_no.split("-")) # converted to JH10BJ9977
-        app.logger.info(get_Person_Detail_by_reg_no_database)
-        full_detail = PersonDetails.query.filter_by(Regd_No_Database=get_Person_Detail_by_reg_no_database).first()   #exact search command 
-        print(f"full details : {full_detail}")
-        app.logger.info("Passing details from Registration no")
+    getFPD = request.args.get('selected')
+    app.logger.info(f"FPD = {getFPD}")
+    full_detail = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == getFPD
+                        ).first()
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
 
@@ -165,39 +152,184 @@ def updatePerson():
 
     #First query the person
     person = db.session.query(PersonDetails).filter(
-                            PersonDetails.Customer_name == data.get("Person Name"),
-                            PersonDetails.Type_of_insurance == data.get("Insurance Type"),
-                            PersonDetails.Policy_No == data.get("Policy No")
+                            PersonDetails.id == data.get("unique_customer_id")
                         ).first()
     print(person)
+
+    """ sample response
+    {'Person Name': 'Mahabir K. Moti Hut', 'Contact No.': '765432876098765', 'Date of Insurance': '08/01/2024', 
+    'Insurance Type': '4 Wheeler', 'Make': 'Maruti', 'Model': 'Ecco AC/Heater', 'Year of Manufacture': '2011', 
+    'Registration No': 'BR-01-BB-2649', 'Old ID value (₹)': 'TP', 'New ID value (₹)': 'mko', 'Old OD value (₹)': '3416', 
+    'New OD value (₹)': '9876', 'Old Final Premium (₹)': '4030', 'New Final Premium (₹)': 'NA98766', 'NCB (%)': 'NA',
+     'Discount (%)': 'NA', 'Term COMP': 'NA', 'Term TP': 'NA', 'Insured Company': 'ROYAL SUNDARAM', 'Insurer Code': 'RB', 
+     'New Company': 'NA', 'Policy No': 'UPTP462770000100', 'Add Ons': 'NA', 'CKYC No.': 'NA', 
+     'Reference 1': 'C/o Carmart', 'Reference 1 Contact': 'NA', 'Reference 2': 'NA', 'Reference 2 Contact': 'NA', 'Transfer to': 'NA'}
+    """
+
     if person:
+        person.Type_of_insurance= data.get("Insurance Type")
+        date_of_insurance = data.get("Date of Insurance")
+
+        if date_of_insurance:
+            date_obj = pd.to_datetime(date_of_insurance, dayfirst=True)
+            person.Date_of_insurance = date_obj
+
+        person.Customer_name = data.get("Person Name")
         person.Customer_Contact_No = data.get("Contact No.")
+        person.Make = data.get("Make")
+        person.Model = data.get("Model")
+        person.Year_of_mfg = data.get("Year of Manufacture")
+        person.Regd_No = data.get("Registration No")
+        person.Regd_No_Database = "".join((data.get("Registration No")).split("-"))
+        person.Old_ID_value = data.get("Old ID value (₹)")
         person.New_ID_value = data.get("New ID value (₹)")
+        person.Old_OD_value = data.get("Old OD value (₹)")
         person.New_OD_value = data.get("New OD value (₹)")
+        person.Old_final_premium = data.get("Old Final Premium (₹)")
+        person.New_final_premium = data.get("New Final Premium (₹)")
+        person.Ncb = data.get("NCB (%)")
+        person.Discount = data.get("Discount (%)")
+        person.Terms_Comp = data.get("Term COMP")
+        person.Terms_TP = data.get("Term TP")
+        person.Insured_Company = data.get("Insured Company")
+        person.Insurer_Code = data.get("Insurer Code")
+        person.New_Company = data.get("New Company")
+        person.Add_Ons = data.get("Add Ons")
+        person.Policy_No = data.get("Policy No")
+        person.Ckyc_No = data.get("CKYC No.")
+        person.Reference_1 = data.get("Reference 1")
         person.Reference_Contact_1 = data.get("Reference 1 Contact")
+        person.Reference_2 = data.get("Reference 2")
         person.Reference_Contact_2 = data.get("Reference 2 Contact")
-        
-        print(person.New_ID_value)
+        person.Transfer_to = data.get("Transfer to")
         db.session.commit()
 
     db.session.refresh(person)
 
-    # ✅ Ensure fresh data is fetched by expiring the session
+    #Ensure fresh data is fetched by expiring the session
     db.session.expire(person)
 
     person_updated = db.session.query(PersonDetails).filter(
-                            PersonDetails.Customer_name == data["Person Name"],
-                            PersonDetails.Type_of_insurance == data["Insurance Type"],
-                            PersonDetails.Policy_No == data["Policy No"]
+                            PersonDetails.id == data.get("unique_customer_id")
                         ).first()
     print(person_updated)
-    app.logger.info(f"updated Person iD value : {person_updated.New_ID_value}")
-    app.logger.info(f"updated Person oD value : {person_updated.New_OD_value}")
     return render_template("FullPersonDetails.html", full_detail = person_updated)
+
+@app.route("/renewPage", methods= ["POST"])
+def renewPage():
+    data = request.json
+    key = data.get("key")
+    value = data.get("value")
+
+    print(key)
+    print(value)
+
+    record_to_renew = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == value).first()
+    return render_template("Renew.html", full_detail = record_to_renew)
+
+@app.route("/renewPerson",  methods=['POST'])
+def renewPerson():
+
+        data = request.json  # Receive edited data as a dictionary
+        print("Received Data:", data)  # Debugging
+
+        new_entry = PersonDetails(
+            Date_of_insurance=datetime.strptime(data["Date of Insurance"], "%d/%m/%Y") if data.get("Date of Insurance") else None,
+            Type_of_insurance=data.get("Insurance Type", ""),
+            Customer_name=data.get("Person Name", ""),
+            Customer_Contact_No=data.get("Contact No.", ""),
+            Make=data.get("Make", ""),
+            Model=data.get("Model", ""),
+            Year_of_mfg=data.get("Year of Manufacture", ""),
+            Regd_No=data.get("Registration No", ""),
+            Old_ID_value=data.get("Old ID value (₹)", ""),
+            New_ID_value=data.get("New ID value (₹)", ""),
+            Old_OD_value=data.get("Old OD value (₹)", ""),
+            New_OD_value=data.get("New OD value (₹)", ""),
+            Old_final_premium=data.get("Old Final Premium (₹)", ""),
+            New_final_premium=data.get("New Final Premium (₹)", ""),
+            Ncb=data.get("NCB (%)", ""),
+            Discount=data.get("Discount (%)", ""),
+            Terms_Comp=data.get("Term COMP", ""),
+            Terms_TP=data.get("Term TP", ""),
+            Insured_Company=data.get("Insured Company", ""),
+            Insurer_Code=data.get("Insurer Code", ""),
+            New_Company=data.get("New Company", ""),
+            Policy_No=data.get("Policy No", ""),
+            Add_Ons=data.get("Add Ons", ""),
+            Ckyc_No=data.get("CKYC No.", ""),
+            Reference_1=data.get("Reference 1", ""),
+            Reference_Contact_1=data.get("Reference 1 Contact", ""),
+            Reference_2=data.get("Reference 2", ""),
+            Reference_Contact_2=data.get("Reference 2 Contact", ""),
+            Transfer_to=data.get("Transfer to", ""),)
+
+        db.session.add(new_entry)
+        db.session.commit()
+
+        person = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == new_entry.id
+                        ).first()
+    
+        return render_template("FullPersonDetails.html", full_detail = person)
+
 
 @app.route("/addPerson")
 def addPerson():
-    return render_template("AddPerson.html")
+    file_path = "1_4 Wheeler Make, Model, Fuel Type, Variant.xlsx"
+    df = pd.read_excel(file_path, sheet_name="Sheet1")
+
+    df.ffill(inplace=True)  # Fill NaN values to maintain hierarchy
+    df.loc[df["Type"].isin(["General Insurance", "Life Insurance", "Mediclaim"]), ["Make", "Model", "Fuel Type", "Variant"]] = "NA"
+
+    dropdown_data = {}
+    for _, row in df.iterrows():
+        type_ = row["Type"]
+        make = row["Make"]
+        model = row["Model"]
+        fuel_type = row["Fuel Type"]
+        variant = row["Variant"]
+
+        if type_ not in dropdown_data:
+            dropdown_data[type_] = {}
+        if make not in dropdown_data[type_]:
+            dropdown_data[type_][make] = {}
+        if model not in dropdown_data[type_][make]:
+            dropdown_data[type_][make][model] = {}
+        if fuel_type not in dropdown_data[type_][make][model]:
+            dropdown_data[type_][make][model][fuel_type] = []
+
+        dropdown_data[type_][make][model][fuel_type].append(variant)
+
+    return render_template("AddPerson.html",dropdown_json=json.dumps(dropdown_data))
+
+
+@app.route("/deleteRecord", methods = ["POST"])
+def deleteRecord():
+    
+    data = request.json
+    key = data.get("key")
+    value = data.get("value")
+
+    print(key)
+    print(value)
+
+    record_to_delete = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == value).first()
+
+    print((record_to_delete.Customer_name))
+    print((record_to_delete.Customer_Contact_No))
+
+    if record_to_delete:
+        db.session.delete(record_to_delete)
+        db.session.commit()
+    else:
+        err_message = "Unable to Delete table"
+        return render_template("Delete.html", err_message = err_message)
+
+    return render_template("Delete.html")
+
 
 @app.route("/successPage", methods=['GET', 'POST'])
 def SuccessPage():
@@ -214,11 +346,13 @@ def SuccessPage():
     """ 
     if request.method == 'POST':
         date_of_insurance = request.form.get("date_of_insurance")
-        type_of_insurance = request.form.get("type_of_insurance")
         customer_name = request.form.get("customer_name")
         customer_contact_no = request.form.get("customer_contact_no")
+        type_of_insurance = request.form.get("type")
         make = request.form.get("make")
         model = request.form.get("model")
+        fuel = request.form.get("fuel")
+        varient = request.form.get("varient")
         year_of_mfg = request.form.get("year_of_mfg")
         registration_no = request.form.get("registration_no")
         old_id_value = request.form.get("old_id_value")
@@ -235,14 +369,26 @@ def SuccessPage():
         insurer_code = request.form.get("insurer_code")
         new_company = request.form.get("new_company")
         policy_no = request.form.get("policy_no")
-        add_ons = request.form.get("add_ons")
+        add_ons = request.form.getlist("add_ons")
         ckyc_no = request.form.get("ckyc_no")
         reference_1 = request.form.get("reference_1")
         reference_contact_1 = request.form.get("reference_contact_1")
         reference_2 = request.form.get("reference_2")
         reference_contact_2 = request.form.get("reference_contact_2")
         transfer_to = request.form.get("transfer_to")
-        ''' Write code to convert a string to hyphen separated string based on the reg no'''
+
+
+        if date_of_insurance:
+            date_of_insurance = datetime.strptime(date_of_insurance, "%Y-%m-%d")
+        else:
+            date_of_insurance = None 
+        # handling Add on list
+        add_ons = ",".join(add_ons)
+
+        make = make +""+ model
+        model = varient + "[" + fuel +"]"
+
+        ''' TODO Write code to convert a string to hyphen separated string based on the reg no'''
         insert_person = PersonDetails(Date_of_insurance=date_of_insurance,Type_of_insurance =type_of_insurance,
                                     Customer_name = customer_name,Customer_Contact_No = customer_contact_no,Make=make, Model = model, Year_of_mfg = year_of_mfg,
                                     Regd_No= registration_no,Regd_No_Database= registration_no, Old_ID_value = old_id_value,New_ID_value= new_id_value,

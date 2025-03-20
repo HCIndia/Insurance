@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success Page</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .hidden-link {
+            color: blue;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
+    <script>
+        function goToMainPage() {
+            window.location.href = '/';
+        }
+    </script>
+</head>
+<body>
+    {% if err_message %}
+        <h1> {{err_message }}</h1>
+    {% else %}
+        <h1>You have successfully Deleted this Record</h1>
+    {% endif %}
+    <h2><span class="hidden-link" onclick="goToMainPage()">Click here to go to main page</span></h2>
+</body>
+</html>

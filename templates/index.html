@@ -87,7 +87,7 @@
             gap: 10px;
             cursor: pointer;
             font-size: 16px;
-            background: #fff;
+            background: #ffffff;
             padding: 10px;
             border-radius: 6px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -115,7 +115,7 @@
             content: "";
             width: 12px;
             height: 12px;
-            background: #007bff;
+            background: #02ffc4;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -130,14 +130,21 @@
         }
 
         .search-container {
+            position: relative;
+            top: 20px; /* Adjusts distance from top */
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            width: 100%;
             align-items: center;
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 30px;
-            padding: 10px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            padding: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
             transition: 0.3s;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid #1e88e5;
+            z-index: 1000;
         }
 
         .search-container:hover {
@@ -176,23 +183,35 @@
                 flex-direction: column;
                 padding: 8px;
                 border-radius: 20px;
+                width: 90%;  /* Ensures it fits within the screen */
+                left: 45%;
+                transform: translateX(-50%);
+                max-width: 100%;
+                box-sizing: border-box; /* Ensures padding doesn’t cause overflow */
             }
 
             .search-input {
-                width: 100%;
+                width: calc(100% - 20px); /* Ensures it stays inside the container */
+                max-width: 100%;
                 text-align: center;
                 padding: 10px;
                 font-size: 14px;
+                border-radius: 15px;
+                box-sizing: border-box; /* Prevents input from overflowing */
             }
 
             .search-button {
-                width: 100%;
+                width: auto; /* Keeps button size appropriate */
+                min-width: 50%; /* Ensures button is not too small */
                 padding: 12px;
                 font-size: 14px;
                 margin-top: 8px;
                 border-radius: 20px;
+                text-align: center;
             }
         }
+
+
         
     </style>
     <script>
@@ -225,9 +244,9 @@
                 <div class="radio-group">
                     {% for pobj in person_object %}
                         <label class="radio-label">
-                            <input type="radio" id="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" name="regNo" value="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" onclick="redirectToPage(this.value)">
+                            <input type="radio" id="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" name="regNo" value="{{ pobj.id }}" onclick="redirectToPage(this.value)">
                             <span class="radio-custom"></span>
-                            {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
+                            {{ pobj.Date_of_insurance.strftime('%d/%m/%Y') if pobj.Date_of_insurance else 'N/A' }}, {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
                         </label>
                     {% endfor %}
                 </div>

@@ -5,138 +5,501 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Insurance Form</title>
     <style>
+        /* Beach-Themed Background */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #fddbb8, #ffebcc, #b2e4db, #78c4d4);
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f4f4f4;
-        }
-        .form-container {
-            background: white;
+            min-height: 100vh;
+            margin: 0;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
         }
-        input[type="text"], input[type="date"], input[type="number"] {
+
+        /* Form Container */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 450px;
             width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border-left: 3px solid #ff9f1c;
+            animation: fadeIn 0.5s ease-in-out;
+            box-sizing: border-box;
         }
+
+        /* Header */
+        h2 {
+            text-align: center;
+            color: #0077b6;
+            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        /* Form Group */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        /* Labels */
+        label {
+            font-weight: bold;
+            color: #004466;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        /* Inputs and Selects */
+        input, select {
+            width: 100%; /* Full width within the form container */
+            max-width: 100%; /* Prevents overflow */
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #fdfaf5;
+            transition: all 0.3s ease-in-out;
+            box-sizing: border-box; /* Prevents overflow beyond container */
+        }
+
+        /* Focus Effect */
+        input:focus, select:focus {
+            border-color: #0077b6;
+            box-shadow: 0px 0px 8px rgba(0, 119, 182, 0.5);
+            outline: none;
+            background: #fff;
+        }
+
+        /* Submit Button */
         button {
-            padding: 10px;
-            background: #007bff;
+            padding: 14px;
+            background: linear-gradient(135deg, #0077b6, #00a6fb);
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 18px;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
+            max-width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0, 119, 182, 0.3);
         }
+
         button:hover {
-            background: #0056b3;
+            background: linear-gradient(135deg, #005a8d, #0090e0);
+            box-shadow: 0 6px 15px rgba(0, 119, 182, 0.5);
+            transform: scale(1.02);
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            width: 330px;
+            max-width: 330px;
+        }
+
+        .dropdown-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #005a8d, #0090e0);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            box-sizing: border-box;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: white;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            z-index: 100;
+        }
+
+        .dropdown-content label {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            gap: 10px;
+        }
+
+        .dropdown-content input {
+            margin: 0;
+            width: 16px;
+            height: 16px;
+        }
+
+        .dropdown-content label:hover {
+            background: #f1f1f1;
+        }
+
+        .selected-items {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 20px;
+                width: 100%;
+            }
+            input, button, select {
+                font-size: 14px;
+                padding : 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            .dropdown {
+                max-width: 100%;
+            }
+
+            .dropdown-content {
+                max-height: 200px;
+            }
+        }
+
+        /* Fade-In Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
     <div class="form-container">
+        <h2>Insurance Form</h2>
         <form action="/successPage" method="post">
+            <div class="form-group">
+                <label>Date of Insurance:</label>
+                <input type="date" name="date_of_insurance" required>
+            </div>
+            <div class="form-group">
+                <label>Customer Name:</label>
+                <input type="text" name="customer_name" required>
+            </div>
+            <div class="form-group">
+                <label>Customer Contact:</label>
+                <input type="tel" name="customer_contact_no" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" placeholder="Enter 10-digit Mobile Number" required>
+            </div>
 
-            <label>Date of Insurance:</label>
-            <input type="date" name="date_of_insurance" required>
+            <div class="form-group">
+                <label for="type">Type:</label>
+                <select id="type" name="type" onchange="updateMake()">
+                    <option value="" selected disabled>Select Type</option>
+                </select>
+            </div>
+        
+            <div class="form-group">
+                <label for="make">Make:</label>
+                <select id="make" name="make" onchange="updateModel()" disabled>
+                    <option value="" selected disabled>Select Make</option>
+                </select>
+            </div>
+        
+            <div class="form-group">
+                <label for="model">Model:</label>
+                <select id="model" name="model" onchange="updateFuelType()" disabled>
+                    <option value="" selected disabled>Select Model</option>
+                </select>
+            </div>
+        
+            <div class="form-group">
+                <label for="fuel">Fuel Type:</label>
+                <select id="fuel" name="fuel" onchange="updateVariant()" disabled>
+                    <option value="" selected disabled>Select Fuel Type</option>
+                </select>
+            </div>
+        
+            <div class="form-group">
+                <label for="variant">Variant:</label>
+                <select id="variant" name="varient" disabled>
+                    <option value="" selected disabled>Select Variant</option>
+                </select>
+            </div>
 
-            <label>Type of Insurance:</label>
-            <input type="text" name="type_of_insurance" required>
-            
-            <label>Customer Name:</label>
-            <input type="text" name="customer_name" required>
+            <div class="form-group">
+                <label>Year of Mfg:</label>
+                <input type="number" name="year_of_mfg" pattern="[0-9]{4}" min="1900" max="2099" inputmode="numeric" required>
+                <span id="year-error" style="color: red; display: none;">Enter a valid 4-digit year</span>
+            </div>
+            <div class="form-group">
+                <label>Registration No:</label>
+                <input type="text" name="registration_no" required>
+            </div>
+            <div class="form-group">
+                <label>Old ID Value (₹):</label>
+                <input type="number" name="old_id_value" required>
+            </div>
+            <div class="form-group">
+                <label>New ID Value (₹):</label>
+                <input type="number" name="new_id_value" required>
+            </div>
+            <div class="form-group">
+                <label>Old OD Value (₹):</label>
+                <input type="number" name="old_od_value" required>
+            </div>
+            <div class="form-group">
+                <label>New OD Value (₹):</label>
+                <input type="number" name="new_od_value" required>
+            </div>
+            <div class="form-group">
+                <label>Old Final Premium (₹):</label>
+                <input type="number" name="old_final_premium" required>
+            </div>
+            <div class="form-group">
+                <label>New Final Premium (₹):</label>
+                <input type="number" name="new_final_premium" required>
+            </div>
+            <div class="form-group">
+                <label>NCB:</label>
+                <input type="number" name="ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" required>
+            </div>
+            <div class="form-group">
+                <label>Discount (%):</label>
+                <input type="number" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" name="discount" required>
+            </div>
+            <div class="form-group">
+                <label>Insured Company:</label>
+                <select name="insured_company" required>
+                    <option value="" disabled selected>Select Insurance Company</option>
+                    <option value="Bajaj Allianz General Insurance Co. Ltd.">Bajaj Allianz General Insurance Co. Ltd.</option>
+                    <option value="Cholamandalam MS General Insurance Co. Ltd.">Cholamandalam MS General Insurance Co. Ltd.</option>
+                    <option value="Future Generali India Insurance Co. Ltd.">Future Generali India Insurance Co. Ltd.</option>
+                    <option value="Go Digit General Insurance Ltd.">Go Digit General Insurance Ltd.</option>
+                    <option value="HDFC ERGO General Insurance Co. Ltd.">HDFC ERGO General Insurance Co. Ltd.</option>
+                    <option value="ICICI LOMBARD General Insurance Co. Ltd.">ICICI LOMBARD General Insurance Co. Ltd.</option>
+                    <option value="IFFCO TOKIO General Insurance Co. Ltd.">IFFCO TOKIO General Insurance Co. Ltd.</option>
+                    <option value="Kotak Mahindra General Insurance Co. Ltd.">Kotak Mahindra General Insurance Co. Ltd.</option>
+                    <option value="Liberty General Insurance Ltd.">Liberty General Insurance Ltd.</option>
+                    <option value="Magma HDI General Insurance Co. Ltd.">Magma HDI General Insurance Co. Ltd.</option>
+                    <option value="National Insurance Co. Ltd.">National Insurance Co. Ltd.</option>
+                    <option value="Navi General Insurance Ltd.">Navi General Insurance Ltd.</option>
+                    <option value="Raheja QBE General Insurance Co. Ltd.">Raheja QBE General Insurance Co. Ltd.</option>
+                    <option value="Reliance General Insurance Co. Ltd.">Reliance General Insurance Co. Ltd.</option>
+                    <option value="Royal Sundaram General Insurance Co. Ltd.">Royal Sundaram General Insurance Co. Ltd.</option>
+                    <option value="SBI General Insurance Co. Ltd.">SBI General Insurance Co. Ltd.</option>
+                    <option value="Shriram General Insurance Co. Ltd.">Shriram General Insurance Co. Ltd.</option>
+                    <option value="Tata AIG General Insurance Co. Ltd.">Tata AIG General Insurance Co. Ltd.</option>
+                    <option value="The New India Assurance Co. Ltd.">The New India Assurance Co. Ltd.</option>
+                    <option value="The Oriental Insurance Co. Ltd.">The Oriental Insurance Co. Ltd.</option>
+                    <option value="United India Insurance Co. Ltd.">United India Insurance Co. Ltd.</option>
+                    <option value="Universal Sompo General Insurance Co. Ltd.">Universal Sompo General Insurance Co. Ltd.</option>
+                    <option value="Zuno General Insurance Limited (Formerly Edelweiss General Insurance Co. Ltd.)">Zuno General Insurance Limited (Formerly Edelweiss General Insurance Co. Ltd.)</option>
+                </select>
+            </div>
 
-            <label>Customer Contact:</label>
-            <input type="text" name="customer_contact_no" required>
-            
-            <label>Make:</label>
-            <input type="text" name="make" required>
+            <div class="form-group">
+                <label>Insurer Code:</label>
+                <input type="text" name="insurer_code" required>
+            </div>
 
-            <label>Model:</label>
-            <input type="text" name="model" required>
-            
-            <label>Year of Mfg:</label>
-            <input type="number" name="year_of_mfg" required>
-            
-            <label>Registration No:</label>
-            <input type="text" name="registration_no" required>
-            
-            <label>Old ID Value:</label>
-            <input type="number" name="old_id_value" required>
-            
-            <label>New ID Value:</label>
-            <input type="number" name="new_id_value" required>
-            
-            <label>Old OD Value:</label>
-            <input type="number" name="old_od_value" required>
-            
-            <label>New OD Value:</label>
-            <input type="number" name="new_od_value" required>
-            
-            <label>Old Final Premium:</label>
-            <input type="number" name="old_final_premium" required>
-            
-            <label>New Final Premium:</label>
-            <input type="number" name="new_final_premium" required>
-            
-            <label>NCB:</label>
-            <input type="text" name="ncb" required>
-            
-            <label>Discount:</label>
-            <input type="text" name="discount" required>
-            
-            <label>Terms COMP:</label>
-            <input type="text" name="terms_comp" required>
+            <div class="form-group">
+                <label>New Company:</label>
+                <input type="text" name="new_company" required>
+            </div>
 
-            <label>Terms TP:</label>
-            <input type="text" name="terms_tp" required>
-            
-            <label>Insured Company:</label>
-            <input type="text" name="insured_company" required>
-            
-            <label>Insurer Code:</label>
-            <input type="text" name="insurer_code" required>
-
-            <label>New Company:</label>
-            <input type="text" name="new_company" required>
-            
-            <label>Policy No.:</label>
-            <input type="text" name="policy_no" required>
-
-            <label>Add Ons:</label>
-            <input type="text" name="add_ons" required>
-
-            <label>CKYC No.:</label>
-            <input type="text" name="ckyc_no" required>
-            <label>Reference 1:</label>
-            <input type="text" name="reference_1" required>
-
-            <label>Reference 1 Contact:</label>
-            <input type="text" name="reference_contact_1" required>
-
-            <label>Reference 2:</label>
-            <input type="text" name="reference_1" required>
-
-            <label>Reference 2 Contact:</label>
-            <input type="text" name="reference_contact_2" required>
-
-            <label>Policy No.:</label>
-            <input type="text" name="policy_no" required>
-            
-            <label>Transfer to:</label>
-            <input type="text" name="transfer_to" required>
-
+            <div class="form-group">
+                <label>Policy No.:</label>
+                <input type="text" name="policy_no" required>
+            </div>
+            <div class="form-group">
+                <label>Term COMP:</label>
+                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_comp" required>
+            </div>
+            <div class="form-group">
+                <label>Term TP:</label>
+                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_tp" required>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn" onclick="toggleDropdown()">Select Add-Ons</button>
+                <div class="dropdown-content" id="dropdown-menu">
+                    <label><input type="checkbox" name="add_ons" value="24x7 Roadside Assistance"> 24x7 Roadside Assistance</label>
+                    <label><input type="checkbox" name="add_ons" value="Accidental Cover"> Accidental Cover</label>
+                    <label><input type="checkbox" name="add_ons" value="Consumables"> Consumables</label>
+                    <label><input type="checkbox" name="add_ons" value="Daily Allowance cover"> Daily Allowance cover</label>
+                    <label><input type="checkbox" name="add_ons" value="Deductible"> Deductible</label>
+                    <label><input type="checkbox" name="add_ons" value="Electrical Accessories"> Electrical Accessories</label>
+                    <label><input type="checkbox" name="add_ons" value="Engine Protection Cover"> Engine Protection Cover</label>
+                    <label><input type="checkbox" name="add_ons" value="Invoice Price Cover"> Invoice Price Cover</label>
+                    <label><input type="checkbox" name="add_ons" value="Key & Lock Replacement"> Key & Lock Replacement</label>
+                    <label><input type="checkbox" name="add_ons" value="Loss of Personal Belongings cover"> Loss of Personal Belongings cover</label>
+                    <label><input type="checkbox" name="add_ons" value="No Claim Bonus Protection"> No Claim Bonus Protection</label>
+                    <label><input type="checkbox" name="add_ons" value="Non-Electrical Accessories"> Non-Electrical Accessories</label>
+                    <label><input type="checkbox" name="add_ons" value="Passenger cover"> Passenger cover</label>
+                    <label><input type="checkbox" name="add_ons" value="Tyre Protector"> Tyre Protector</label>
+                    <label><input type="checkbox" name="add_ons" value="Zero Depreciation"> Zero Depreciation</label>
+                    <label><input type="checkbox" name="add_ons" value="Others"> Others</label>
+                </div>
+                <div class="selected-items" id="selected-items">No Add-Ons Selected</div>
+            </div>
+            <br>
+            <br>
+            <div class="form-group">
+                <label>CKYC No.:</label>
+                <input type="text" name="ckyc_no" required>
+            </div>
+            <div class="form-group">
+                <label>Reference 1:</label>
+                <input type="text" name="reference_1" required>
+            </div>
+            <div class="form-group">
+                <label>Reference 1 Contact:</label>
+                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric"  name="reference_contact_1" required>
+            </div>
+            <div class="form-group">
+                <label>Reference 2:</label>
+                <input type="text" name="reference_2" required>
+            </div>
+            <div class="form-group">
+                <label>Reference 2 Contact:</label>
+                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" name="reference_contact_2" required>
+            </div>
+            <div class="form-group">
+                <label>Transfer to:</label>
+                <input type="text" name="transfer_to" required>
+            </div>
             <button type="submit">Submit</button>
         </form>
     </div>
+    <script>
+        let yearInput = document.getElementById("year_of_mfg");
+    
+        yearInput.addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, ""); // Remove any non-numeric input
+    
+            if (this.value.length > 4) {
+                this.value = this.value.slice(0, 4); // Prevent entering more than 4 digits
+            }
+        });
+    </script>
+
+<script>
+    function toggleDropdown() {
+        let dropdown = document.getElementById("dropdown-menu");
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+
+    document.addEventListener("click", function(event) {
+        let dropdown = document.querySelector(".dropdown");
+        if (!dropdown.contains(event.target)) {
+            document.getElementById("dropdown-menu").style.display = "none";
+        }
+    });
+
+    let checkboxes = document.querySelectorAll(".dropdown-content input");
+    let selectedItemsDiv = document.getElementById("selected-items");
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", function() {
+            let selected = [];
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    selected.push(cb.value);
+                }
+            });
+
+            if (selected.length > 0) {
+                selectedItemsDiv.innerText = selected.join(", ");
+            } else {
+                selectedItemsDiv.innerText = "No Add-Ons Selected";
+            }
+        });
+    });
+</script>
+<script>
+    const dropdownData = JSON.parse(`{{dropdown_json | safe}}`);
+
+    function populateDropdown(dropdown, options) {
+        dropdown.innerHTML = '<option value="" selected disabled>Select</option>';
+        options.forEach(option => {
+            let opt = document.createElement("option");
+            opt.value = option;
+            opt.textContent = option;
+            dropdown.appendChild(opt);
+        });
+        dropdown.disabled = options.length === 0;
+    }
+
+    function updateMake() {
+        let type = document.getElementById("type").value;
+        let makeDropdown = document.getElementById("make");
+        let modelsDropdown = document.getElementById("model");
+        let fuelDropdown = document.getElementById("fuel");
+        let variantDropdown = document.getElementById("variant");
+
+        populateDropdown(makeDropdown, Object.keys(dropdownData[type] || {}));
+        modelsDropdown.innerHTML = fuelDropdown.innerHTML = variantDropdown.innerHTML = '<option value="" selected disabled>Select</option>';
+        modelsDropdown.disabled = fuelDropdown.disabled = variantDropdown.disabled = true;
+    }
+
+    function updateModel() {
+        let type = document.getElementById("type").value;
+        let make = document.getElementById("make").value;
+        let modelDropdown = document.getElementById("model");
+        let fuelDropdown = document.getElementById("fuel");
+        let variantDropdown = document.getElementById("variant");
+
+        populateDropdown(modelDropdown, Object.keys(dropdownData[type][make] || {}));
+        fuelDropdown.innerHTML = variantDropdown.innerHTML = '<option value="" selected disabled>Select</option>';
+        fuelDropdown.disabled = variantDropdown.disabled = true;
+    }
+
+    function updateFuelType() {
+        let type = document.getElementById("type").value;
+        let make = document.getElementById("make").value;
+        let model = document.getElementById("model").value;
+        let fuelDropdown = document.getElementById("fuel");
+        let variantDropdown = document.getElementById("variant");
+
+        populateDropdown(fuelDropdown, Object.keys(dropdownData[type][make][model] || {}));
+        variantDropdown.innerHTML = '<option value="" selected disabled>Select</option>';
+        variantDropdown.disabled = true;
+    }
+
+    function updateVariant() {
+        let type = document.getElementById("type").value;
+        let make = document.getElementById("make").value;
+        let model = document.getElementById("model").value;
+        let fuel = document.getElementById("fuel").value;
+        let variantDropdown = document.getElementById("variant");
+
+        populateDropdown(variantDropdown, dropdownData[type][make][model][fuel] || []);
+    }
+
+    // Populate the "Type" dropdown on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        populateDropdown(document.getElementById("type"), Object.keys(dropdownData));
+    });
+</script>
+    
 </body>
 </html>

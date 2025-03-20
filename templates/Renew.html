@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Page</title>
+    <title>Renew Page</title>
     <style>
         body {
             display: flex;
@@ -72,16 +72,16 @@
         }
 
         .edit-btn {
-        padding: 12px 24px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #007bff, #00c6ff);
-        color: white;
-        transition: all 0.3s ease-in-out;
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #007bff, #00c6ff);
+            color: white;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
     }
 
     /* Hover Effect - Glow */
@@ -158,7 +158,7 @@
             opacity: 1;
             visibility: visible;
         }
-        
+
         .home-btn {
             padding: 12px 24px;
             border: none;
@@ -177,7 +177,6 @@
             box-shadow: 0 4px 20px rgba(0, 212, 255, 0.8);
             transform: translateY(-2px);
         }
-
         .wrap-text {
             word-wrap: break-word;  /* Ensures text wraps inside the cell */
             white-space: pre-wrap;  /* Preserves spaces and wraps lines */
@@ -200,7 +199,7 @@
                 font-size: 12px;
             }
 
-            .edit-btn, .save-btn,.renew-btn .delete-btn, .home-btn{
+            .edit-btn, .save-btn,.renew-btn .delete-btn{
                 padding: 10px;
                 font-size: 14px;
             }
@@ -212,15 +211,12 @@
 
         
     </style>
-
 </head>
 <body>
 
     <script>
         function enableEditing() {
             document.getElementById("edit-btn").style.display = "none";
-            document.getElementById("renew-btn").style.display = "none";
-            document.getElementById("delete-btn").style.display = "none";
             document.getElementById("save-btn").style.display = "inline-block";
             document.querySelectorAll("td[contenteditable]").forEach(cell => {
                 cell.style.backgroundColor = "#fff3cd"; // Highlight editable cells
@@ -241,7 +237,7 @@
                 }
             });
 
-            fetch("/updatePerson", {
+            fetch("/renewPerson", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(tableData)
@@ -258,39 +254,14 @@
             .catch(error => {
                 console.error("Error:", error);
             });
-        }
+}
 
-    </script>
-    <script>
-        function goToRenewPage() {
-                let hiddenRow = document.querySelector(".uniqueID"); // Get hidden row
-                let key = hiddenRow.cells[0].innerText;  // Get first column (Key)
-                let value = hiddenRow.cells[1].innerText; // Get second column (Value)
-    
-                // Send request to Flask to delete all data from database
-                fetch('/renewPage', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key: key, value: value })
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    return response.text();
-                })
-                .then(html => {
-                            document.open();
-                            document.write(html);
-                            document.close();
-                        })
-                .catch(error => console.error('Error:', error));
-        }
+
     </script>
     <div class="button-container">
         <a href="/" class="home-btn">Home</a>
-        <button id="renew-btn" class="renew-btn" onclick="goToRenewPage()">Renew</button>
         <button id="save-btn" class="save-btn" onclick="saveChanges()">Save Changes</button>
-        <button  id="edit-btn" class="edit-btn" onclick="enableEditing()">Edit</button>
-        <button  id="delete-btn" class="delete-btn" onclick="deleteTableData()">Delete</button>
+        <button  id="edit-btn" class="edit-btn" onclick="enableEditing()">Click to Renew</button>
     </div>
     {% if full_detail %}
         <div id = "ins-table" class="table-container">
@@ -316,11 +287,11 @@
                     </tr>
                     <tr>
                         <td>Date of Insurance</td>
-                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Date_of_insurance.strftime('%d/%m/%Y') if full_detail.Date_of_insurance else 'N/A' }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Date_of_insurance.strftime('%d/%m/%Y') if full_detail.Date_of_insurance else 'N/A'  }}</td>
                     </tr>
                     <tr>
                         <td>Insurance Type</td>
-                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Type_of_insurance }}</td>
+                        <td class="wrap-text" contenteditable="true" onclick="enableEditing()">{{ full_detail.Type_of_insurance }}</td>
                     </tr>
                     <tr>
                         <td>Make</td>
@@ -380,7 +351,7 @@
                     </tr>
                     <tr>
                         <td>Insured Company</td>
-                        <td class="wrap-text" contenteditable="true" onclick="enableEditing()">{{ full_detail.Insured_Company }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Insured_Company }}</td>
                     </tr>
                     <tr>
                         <td>Insurer Code</td>
@@ -426,32 +397,6 @@
             </table>
         </div>
     {% endif %}
-    <script>
-        function deleteTableData() {
-            if (confirm("Are you sure you want to delete the entire table? This action cannot be undone!")) {
-                let hiddenRow = document.querySelector(".uniqueID"); // Get hidden row
-                let key = hiddenRow.cells[0].innerText;  // Get first column (Key)
-                let value = hiddenRow.cells[1].innerText; // Get second column (Value)
-    
-                // Send request to Flask to delete all data from database
-                fetch('/deleteRecord', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key: key, value: value })
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    return response.text();
-                })
-                .then(html => {
-                            document.open();
-                            document.write(html);
-                            document.close();
-                        })
-                .catch(error => console.error('Error:', error));
-            }
-        }
-    </script>
     
 </body>
 </html>
