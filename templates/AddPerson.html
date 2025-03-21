@@ -200,15 +200,15 @@
         <form action="/successPage" method="post">
             <div class="form-group">
                 <label>Date of Insurance:</label>
-                <input type="date" name="date_of_insurance" required>
+                <input type="date" name="date_of_insurance" value="{{ person_to_renew['Date_of_insurance'] if person_to_renew}}"  required>
             </div>
             <div class="form-group">
                 <label>Customer Name:</label>
-                <input type="text" name="customer_name" required>
+                <input type="text" name="customer_name" value="{{ person_to_renew['Customer_name'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Customer Contact:</label>
-                <input type="tel" name="customer_contact_no" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" placeholder="Enter 10-digit Mobile Number" required>
+                <input type="tel" name="customer_contact_no" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" placeholder="Enter 10-digit Mobile Number" value="{{ person_to_renew['Customer_Contact_No'] if person_to_renew}}"required>
             </div>
 
             <div class="form-group">
@@ -248,44 +248,44 @@
 
             <div class="form-group">
                 <label>Year of Mfg:</label>
-                <input type="number" name="year_of_mfg" pattern="[0-9]{4}" min="1900" max="2099" inputmode="numeric" required>
+                <input type="number" name="year_of_mfg" pattern="[0-9]{4}" min="1900" max="2099" inputmode="numeric" value="{{ person_to_renew['Year_of_mfg'] if person_to_renew}}" required>
                 <span id="year-error" style="color: red; display: none;">Enter a valid 4-digit year</span>
             </div>
             <div class="form-group">
                 <label>Registration No:</label>
-                <input type="text" name="registration_no" required>
+                <input type="text" name="registration_no" value="{{ person_to_renew['Regd_No'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Old ID Value (₹):</label>
-                <input type="number" name="old_id_value" required>
+                <input type="number" name="old_id_value" value="{{ person_to_renew['Old_ID_value'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>New ID Value (₹):</label>
-                <input type="number" name="new_id_value" required>
+                <input type="number" name="new_id_value" value="{{ person_to_renew['New_ID_value'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Old OD Value (₹):</label>
-                <input type="number" name="old_od_value" required>
+                <input type="number" name="old_od_value" value="{{ person_to_renew['Old_OD_value'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>New OD Value (₹):</label>
-                <input type="number" name="new_od_value" required>
+                <input type="number" name="new_od_value" value="{{ person_to_renew['New_OD_value'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Old Final Premium (₹):</label>
-                <input type="number" name="old_final_premium" required>
+                <input type="number" name="old_final_premium" value="{{ person_to_renew['Old_final_premium'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>New Final Premium (₹):</label>
-                <input type="number" name="new_final_premium" required>
+                <input type="number" name="new_final_premium" value="{{ person_to_renew['New_final_premium'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>NCB:</label>
-                <input type="number" name="ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" required>
+                <input type="number" name="ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" value="{{ person_to_renew['Ncb'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Discount (%):</label>
-                <input type="number" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" name="discount" required>
+                <input type="number" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" name="discount" value="{{ person_to_renew['Discount'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Insured Company:</label>
@@ -319,25 +319,25 @@
 
             <div class="form-group">
                 <label>Insurer Code:</label>
-                <input type="text" name="insurer_code" required>
+                <input type="text" name="insurer_code" value="{{ person_to_renew['Insurer_Code'] if person_to_renew}}" required>
             </div>
 
             <div class="form-group">
                 <label>New Company:</label>
-                <input type="text" name="new_company" required>
+                <input type="text" name="new_company" value="{{ person_to_renew['New_Company'] if person_to_renew}}" required>
             </div>
 
             <div class="form-group">
                 <label>Policy No.:</label>
-                <input type="text" name="policy_no" required>
+                <input type="text" name="policy_no" value="{{ person_to_renew['Policy_No'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Term COMP:</label>
-                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_comp" required>
+                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_comp" value="{{ person_to_renew['Terms_Comp'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Term TP:</label>
-                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_tp" required>
+                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_tp" value="{{ person_to_renew['Terms_TP'] if person_to_renew}}" required>
             </div>
             <div class="dropdown">
                 <button class="dropdown-btn" onclick="toggleDropdown()">Select Add-Ons</button>
@@ -365,27 +365,27 @@
             <br>
             <div class="form-group">
                 <label>CKYC No.:</label>
-                <input type="text" name="ckyc_no" required>
+                <input type="text" name="ckyc_no" value="{{ person_to_renew['Ckyc_No'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Reference 1:</label>
-                <input type="text" name="reference_1" required>
+                <input type="text" name="reference_1" value="{{ person_to_renew['Reference_1'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Reference 1 Contact:</label>
-                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric"  name="reference_contact_1" required>
+                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric"  name="reference_contact_1" value="{{ person_to_renew['Reference_Contact_1'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Reference 2:</label>
-                <input type="text" name="reference_2" required>
+                <input type="text" name="reference_2" value="{{ person_to_renew['Reference_2'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Reference 2 Contact:</label>
-                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" name="reference_contact_2" required>
+                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" name="reference_contact_2" value="{{ person_to_renew['Reference_Contact_2'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Transfer to:</label>
-                <input type="text" name="transfer_to" required>
+                <input type="text" name="transfer_to"value="{{ person_to_renew['Transfer_to'] if person_to_renew}}"required>
             </div>
             <button type="submit">Submit</button>
         </form>

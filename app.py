@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from typing import Final
@@ -64,6 +64,42 @@ class PersonDetails(db.Model):
     Reference_2 = db.Column(db.String(120))
     Reference_Contact_2 = db.Column(db.String(120))
     Transfer_to = db.Column(db.String(120))
+
+    def to_dict(self):
+        """Convert SQLAlchemy object to a dictionary."""
+        return {
+            "id": self.id,
+            "Date_of_insurance": self.Date_of_insurance.isoformat() if self.Date_of_insurance else None,  # Convert datetime to string
+            "Type_of_insurance": self.Type_of_insurance,
+            "Customer_name": self.Customer_name,
+            "Customer_Contact_No": self.Customer_Contact_No,
+            "Make": self.Make,
+            "Model": self.Model,
+            "Year_of_mfg": self.Year_of_mfg,
+            "Regd_No": self.Regd_No,
+            "Regd_No_Database": self.Regd_No_Database,
+            "Old_ID_value": self.Old_ID_value,
+            "New_ID_value": self.New_ID_value,
+            "Old_OD_value": self.Old_OD_value,
+            "New_OD_value": self.New_OD_value,
+            "Old_final_premium": self.Old_final_premium,
+            "New_final_premium": self.New_final_premium,
+            "Ncb": self.Ncb,
+            "Discount": self.Discount,
+            "Terms_Comp": self.Terms_Comp,
+            "Terms_TP": self.Terms_TP,
+            "Insured_Company": self.Insured_Company,
+            "Insurer_Code": self.Insurer_Code,
+            "New_Company": self.New_Company,
+            "Policy_No": self.Policy_No,
+            "Add_Ons": self.Add_Ons,
+            "Ckyc_No": self.Ckyc_No,
+            "Reference_1": self.Reference_1,
+            "Reference_Contact_1": self.Reference_Contact_1,
+            "Reference_2": self.Reference_2,
+            "Reference_Contact_2": self.Reference_Contact_2,
+            "Transfer_to": self.Transfer_to
+        }
 
 @app.route("/")
 def start():
@@ -226,63 +262,19 @@ def renewPage():
 
     record_to_renew = db.session.query(PersonDetails).filter(
                             PersonDetails.id == value).first()
-    return render_template("Renew.html", full_detail = record_to_renew)
 
-@app.route("/renewPerson",  methods=['POST'])
-def renewPerson():
-
-        data = request.json  # Receive edited data as a dictionary
-        print("Received Data:", data)  # Debugging
-
-        new_entry = PersonDetails(
-            Date_of_insurance=datetime.strptime(data["Date of Insurance"], "%d/%m/%Y") if data.get("Date of Insurance") else None,
-            Type_of_insurance=data.get("Insurance Type", ""),
-            Customer_name=data.get("Person Name", ""),
-            Customer_Contact_No=data.get("Contact No.", ""),
-            Make=data.get("Make", ""),
-            Model=data.get("Model", ""),
-            Year_of_mfg=data.get("Year of Manufacture", ""),
-            Regd_No=data.get("Registration No", ""),
-            Old_ID_value=data.get("Old ID value (₹)", ""),
-            New_ID_value=data.get("New ID value (₹)", ""),
-            Old_OD_value=data.get("Old OD value (₹)", ""),
-            New_OD_value=data.get("New OD value (₹)", ""),
-            Old_final_premium=data.get("Old Final Premium (₹)", ""),
-            New_final_premium=data.get("New Final Premium (₹)", ""),
-            Ncb=data.get("NCB (%)", ""),
-            Discount=data.get("Discount (%)", ""),
-            Terms_Comp=data.get("Term COMP", ""),
-            Terms_TP=data.get("Term TP", ""),
-            Insured_Company=data.get("Insured Company", ""),
-            Insurer_Code=data.get("Insurer Code", ""),
-            New_Company=data.get("New Company", ""),
-            Policy_No=data.get("Policy No", ""),
-            Add_Ons=data.get("Add Ons", ""),
-            Ckyc_No=data.get("CKYC No.", ""),
-            Reference_1=data.get("Reference 1", ""),
-            Reference_Contact_1=data.get("Reference 1 Contact", ""),
-            Reference_2=data.get("Reference 2", ""),
-            Reference_Contact_2=data.get("Reference 2 Contact", ""),
-            Transfer_to=data.get("Transfer to", ""),)
-
-        db.session.add(new_entry)
-        db.session.commit()
-
-        person = db.session.query(PersonDetails).filter(
-                            PersonDetails.id == new_entry.id
-                        ).first()
+    session['record_to_renew'] = record_to_renew.to_dict()
     
-        return render_template("FullPersonDetails.html", full_detail = person)
-
-
+    return redirect(url_for("addPerson"))
+     
 @app.route("/addPerson")
 def addPerson():
     file_path = "1_4 Wheeler Make, Model, Fuel Type, Variant.xlsx"
     df = pd.read_excel(file_path, sheet_name="Sheet1")
-
+    
     df.ffill(inplace=True)  # Fill NaN values to maintain hierarchy
     df.loc[df["Type"].isin(["General Insurance", "Life Insurance", "Mediclaim"]), ["Make", "Model", "Fuel Type", "Variant"]] = "NA"
-
+    
     dropdown_data = {}
     for _, row in df.iterrows():
         type_ = row["Type"]
@@ -301,6 +293,15 @@ def addPerson():
             dropdown_data[type_][make][model][fuel_type] = []
 
         dropdown_data[type_][make][model][fuel_type].append(variant)
+
+    if 'record_to_renew' in session:
+        person_to_renew = session['record_to_renew']
+        session.clear()
+        if person_to_renew:
+            return render_template("AddPerson.html",
+                                    dropdown_json=json.dumps(dropdown_data),
+                                    person_to_renew = person_to_renew)
+
 
     return render_template("AddPerson.html",dropdown_json=json.dumps(dropdown_data))
 

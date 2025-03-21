@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Success Page</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
     <style>
         body {
             display: flex;
@@ -12,15 +16,76 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             text-align: center;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 20px;
         }
-        .hidden-link {
-            color: blue;
-            cursor: pointer;
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #ff7eb3;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 12px 25px;
+            margin-top: 20px;
+            border-radius: 50px;
             text-decoration: none;
+            box-shadow: 0 4px 10px rgba(255, 126, 179, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .btn:hover {
+            background: #ff589c;
+            box-shadow: 0 6px 15px rgba(255, 126, 179, 0.5);
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .btn {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            p {
+                font-size: 0.9rem;
+            }
+            .btn {
+                font-size: 0.9rem;
+                padding: 10px 18px;
+                width: 80%;
+            }
         }
     </style>
+
     <script>
         function goToMainPage() {
             window.location.href = '/';
@@ -28,7 +93,8 @@
     </script>
 </head>
 <body>
-    <h1>You have successfully entered a value</h1>
-    <h2><span class="hidden-link" onclick="goToMainPage()">Click here to go to main page</span></h2>
+    <h1>Success!</h1>
+    <p>You have successfully entered a value.</p>
+    <button class="btn" onclick="goToMainPage()">Go to Main Page</button>
 </body>
 </html>
