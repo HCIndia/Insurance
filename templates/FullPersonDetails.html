@@ -428,7 +428,7 @@
     {% endif %}
     <script>
         function deleteTableData() {
-            if (confirm("Are you sure you want to delete the entire table? This action cannot be undone!")) {
+            if (window.confirm("Are you sure you want to delete the entire table? This action cannot be undone!")) {
                 let hiddenRow = document.querySelector(".uniqueID"); // Get hidden row
                 let key = hiddenRow.cells[0].innerText;  // Get first column (Key)
                 let value = hiddenRow.cells[1].innerText; // Get second column (Value)
