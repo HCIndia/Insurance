@@ -22,6 +22,10 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///personDetails.sqlite3'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['SQLALCHEMY_POOL_SIZE'] = 10
+app.config['SQLALCHEMY_MAX_OVERFLOW'] = 5
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 1800
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
 app.secret_key = 'MyInsAPP'
 
 logging.basicConfig(level=logging.DEBUG)
@@ -264,7 +268,7 @@ def renewPage():
                             PersonDetails.id == value).first()
 
     session['record_to_renew'] = record_to_renew.to_dict()
-    
+
     return redirect(url_for("addPerson"))
      
 @app.route("/addPerson")
