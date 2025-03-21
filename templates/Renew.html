@@ -363,7 +363,7 @@
                     </tr>
                     <tr>
                         <td>Policy No</td>
-                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Policy_No }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ "%.0f" | format(full_detail.Policy_No | float) if full_detail.Policy_No else 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td>Add Ons</td>
