@@ -318,11 +318,14 @@ input:checked + .radio-custom::after {
                 <span class="radio-custom"></span>
                 
                 {% if pobj.Date_of_insurance.__class__.__name__ == 'datetime' %}
-                                {{ pobj.Date_of_insurance.strftime('%d/%m/%Y') }}
-                            {% else %}
-                                {{ pobj.Date_of_insurance }}
-                            {% endif %},
-                            {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
+                    {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
+                {% elif pobj.Date_of_insurance.__class__.__name__ == 'date' %}
+                    {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
+                {% else %}
+                    {% set parts = pobj.Date_of_insurance.split('-') %}
+                    {{ parts[2] ~ '-' ~ parts[1] ~ '-' ~ parts[0] }}
+                {% endif %},
+                {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
             </label>
         {% endfor %}
     </div>
