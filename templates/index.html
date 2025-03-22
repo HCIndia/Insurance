@@ -246,7 +246,12 @@
                         <label class="radio-label">
                             <input type="radio" id="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" name="regNo" value="{{ pobj.id }}" onclick="redirectToPage(this.value)">
                             <span class="radio-custom"></span>
-                            {{ pobj.Date_of_insurance.strftime('%d/%m/%Y') if pobj.Date_of_insurance else 'N/A' }}, {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
+                            {% if pobj.Date_of_insurance.__class__.__name__ == 'datetime' %}
+                                {{ pobj.Date_of_insurance.strftime('%d/%m/%Y') }}
+                            {% else %}
+                                {{ pobj.Date_of_insurance }}
+                            {% endif %},
+                            {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
                         </label>
                     {% endfor %}
                 </div>

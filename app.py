@@ -118,7 +118,6 @@ def home():
         #person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()   #exact search command 
             person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()
                                                  # this is partial search
-            print(f"This is from reg no search {person_object}")
         if not person_object and search_Person_Detail_by_reg :
             person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).order_by(PersonDetails.Date_of_insurance.desc()).all() 
             print(f"This is from person search {person_object}")             
