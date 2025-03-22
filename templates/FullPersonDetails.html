@@ -336,7 +336,7 @@
                     </tr>
                     <tr>
                         <td>Date of Insurance</td>
-                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Date_of_insurance.strftime('%d/%m/%Y') if full_detail.Date_of_insurance else 'N/A' }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Date_of_insurance.strftime('%d/%m/%Y') if full_detail.Date_of_insurance.__class__.__name__ == 'datetime' else full_detail.Date_of_insurance }}</td>
                     </tr>
                     <tr>
                         <td>Insurance Type</td>
