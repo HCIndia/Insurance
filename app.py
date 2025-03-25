@@ -8,6 +8,7 @@ from flask_cors import CORS
 from datetime import datetime
 import json
 import pandas as pd
+from sqlalchemy import or_
 
 
 
@@ -116,10 +117,25 @@ def home():
         if (search_Person_Detail_by_reg):
             app.logger.info(f"Got the data from form action :{search_Person_Detail_by_reg}")
         #person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()   #exact search command 
-            person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()
-                                                 # this is partial search
+            #person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()
+            person_object = PersonDetails.query.filter(
+                or_(
+                    PersonDetails.Regd_No_Database.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Customer_Contact_No.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Reference_Contact_1.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Reference_Contact_2.ilike(f"%{search_Person_Detail_by_reg}%"),
+                )
+            ).all()
+                                                               # this is partial search
         if not person_object and search_Person_Detail_by_reg :
-            person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).order_by(PersonDetails.Date_of_insurance.desc()).all() 
+            #person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).order_by(PersonDetails.Date_of_insurance.desc()).all() 
+            person_object = PersonDetails.query.filter(
+                or_(
+                    PersonDetails.Customer_name.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Reference_1.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Reference_1.ilike(f"%{search_Person_Detail_by_reg}%")
+                )
+            ).order_by(PersonDetails.Date_of_insurance.desc()).all()
             print(f"This is from person search {person_object}")             
 
         if not person_object or not search_Person_Detail_by_reg :
@@ -234,7 +250,7 @@ def updatePerson():
         person.Insurer_Code = data.get("Insurer Code")
         person.New_Company = data.get("New Company")
         person.Add_Ons = data.get("Add Ons")
-        person.Policy_No = data.get("Policy No")
+        person.Policy_No = data.get("Policy No","").strip()
         person.Ckyc_No = data.get("CKYC No.")
         person.Reference_1 = data.get("Reference 1")
         person.Reference_Contact_1 = data.get("Reference 1 Contact")
@@ -251,7 +267,7 @@ def updatePerson():
     person_updated = db.session.query(PersonDetails).filter(
                             PersonDetails.id == data.get("unique_customer_id")
                         ).first()
-    print(person_updated)
+    print(person_updated.Policy_No)
     return render_template("FullPersonDetails.html", full_detail = person_updated)
 
 @app.route("/renewPage", methods= ["POST"])
@@ -372,7 +388,7 @@ def SuccessPage():
         insured_company = request.form.get("insured_company")
         insurer_code = request.form.get("insurer_code")
         new_company = request.form.get("new_company")
-        policy_no = request.form.get("policy_no")
+        policy_no = request.form.get("policy_no","").strip()
         add_ons = request.form.getlist("add_ons")
         ckyc_no = request.form.get("ckyc_no")
         reference_1 = request.form.get("reference_1")
