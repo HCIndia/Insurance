@@ -186,21 +186,27 @@ def search():
             results = [tfl for tfl in results if tfl.Insured_Company == insuranceCompany]
         else:
             session["myquery"] = [res.to_dict() for res in results]
+            session['month'] = month
+            session['year'] = year
         
 
     if not month and  not year and insuranceCompany :  # Apply filter only if insurance company is selected
         if 'myquery' in session:
             myquery = session.get('myquery')
+
+            month = session['month']
+            year= session['year'] 
+
             filter_result = []
             for mq in myquery:
                 if mq.get("Insured_Company") == insuranceCompany:
                     filter_result.append(mq)
-            return render_template("SearchByMonth.html", filter_result = filter_result )
+            return render_template("SearchByMonth.html", filter_result = filter_result,month=month,year=year )
         else:
             results = PersonDetails.query.filter(PersonDetails.Insured_Company == insuranceCompany).order_by(PersonDetails.Date_of_insurance).all()
 
     #print(results)
-    return render_template("SearchByMonth.html", result=results)
+    return render_template("SearchByMonth.html", result=results, month=month,year=year )
     
 
 @app.route("/searchByType", methods=['GET', 'POST'])

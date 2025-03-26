@@ -328,7 +328,7 @@ input:checked + .radio-custom::after {
     </script>
 
     {% if result %}
-    <p>Select an Option:</p>
+    <p> Month :[{{month}}]   Year : [{{year}}]</p>
     <div class="radio-group">
         {% for pobj in result %}
             <label class="radio-label">
@@ -348,7 +348,7 @@ input:checked + .radio-custom::after {
         {% endfor %}
     </div>
     {% elif filter_result %}
-        <p>Select an Option:</p>
+        <p>Month : [{{month}}]   Year : [{{year}}]</p>
         <div class="radio-group">
             {% for pobj in filter_result %}
                 <label class="radio-label">
