@@ -117,8 +117,9 @@ select:focus {
     }
 
     .container {
-        max-width: 100%;
-    }
+                max-width: 100%;
+                padding: 15px;
+            }
 
     h2 {
         font-size: 16px;
@@ -228,8 +229,39 @@ input:checked + .radio-custom::after {
                 <option value="">--Select a Year--</option>
             </select>
         </div>
+
+        <div class="container">
+            <h2>Select Insurance Company (Optional)</h2>
+            <select id="insuranceSelect">
+                <option value="">--Select an Insurance Company--</option>
+                <option value="Bajaj Allianz General Insurance Co. Ltd.">Bajaj Allianz General Insurance Co. Ltd.</option>
+                    <option value="Cholamandalam MS General Insurance Co. Ltd.">Cholamandalam MS General Insurance Co. Ltd.</option>
+                    <option value="Future Generali India Insurance Co. Ltd.">Future Generali India Insurance Co. Ltd.</option>
+                    <option value="Go Digit General Insurance Ltd.">Go Digit General Insurance Ltd.</option>
+                    <option value="HDFC ERGO General Insurance Co. Ltd.">HDFC ERGO General Insurance Co. Ltd.</option>
+                    <option value="ICICI LOMBARD General Insurance Co. Ltd.">ICICI LOMBARD General Insurance Co. Ltd.</option>
+                    <option value="IFFCO TOKIO General Insurance Co. Ltd.">IFFCO TOKIO General Insurance Co. Ltd.</option>
+                    <option value="Kotak Mahindra General Insurance Co. Ltd.">Kotak Mahindra General Insurance Co. Ltd.</option>
+                    <option value="Liberty General Insurance Ltd.">Liberty General Insurance Ltd.</option>
+                    <option value="Magma HDI General Insurance Co. Ltd.">Magma HDI General Insurance Co. Ltd.</option>
+                    <option value="National Insurance Co. Ltd.">National Insurance Co. Ltd.</option>
+                    <option value="Navi General Insurance Ltd.">Navi General Insurance Ltd.</option>
+                    <option value="Raheja QBE General Insurance Co. Ltd.">Raheja QBE General Insurance Co. Ltd.</option>
+                    <option value="Reliance General Insurance Co. Ltd.">Reliance General Insurance Co. Ltd.</option>
+                    <option value="Royal Sundaram General Insurance Co. Ltd.">Royal Sundaram General Insurance Co. Ltd.</option>
+                    <option value="SBI General Insurance Co. Ltd.">SBI General Insurance Co. Ltd.</option>
+                    <option value="Shriram General Insurance Co. Ltd.">Shriram General Insurance Co. Ltd.</option>
+                    <option value="Tata AIG General Insurance Co. Ltd.">Tata AIG General Insurance Co. Ltd.</option>
+                    <option value="The New India Assurance Co. Ltd.">The New India Assurance Co. Ltd.</option>
+                    <option value="The Oriental Insurance Co. Ltd.">The Oriental Insurance Co. Ltd.</option>
+                    <option value="United India Insurance Co. Ltd.">United India Insurance Co. Ltd.</option>
+                    <option value="Universal Sompo General Insurance Co. Ltd.">Universal Sompo General Insurance Co. Ltd.</option>
+                    <option value="Zuno General Insurance Limited (Formerly Edelweiss General Insurance Co. Ltd.)">Zuno General Insurance Limited (Formerly Edelweiss General Insurance Co. Ltd.)</option>
+                
+            </select>
+        </div>
     
-        <button id="search-btn" class="search-btn" disabled onclick="sendData()">Search</button>
+        <button id="search-btn" class="search-btn" onclick="sendData()">Search</button>
     </div>
 
     <script>
@@ -262,40 +294,24 @@ input:checked + .radio-custom::after {
     </script>
 
     <script>
-        // Populate Year Dropdown (2000 - Current Year)
-        // const yearSelect = document.getElementById("yearSelect");
-        // const currentYear = new Date().getFullYear();
-    
-        // for (let year = 2020; year <= currentYear; year++) {
-        //     let option = document.createElement("option");
-        //     option.value = year;
-        //     option.textContent = year;
-        //     yearSelect.appendChild(option);
-        // }
-    
-        function checkSelection() {
-            let month = document.getElementById("monthSelect").value;
-            let year = document.getElementById("yearSelect").value;
-            let searchBtn = document.getElementById("search-btn");
-    
-            // Enable button only if both fields are selected
-            searchBtn.disabled = !(month && year);
-        }
     
         function sendData() {
             let month = document.getElementById("monthSelect").value;
             let year = document.getElementById("yearSelect").value;
-    
-            if (!month || !year) {
-                alert("Please select both Month and Year before searching!");
-                return;
+            let insuranceCompany = document.getElementById("insuranceSelect").value;
+            
+            // if (!month || !year) {
+            //     alert("Please select both Month and Year before searching!");
+            //     return;
+            // }
+
+            let url = `/searchByMonthAndYear?month=${month}&year=${year}`;
+            if (insuranceCompany) {
+                url += `&insuranceCompany=${encodeURIComponent(insuranceCompany)}`;
             }
-    
             // Simulate sending data (modify as needed)
-            console.log("Sending Data:", { month, year });
-    
             // Example: Sending Data via Fetch API (Modify as per your backend)
-            fetch(`/searchByMonthAndYear?month=${month}&year=${year}`)
+            fetch(url)
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 return response.text();
@@ -304,6 +320,8 @@ input:checked + .radio-custom::after {
                         document.open();
                         document.write(html);
                         document.close();
+
+                        sessionStorage.setItem("hasSearched", "true");
                     })
                 .catch(error => console.error("Error fetching data:", error));
         }
@@ -329,7 +347,26 @@ input:checked + .radio-custom::after {
             </label>
         {% endfor %}
     </div>
-{% endif %}
+    {% elif filter_result %}
+        <p>Select an Option:</p>
+        <div class="radio-group">
+            {% for pobj in filter_result %}
+                <label class="radio-label">
+                    <input type="radio" id = "{{ pobj.id }}" name="regNo" value="{{ pobj.id }}" onclick="redirectToPage(this.value)">
+                    <span class="radio-custom"></span>
+                    
+                    {% if pobj.get('Date_of_insurance').__class__.__name__ == 'datetime' %}
+                        {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
+                    {% elif pobj.get('Date_of_insurance').__class__.__name__ == 'date' %}
+                        {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
+                    {% else %}
+                        {% set parts = pobj.Date_of_insurance.split('-') %}
+                        {{ parts[2] ~ '-' ~ parts[1] ~ '-' ~ parts[0] }}
+                    {% endif %},
+                    {{ pobj.get('Customer_name') }} , {{ pobj.get('Regd_No') }}
+                </label>
+            {% endfor %}
+    {% endif %}
         
 
 

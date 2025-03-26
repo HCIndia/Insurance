@@ -165,22 +165,41 @@ def searchByMonth():
 def search():
     month = request.args.get("month")
     year = request.args.get("year")
-
-    if not month or not year:
-        return jsonify({"error": "Both month and year are required"}), 400
-
-    try:
-        month_number = datetime.strptime(month, "%B").month
-        year = int(year)
-    except ValueError:
-        return jsonify({"error": "Invalid month or year"}), 400
+    insuranceCompany = request.args.get("insuranceCompany")
+    results = None
+    # if not month or not year:
+    #     return jsonify({"error": "Both month and year are required"}), 400
+    if month and year :
+        try:
+            month_number = datetime.strptime(month, "%B").month
+            year = int(year)
+        except ValueError:
+            return jsonify({"error": "Invalid month or year"}), 400
 
     # Query database to filter by month and year
-    results = PersonDetails.query.filter(
-        db.extract('month', PersonDetails.Date_of_insurance) == month_number,
-        db.extract('year', PersonDetails.Date_of_insurance) == year
-    ).order_by(PersonDetails.Date_of_insurance).all()
-    print(results)
+        results = PersonDetails.query.filter(
+            db.extract('month', PersonDetails.Date_of_insurance) == month_number,
+            db.extract('year', PersonDetails.Date_of_insurance) == year
+        ).order_by(PersonDetails.Date_of_insurance).all()
+
+        if insuranceCompany:
+            results = [tfl for tfl in results if tfl.Insured_Company == insuranceCompany]
+        else:
+            session["myquery"] = [res.to_dict() for res in results]
+        
+
+    if not month and  not year and insuranceCompany :  # Apply filter only if insurance company is selected
+        if 'myquery' in session:
+            myquery = session.get('myquery')
+            filter_result = []
+            for mq in myquery:
+                if mq.get("Insured_Company") == insuranceCompany:
+                    filter_result.append(mq)
+            return render_template("SearchByMonth.html", filter_result = filter_result )
+        else:
+            results = PersonDetails.query.filter(PersonDetails.Insured_Company == insuranceCompany).order_by(PersonDetails.Date_of_insurance).all()
+
+    #print(results)
     return render_template("SearchByMonth.html", result=results)
     
 
