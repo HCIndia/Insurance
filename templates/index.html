@@ -176,6 +176,18 @@
         .search-button:hover {
             background-color: #0056b3;
         }
+        .home-btn {
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #000000, #959595);
+            color: white;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
 
         /* Responsive Design for Smaller Screens */
         @media (max-width: 480px) {
@@ -223,6 +235,7 @@
 <body>
 
     <div class="top-container">
+        <a href="/" class="home-btn">Home</a>
         <form class="search-container" action="/index" method="post">
             <input type="text" placeholder="Search..." name="searchPersonDet" class="search-input" required>
             <button type="submit" class="search-button">Search</button>
