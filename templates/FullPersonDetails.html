@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <title>Search Page</title>
     <style>
         body {
@@ -309,8 +310,8 @@
         <button id="renew-btn" class="renew-btn">Renew</button>
         <!-- <button id="renew-btn" class="renew-btn" onclick="goToRenewPage()">Renew</button> -->
         <button id="save-btn" class="save-btn" onclick="saveChanges()">Save Changes</button>
-        <button  id="edit-btn" class="edit-btn" onclick="enableEditing()">Edit</button>
-        <button  id="delete-btn" class="delete-btn" onclick="deleteTableData()">Delete</button>
+        <button id="edit-btn" class="edit-btn" onclick="enableEditing()">Edit</button>
+        <button id="delete-btn" class="delete-btn" onclick="deleteTableData()">Delete</button>
     </div>
     {% if full_detail %}
         <div id = "ins-table" class="table-container">
@@ -336,7 +337,16 @@
                     </tr>
                     <tr>
                         <td>Date of Insurance</td>
-                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Date_of_insurance.strftime('%d/%m/%Y') if full_detail.Date_of_insurance.__class__.__name__ == 'datetime' else full_detail.Date_of_insurance }}</td>
+                        <td contenteditable="true" onclick="enableEditing()">
+                            {% if full_detail.Date_of_insurance.__class__.__name__ == 'datetime' %}
+                                {{ full_detail.Date_of_insurance.strftime('%d-%m-%Y') }}
+                            {% elif full_detail.Date_of_insurance.__class__.__name__ == 'date' %}
+                                {{ full_detail.Date_of_insurance.strftime('%d-%m-%Y') }}
+                            {% else %}
+                                {% set parts = full_detail.Date_of_insurance.split('-') %}
+                                {{ parts[2] ~ '-' ~ parts[1] ~ '-' ~ parts[0] }}
+                            {% endif %}
+                        </td>
                     </tr>
                     <tr>
                         <td>Insurance Type</td>
@@ -385,6 +395,10 @@
                     <tr>
                         <td>NCB (%)</td>
                         <td contenteditable="true" onclick="enableEditing()">{{ full_detail.Ncb }}</td>
+                    </tr>
+                    <tr>
+                        <td>New NCB (%)</td>
+                        <td contenteditable="true" onclick="enableEditing()">{{ full_detail.New_NCB }}</td>
                     </tr>
                     <tr>
                         <td>Discount (%)</td>
@@ -511,6 +525,5 @@
             });
         });
     </script>
-    
 </body>
 </html>

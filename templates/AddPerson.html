@@ -280,8 +280,12 @@
                 <input type="number" name="new_final_premium" value="{{ person_to_renew['New_final_premium'] if person_to_renew}}" >
             </div>
             <div class="form-group">
-                <label>NCB:</label>
+                <label>NCB (%):</label>
                 <input type="number" name="ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" value="{{ person_to_renew['Ncb'] if person_to_renew}}" required>
+            </div>
+            <div class="form-group">
+                <label>New NCB (%):</label>
+                <input type="number" name="new_ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" value="{{ person_to_renew['New_NCB'] if person_to_renew}}">
             </div>
             <div class="form-group">
                 <label>Discount (%):</label>

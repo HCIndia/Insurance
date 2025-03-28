@@ -148,6 +148,8 @@ input:checked + .radio-custom::after {
     <script>
         function sendMonth() {
             var selectedMonth = document.getElementById("monthSelect").value;
+
+            sessionStorage.setItem("selectedMonth", selectedMonth);
             
             fetch("/searchByType", {
                 method: "POST",
@@ -165,6 +167,8 @@ input:checked + .radio-custom::after {
             .catch(error => console.error("Error:", error));
         }
     </script>
+    
+    
     <script>
         function redirectToPage(value) {
             window.location.href = "/fullPersonDetails?selected=" + encodeURIComponent(value);
@@ -203,6 +207,16 @@ input:checked + .radio-custom::after {
         {% endfor %}
     </div>
 {% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var savedMonth = sessionStorage.getItem("selectedMonth");
+        if (savedMonth) {
+            var dropdown = document.getElementById("monthSelect");
+            dropdown.value = savedMonth;
+        }
+    });
+</script>
 
 </body>
 </html>

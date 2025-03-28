@@ -55,6 +55,7 @@ class PersonDetails(db.Model):
     Old_final_premium = db.Column(db.String(120))
     New_final_premium = db.Column(db.String(120))
     Ncb = db.Column(db.String(120))
+    New_NCB = db.Column(db.String(120))
     Discount = db.Column(db.String(120))
     Terms_Comp = db.Column(db.String(120))
     Terms_TP = db.Column(db.String(120))
@@ -90,6 +91,7 @@ class PersonDetails(db.Model):
             "Old_final_premium": self.Old_final_premium,
             "New_final_premium": self.New_final_premium,
             "Ncb": self.Ncb,
+            "New_NCB": self.New_NCB,
             "Discount": self.Discount,
             "Terms_Comp": self.Terms_Comp,
             "Terms_TP": self.Terms_TP,
@@ -268,6 +270,7 @@ def updatePerson():
         person.Old_final_premium = data.get("Old Final Premium (₹)")
         person.New_final_premium = data.get("New Final Premium (₹)")
         person.Ncb = data.get("NCB (%)")
+        person.New_NCB = data.get("New NCB (%)")
         person.Discount = data.get("Discount (%)")
         person.Terms_Comp = data.get("Term COMP")
         person.Terms_TP = data.get("Term TP")
@@ -407,6 +410,7 @@ def SuccessPage():
         old_final_premium = request.form.get("old_final_premium")
         new_final_premium = request.form.get("new_final_premium")
         ncb = request.form.get("ncb")
+        new_ncb = request.form.get("new_ncb")
         discount = request.form.get("discount")
         terms_comp = request.form.get("terms_comp")
         terms_tp = request.form.get("terms_tp")
@@ -438,7 +442,7 @@ def SuccessPage():
                                     Customer_name = customer_name,Customer_Contact_No = customer_contact_no,Make=make, Model = model, Year_of_mfg = year_of_mfg,
                                     Regd_No= registration_no,Regd_No_Database= registration_no, Old_ID_value = old_id_value,New_ID_value= new_id_value,
                                     Old_OD_value=old_od_value, New_OD_value=new_od_value,
-                                    Old_final_premium=old_final_premium,New_final_premium=new_final_premium,Ncb=ncb,
+                                    Old_final_premium=old_final_premium,New_final_premium=new_final_premium,Ncb=ncb,New_NCB=new_ncb,
                                     Discount=discount,Terms_Comp=terms_comp, Terms_TP = terms_tp, Insured_Company=insured_company,Insurer_Code = insurer_code,
                                     New_Company=new_company,Policy_No=policy_no,Add_Ons = add_ons, Ckyc_No= ckyc_no, 
                                     Reference_1= reference_1, Reference_Contact_1 = reference_contact_1, Reference_2 = reference_2,
@@ -492,7 +496,7 @@ def loadData():
 if __name__ == "__main__":
     with app.app_context():
         
-        #db.drop_all()
+        db.drop_all()
         db.create_all()
         app.run(debug=True, host = "0.0.0.0")
 
