@@ -298,6 +298,51 @@ def updatePerson():
     print(person_updated.Policy_No)
     return render_template("FullPersonDetails.html", full_detail = person_updated)
 
+
+
+@app.route("/updatePersonInMonth",  methods=['POST'])
+def updatePersonInMonth():
+
+    data = request.json  # Receive edited data as a dictionary
+    print("Received Data:", data)  # Debugging
+
+    #First query the person
+    person = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == data.get("unique_customer_id")
+                        ).first()
+    print(person)
+
+    if person:
+        person.Customer_name = data.get("Person Name")
+        person.Old_ID_value = data.get("Old ID value (₹)")
+        person.New_ID_value = data.get("New ID value (₹)")
+        person.Old_OD_value = data.get("Old OD value (₹)")
+        person.New_OD_value = data.get("New OD value (₹)")
+        person.Old_final_premium = data.get("Old Final Premium (₹)")
+        person.New_final_premium = data.get("New Final Premium (₹)")
+        person.Ncb = data.get("NCB (%)")
+        person.New_NCB = data.get("New NCB (%)")
+        person.Discount = data.get("Discount (%)")
+        person.Insured_Company = data.get("Insured Company")
+        person.Insurer_Code = data.get("Insurer Code")
+        person.New_Company = data.get("New Company")
+
+        db.session.commit()
+
+    db.session.refresh(person)
+
+    #Ensure fresh data is fetched by expiring the session
+    db.session.expire(person)
+
+    person_updated = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == data.get("unique_customer_id")
+                        ).first()
+    print(f"Updated Person = {person_updated}")
+
+    return jsonify({"message": "success"}), 200  
+
+
+
 @app.route("/renewPage", methods= ["POST"])
 def renewPage():
     data = request.json
@@ -496,7 +541,7 @@ def loadData():
 if __name__ == "__main__":
     with app.app_context():
         
-        db.drop_all()
+        # db.drop_all()
         db.create_all()
         app.run(debug=True, host = "0.0.0.0")
 

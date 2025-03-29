@@ -106,6 +106,77 @@ select:focus {
     cursor: not-allowed;
     box-shadow: none;
 }
+table {
+            width: 90%;
+            max-width: 1200px;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            
+            padding: 8px; /* Reduced padding to save space */
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top; /* Align text to top for better readability */
+            white-space: normal; /* Allows text wrapping */
+            word-wrap: break-word; /* Ensures long words break properly */
+            max-width: 200px; /* Prevents columns from stretching too much */
+            
+        }
+
+        th {
+            background: #007BFF;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f1f1f1;
+        }
+
+        .save-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 14px;
+        }
+
+        .save-btn:hover {
+            background: #218838;
+        }
+
+/* Make the table container responsive */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Enables horizontal scrolling */
+    /* white-space: nowrap; Prevents table wrapping */
+    padding: 10px; /* Adds spacing around the table */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+}
+
+/* Adjust table styles */
+table {
+    width: 100%;
+    min-width: 900px; /* Ensures the table doesn't shrink too much */
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Ensure smooth scrolling */
+html, body {
+    overflow-x: hidden; /* Prevent horizontal scrolling on the entire page */
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -134,6 +205,15 @@ select:focus {
         font-size: 14px;
         padding: 10px 14px;
     }
+    body {
+        overflow-x: auto; /* Allow horizontal scrolling on mobile */
+    }
+
+    .table-container {
+        overflow-x: scroll; /* Enables horizontal scrolling */
+        scroll-behavior: smooth; /* Smooth scrolling */
+    }
+
 }
 
 .radio-group {
@@ -193,13 +273,104 @@ select:focus {
 input:checked + .radio-custom::after {
     opacity: 1;
 }
+input[type="text"] {
+    width: 100%;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px; /* Adjusted font size */
+}
+.custom-alert {
+    display: none; /* Initially hidden */
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 1000;
+    transition: opacity 0.3s ease-in-out;
+}
 
-    
+/* Animation */
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
     </style>
     <script>
         function redirectToPage(value) {
             window.location.href = "/fullPersonDetails?selected=" + encodeURIComponent(value);
         }
+    </script>
+    <script>
+        function makeEditable(element) {
+            let value = element.innerText;
+            element.innerHTML = `<input type='text' value='${value}' />`;
+            element.firstChild.focus();
+        }
+
+        function showCustomAlert() {
+            let alertBox = document.getElementById("customAlert");
+            alertBox.style.display = "block";
+            alertBox.style.animation = "fadeInOut 3s forwards";
+
+            // Hide the alert after 3 seconds
+            setTimeout(() => {
+                alertBox.style.display = "none";
+            }, 3000);
+        }
+
+        function saveRow(button) {
+                let row = button.parentElement.parentElement;
+                let rowData = {};
+                let headers = document.querySelectorAll("th"); // Get all table headers
+
+                row.querySelectorAll("td").forEach((cell, index) => {
+                    if (index >= headers.length) {
+                        console.warn("Skipping extra cell: ", cell);  // Debugging
+                        return; // Skip extra columns if they exist
+                    }
+
+                    let header = headers[index]?.innerText.trim(); // Ensure header exists
+                    if (!header) {
+                        console.warn("Header not found for index", index);  // Debugging
+                        return; // Skip if no header found
+                    }
+
+                    if (cell.style.display === "none") {  
+                        rowData["unique_customer_id"] = cell.innerText; // Capture hidden ID
+                    } else if (cell.querySelector("input")) {  
+                        rowData[header] = cell.querySelector("input").value;
+                        cell.innerText = cell.querySelector("input").value;
+                    } else {  
+                        rowData[header] = cell.innerText;
+                    }
+                });
+
+                console.log("Data to be sent:", rowData);  // Debugging
+
+                fetch('/updatePersonInMonth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rowData)
+                }).then(response => response.json())  // Ensure proper response parsing
+                    .then(data => {
+                        if (data.message === "success") {
+                            showCustomAlert();  // Show the modern alert
+                        }
+    })
+                .catch(error => console.error("Error saving data:", error));
+            }
+
     </script>
 </head>
 <body>
@@ -263,8 +434,15 @@ input:checked + .radio-custom::after {
     
         <button id="search-btn" class="search-btn" onclick="sendData()">Search</button>
     </div>
-
+    <div id="customAlert" class="custom-alert">Data saved successfully!</div>
     <script>
+        function checkSelection() {
+            let month = document.getElementById("monthSelect").value;
+            let year = document.getElementById("yearSelect").value;
+            let searchBtn = document.getElementById("search-btn");
+
+            // Enable the button only if both month and year are selected
+        }
         // Ensure the script runs after the DOM is fully loaded
         document.addEventListener("DOMContentLoaded", function () {
             populateYearDropdown();
@@ -329,46 +507,95 @@ input:checked + .radio-custom::after {
 
     {% if result %}
     <p> Month :[{{month}}]   Year : [{{year}}]</p>
-    <div class="radio-group">
-        {% for pobj in result %}
-            <label class="radio-label">
-                <input type="radio" id = "{{ pobj.id }}" name="regNo" value="{{ pobj.id }}" onclick="redirectToPage(this.value)">
-                <span class="radio-custom"></span>
-                
-                {% if pobj.Date_of_insurance.__class__.__name__ == 'datetime' %}
-                    {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
-                {% elif pobj.Date_of_insurance.__class__.__name__ == 'date' %}
-                    {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
-                {% else %}
-                    {% set parts = pobj.Date_of_insurance.split('-') %}
-                    {{ parts[2] ~ '-' ~ parts[1] ~ '-' ~ parts[0] }}
-                {% endif %},
-                {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
-            </label>
-        {% endfor %}
+    <div class="table-container">
+    <table border="1">
+        <thead>
+            <tr>
+                <th style="display: none;">unique_customer_id</th>
+                <th>Person Name</th>
+                <th>Old ID value (₹)</th>
+                <th>New ID value (₹)</th>
+                <th>Old OD value (₹)</th>
+                <th>New OD value (₹)</th>
+                <th>Old Final Premium (₹)</th>
+                <th>New Final Premium (₹)</th>
+                <th>NCB (%)</th>
+                <th>New NCB (%)</th>
+                <th>Discount (%)</th>
+                <th>Insured Company</th>
+                <th>Insurer Code</th>
+                <th>New Company</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for person in result %}
+            <tr>
+                <td style="display: none;">{{person.id}}</td>
+                <td>{{ person.Customer_name }}</td>
+                <td>{{ person.Old_ID_value }}</td>
+                <td onclick="makeEditable(this)">{{ person.New_ID_value }}</td>
+                <td>{{ person.Old_OD_value }}</td>
+                <td onclick="makeEditable(this)">{{ person.New_OD_value }}</td>
+                <td>{{ person.Old_final_premium }}</td>
+                <td onclick="makeEditable(this)">{{ person.New_final_premium }}</td>
+                <td>{{ person.Ncb }}</td>
+                <td onclick="makeEditable(this)">{{ person.New_NCB }}</td>
+                <td>{{ person.Discount }}</td>
+                <td>{{ person.Insured_Company }}</td>
+                <td>{{ person.Insurer_Code }}</td>
+                <td onclick="makeEditable(this)">{{ person.New_Company }}</td>
+                <td><button class = save-btn onclick="saveRow(this)">Save</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     </div>
+
     {% elif filter_result %}
         <p>Month : [{{month}}]   Year : [{{year}}]</p>
-        <div class="radio-group">
-            {% for pobj in filter_result %}
-                <label class="radio-label">
-                    <input type="radio" id = "{{ pobj.id }}" name="regNo" value="{{ pobj.id }}" onclick="redirectToPage(this.value)">
-                    <span class="radio-custom"></span>
-                    
-                    {% if pobj.get('Date_of_insurance').__class__.__name__ == 'datetime' %}
-                        {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
-                    {% elif pobj.get('Date_of_insurance').__class__.__name__ == 'date' %}
-                        {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
-                    {% else %}
-                        {% set parts = pobj.Date_of_insurance.split('-') %}
-                        {{ parts[2] ~ '-' ~ parts[1] ~ '-' ~ parts[0] }}
-                    {% endif %},
-                    {{ pobj.get('Customer_name') }} , {{ pobj.get('Regd_No') }}
-                </label>
-            {% endfor %}
+        <div class="table-container">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th style="display: none;">unique_customer_id</th>
+                    <th>Person Name/th>
+                    <th>Old ID value (₹)</th>
+                    <th>New ID value (₹)</th>
+                    <th>Old OD value (₹)</th>
+                    <th>New OD value (₹)</th>
+                    <th>Old Final Premium (₹)</th>
+                    <th>New Final Premium (₹)</th>
+                    <th>NCB (%)</th>
+                    <th>New NCB (%)</th>
+                    <th>Discount (%)</th>
+                    <th>Insured Company</th>
+                    <th>Insurer Code</th>
+                    <th>New Company</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person in filter_result %}
+                <tr>
+                    <td style="display: none;">{{person.id}}</td>
+                    <td>{{ person.Customer_name }}</td>
+                    <td>{{ person.Old_ID_value }}</td>
+                    <td onclick="makeEditable(this)">{{ person.New_ID_value }}</td>
+                    <td>{{ person.Old_OD_value }}</td>
+                    <td onclick="makeEditable(this)">{{ person.New_OD_value }}</td>
+                    <td>{{ person.Old_final_premium }}</td>
+                    <td onclick="makeEditable(this)">{{ person.New_final_premium }}</td>
+                    <td>{{ person.Ncb }}</td>
+                    <td onclick="makeEditable(this)">{{ person.New_NCB }}</td>
+                    <td>{{ person.Discount }}</td>
+                    <td>{{ person.Insured_Company }}</td>
+                    <td>{{ person.Insurer_Code }}</td>
+                    <td onclick="makeEditable(this)">{{ person.New_Company }}</td>
+                    <td><button class = save-btn onclick="saveRow(this)">Save</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
     {% endif %}
-        
-
-
 </body>
 </html>
