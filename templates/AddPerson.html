@@ -200,7 +200,7 @@
         <form action="/successPage" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Date of Insurance:</label>
-                <input type="date" name="date_of_insurance" value="{{ person_to_renew['Date_of_insurance'] if person_to_renew}}"  required>
+                <input type="date" name="date_of_insurance" required>
             </div>
             <div class="form-group">
                 <label>Customer Name:</label>
@@ -257,35 +257,19 @@
             </div>
             <div class="form-group">
                 <label>Old ID Value (₹):</label>
-                <input type="number" name="old_id_value" value="{{ person_to_renew['Old_ID_value'] if person_to_renew}}" required>
-            </div>
-            <div class="form-group">
-                <label>New ID Value (₹):</label>
-                <input type="number" name="new_id_value" value="{{ person_to_renew['New_ID_value'] if person_to_renew}}" >
+                <input type="number" name="old_id_value" required>
             </div>
             <div class="form-group">
                 <label>Old OD Value (₹):</label>
-                <input type="number" name="old_od_value" value="{{ person_to_renew['Old_OD_value'] if person_to_renew}}" required>
-            </div>
-            <div class="form-group">
-                <label>New OD Value (₹):</label>
-                <input type="number" name="new_od_value" value="{{ person_to_renew['New_OD_value'] if person_to_renew}}" >
+                <input type="number" name="old_od_value" required>
             </div>
             <div class="form-group">
                 <label>Old Final Premium (₹):</label>
-                <input type="number" name="old_final_premium" value="{{ person_to_renew['Old_final_premium'] if person_to_renew}}" required>
-            </div>
-            <div class="form-group">
-                <label>New Final Premium (₹):</label>
-                <input type="number" name="new_final_premium" value="{{ person_to_renew['New_final_premium'] if person_to_renew}}" >
+                <input type="number" name="old_final_premium" required>
             </div>
             <div class="form-group">
                 <label>NCB (%):</label>
-                <input type="number" name="ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" value="{{ person_to_renew['Ncb'] if person_to_renew}}" required>
-            </div>
-            <div class="form-group">
-                <label>New NCB (%):</label>
-                <input type="number" name="new_ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" value="{{ person_to_renew['New_NCB'] if person_to_renew}}">
+                <input type="number" name="ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" required>
             </div>
             <div class="form-group">
                 <label>Insured Company:</label>
@@ -321,17 +305,9 @@
                 <label>Insurer Code:</label>
                 <input type="text" name="insurer_code" value="{{ person_to_renew['Insurer_Code'] if person_to_renew}}" required>
             </div>
-
-            <div class="form-group">
-                <label>New Company:</label>
-                <input type="text" name="new_company" value="{{ person_to_renew['New_Company'] if person_to_renew}}">
-            </div>
-
             <div class="form-group">
                 <label>Policy No.:</label>
-                <input type="text" name="policy_no" value="{{ person_to_renew['Policy_No'] if person_to_renew and person_to_renew['Policy_No'] is not none else '' }}"
-                    autocomplete="off"
-                    pattern="^[0-9\/\-]+$" required>
+                <input type="text" name="policy_no" autocomplete="off" pattern="^[0-9\/\-]+$" required>
             </div>
             <div class="form-group">
                 <label>Term COMP:</label>

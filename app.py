@@ -393,6 +393,8 @@ def viewFiles():
 
     try:
         files = os.listdir(UPLOAD_FOLDER)
+        if not files:
+            return render_template("NoFiles.html")
     except Exception:
         return render_template("NoFiles.html")
 
@@ -512,18 +514,13 @@ def SuccessPage():
         year_of_mfg = request.form.get("year_of_mfg")
         registration_no = request.form.get("registration_no")
         old_id_value = request.form.get("old_id_value")
-        new_id_value = request.form.get("new_id_value")
         old_od_value = request.form.get("old_od_value")
-        new_od_value = request.form.get("new_od_value")
         old_final_premium = request.form.get("old_final_premium")
-        new_final_premium = request.form.get("new_final_premium")
         ncb = request.form.get("ncb")
-        new_ncb = request.form.get("new_ncb")
         terms_comp = request.form.get("terms_comp")
         terms_tp = request.form.get("terms_tp")
         insured_company = request.form.get("insured_company")
         insurer_code = request.form.get("insurer_code")
-        new_company = request.form.get("new_company")
         policy_no = request.form.get("policy_no","").strip()
         add_ons = request.form.getlist("add_ons")
         ckyc_no = request.form.get("ckyc_no")
@@ -550,11 +547,11 @@ def SuccessPage():
         ''' TODO Write code to convert a string to hyphen separated string based on the reg no'''
         insert_person = PersonDetails(Date_of_insurance=date_of_insurance,Type_of_insurance =type_of_insurance,
                                     Customer_name = customer_name,Customer_Contact_No = customer_contact_no,Make=make, Model = model, Year_of_mfg = year_of_mfg,
-                                    Regd_No= registration_no,Regd_No_Database= registration_no, Old_ID_value = old_id_value,New_ID_value= new_id_value,
-                                    Old_OD_value=old_od_value, New_OD_value=new_od_value,
-                                    Old_final_premium=old_final_premium,New_final_premium=new_final_premium,Ncb=ncb,New_NCB=new_ncb,
+                                    Regd_No= registration_no,Regd_No_Database= registration_no, Old_ID_value = old_id_value,
+                                    Old_OD_value=old_od_value,
+                                    Old_final_premium=old_final_premium,Ncb=ncb,
                                     Terms_Comp=terms_comp, Terms_TP = terms_tp, Insured_Company=insured_company,Insurer_Code = insurer_code,
-                                    New_Company=new_company,Policy_No=policy_no,Add_Ons = add_ons, Ckyc_No= ckyc_no, 
+                                    Policy_No=policy_no,Add_Ons = add_ons, Ckyc_No= ckyc_no, 
                                     Reference_1= reference_1, Reference_Contact_1 = reference_contact_1, Reference_2 = reference_2,
                                     Reference_Contact_2 = reference_contact_2 , Transfer_to=transfer_to)
         
