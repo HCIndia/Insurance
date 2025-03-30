@@ -145,8 +145,9 @@ def home():
 
     return render_template("index.html")
 
+@app.route("/fullPersonDetails", methods=['GET', 'POST'])
 @app.route("/fullPersonDetails/<person_id>", methods=['GET', 'POST'])
-def fullPersonDetails(person_id):
+def fullPersonDetails(person_id = None):
 
     if person_id:
         getFPD = person_id
