@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from typing import Final
@@ -9,7 +9,7 @@ from datetime import datetime
 import json
 import pandas as pd
 from sqlalchemy import or_
-
+import os
 
 
 app = Flask(__name__)
@@ -155,6 +155,8 @@ def fullPersonDetails():
     full_detail = db.session.query(PersonDetails).filter(
                             PersonDetails.id == getFPD
                         ).first()
+
+    session["FPD"] = getFPD
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
 
@@ -341,6 +343,66 @@ def updatePersonInMonth():
 
     return jsonify({"message": "success"}), 200  
 
+
+
+
+@app.route("/uploadDataPage", methods= ["GET", "POST"])
+def uploadDataPage():
+    data = request.json
+    print(data)
+
+    session['uploadDataid'] = data.get("unique_customer_id")
+    session['uploadDataName'] = data.get("Person Name")
+
+    return render_template("FileUpload.html")
+
+
+@app.route("/uploadFiles", methods=["GET", "POST"])
+def uploadFiles():
+
+    UPLOAD_FOLDER = "uploads"
+
+    if request.method == "POST":
+        # Get files from form
+        insurance_file = request.files.get("insurance_file")
+        aadhaar_front = request.files.get("aadhaar_front")
+        aadhaar_back = request.files.get("aadhaar_back")
+        pan_file = request.files.get("pan_card")
+
+        id_data = session.get("uploadDataid")
+        name_data = session.get("uploadDataName")
+        session.clear()
+
+        UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+id_data+"/"
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
+        # Save files if they exist..
+        for file, name in [(insurance_file, "insurance"), 
+                           (aadhaar_front, "aadhaar_front"), 
+                           (aadhaar_back, "aadhaar_back"), 
+                           (pan_file, "pan_card")]:
+            if file and file.filename:
+                
+                file_path = os.path.join(UPLOAD_FOLDER,file.filename)
+                file.save(file_path)
+                print(f"{name} uploaded: {file.filename}")
+
+    return render_template("Success.html", upload_success= name_data) # Load HTML form
+
+
+@app.route("/fullPersonDetails/viewFiles", methods = ["GET","POST"])
+def viewFiles():
+
+    UPLOAD_FOLDER = "uploads"
+    UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+session.get("FPD")
+
+    files = os.listdir(UPLOAD_FOLDER)
+    return render_template("ViewUploads.html",UPLOAD_FOLDER=UPLOAD_FOLDER, files=files)
+
+@app.route("/fullPersonDetails/uploadedFiles/<filename>")
+def download_file(filename):
+    UPLOAD_FOLDER = "uploads"
+    UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+session.get("FPD")
+    return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=True)
 
 
 @app.route("/renewPage", methods= ["POST"])

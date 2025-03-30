@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Documents</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f4f4;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        .file-input {
+            display: none;
+        }
+        .upload-label {
+            display: block;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .upload-label:hover {
+            background: #0056b3;
+        }
+        .file-name {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h3 class="text-center">Upload Your Documents</h3>
+        <form action="/uploadFiles" method="POST" enctype="multipart/form-data">
+            
+            <!-- Insurance File -->
+            <label for="insurance-file" class="upload-label">Upload Insurance File</label>
+            <input type="file" id="insurance-file" name="insurance_file" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="insurance-file-name">No file chosen</p>
+
+            <!-- Aadhaar Front -->
+            <label for="aadhaar-front" class="upload-label">Upload Aadhaar Card Front</label>
+            <input type="file" id="aadhaar-front" name="aadhaar_front" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="aadhaar-front-name">No file chosen</p>
+
+            <!-- Aadhaar Back -->
+            <label for="aadhaar-back" class="upload-label">Upload Aadhaar Card Back</label>
+            <input type="file" id="aadhaar-back" name="aadhaar_back" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="aadhaar-back-name">No file chosen</p>
+
+            <!-- PAN Card -->
+            <label for="pan-card" class="upload-label">Upload PAN Card</label>
+            <input type="file" id="pan-card" name="pan_card" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="pan-card-name">No file chosen</p>
+
+            <button type="submit" class="btn btn-success w-100 mt-3">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        // Function to display the selected file name
+        function updateFileName(inputId, fileNameId) {
+            document.getElementById(inputId).addEventListener("change", function () {
+                let file = this.files[0];
+                if (file) {
+                    document.getElementById(fileNameId).textContent = file.name;
+                } else {
+                    document.getElementById(fileNameId).textContent = "No file chosen";
+                }
+            });
+        }
+
+        // Attach the function to each input field
+        updateFileName("insurance-file", "insurance-file-name");
+        updateFileName("aadhaar-front", "aadhaar-front-name");
+        updateFileName("aadhaar-back", "aadhaar-back-name");
+        updateFileName("pan-card", "pan-card-name");
+    </script>
+
+</body>
+</html>

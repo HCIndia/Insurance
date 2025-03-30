@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
     <style>
+        /* General Styling */
         body {
             display: flex;
             flex-direction: column;
@@ -23,18 +24,30 @@
             padding: 20px;
         }
 
+        /* Glassmorphism Card */
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+        }
+
         h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 10px;
-            text-transform: uppercase;
+            margin-bottom: 15px;
         }
 
         p {
             font-size: 1.2rem;
+            font-weight: 300;
             margin-bottom: 20px;
         }
 
+        /* Button Styling */
         .btn {
             display: inline-block;
             background: #ff7eb3;
@@ -42,7 +55,6 @@
             font-size: 1.2rem;
             font-weight: 500;
             padding: 12px 25px;
-            margin-top: 20px;
             border-radius: 50px;
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(255, 126, 179, 0.3);
@@ -60,7 +72,7 @@
         /* Responsive Styling */
         @media (max-width: 768px) {
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             p {
                 font-size: 1rem;
@@ -73,7 +85,7 @@
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
             }
             p {
                 font-size: 0.9rem;
@@ -93,8 +105,14 @@
     </script>
 </head>
 <body>
-    <h1>Success!</h1>
-    <p>You have successfully entered a value.</p>
-    <button class="btn" onclick="goToMainPage()">Go to Main Page</button>
+    <div class="card">
+        {% if upload_success %}
+            <h1>You have successfully uploaded the documents for {{ upload_success }}</h1>
+        {% else %}
+            <h1>Success!</h1>
+            <p>You have successfully inserted a record.</p>
+        {% endif %}
+        <button class="btn" onclick="goToMainPage()">Go to Main Page</button>
+    </div>
 </body>
 </html>
