@@ -2,34 +2,123 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Uploaded Files</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background: #ffffff;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+        .file-card {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.2s ease-in-out;
+        }
+        .file-card:hover {
+            transform: scale(1.03);
+        }
         .preview-img {
-            width: 150px;  
+            width: 100%;
+            max-width: 180px;
             height: auto;
-            margin: 10px;
-            border: 1px solid #ccc;
             border-radius: 5px;
+            margin-bottom: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .filename {
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 8px;
+            word-wrap: break-word;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+        }
+        @media (max-width: 768px) {
+            .file-card {
+                margin-bottom: 15px;
+            }
+            .btn-container {
+                flex-direction: column;
+                gap: 5px;
+            }
         }
     </style>
 </head>
-<body class="container mt-4">
+<body>
+
+<div class="container mt-4">
     <h2>Uploaded Files</h2>
     <div class="row">
         {% for file in files %}
-        <div class="col-md-3 text-center">
-            {% if file.lower().endswith(('.png', '.jpg', '.jpeg')) %}
-                <img src="{{ url_for('download_file', filename=file) }}" class="preview-img">
-            {% else %}
-                <p>{{ file }}</p>
-            {% endif %}
-            <br>
-            <a href="{{ url_for('download_file', filename=file) }}" download class="btn btn-primary btn-sm mt-2">Download</a>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="file-card">
+                {% if file.lower().endswith(('.png', '.jpg', '.jpeg')) %}
+                    <img src="{{ url_for('download_file', filename=file) }}" class="preview-img">
+                {% else %}
+                    <p class="filename">{{ file }}</p>
+                {% endif %}
+                
+                <!-- Show Filename Below the Image -->
+                <p class="filename">{{ file }}</p>
+
+                <div class="btn-container">
+                    <!-- Download Button -->
+                    <a href="{{ url_for('download_file', filename=file) }}" download class="btn btn-primary btn-sm">Download</a>
+                    <!-- Delete Button -->
+                    <button class="btn btn-danger btn-sm" onclick="deleteFile('{{ file }}')">Delete</button>
+                </div>
+            </div>
         </div>
         {% endfor %}
     </div>
 
-    <a href="/index" class="btn btn-secondary mt-3">Back to search</a>
+    <div class="text-center">
+        <a href="/index" class="btn btn-secondary mt-3">Back to Search</a>
+    </div>
+</div>
+
+<script>
+    function deleteFile(filename) {
+        if (confirm("Are you sure you want to delete this file?")) {
+            fetch(`/deleteFile/${filename}`, {
+                method: "DELETE"
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      alert("File deleted successfully!");
+                      location.reload();  // Refresh the page
+                  } else {
+                      alert("Error deleting file.");
+                  }
+              })
+              .catch(error => console.error("Error:", error));
+        }
+    }
+</script>
+
 </body>
 </html>

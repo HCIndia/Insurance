@@ -411,6 +411,20 @@ def download_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=True)
 
 
+@app.route("/deleteFile/<filename>", methods=["DELETE"])
+def delete_file(filename):
+
+    UPLOAD_FOLDER = "uploads"
+    UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+session.get("FPD")
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return jsonify({"success": True, "message": "File deleted successfully"})
+    else:
+        return jsonify({"success": False, "message": "File not found"}), 404
+
+
 @app.route("/renewPage", methods= ["POST"])
 def renewPage():
     data = request.json

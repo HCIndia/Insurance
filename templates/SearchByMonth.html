@@ -557,6 +557,7 @@ input[type="text"] {
         <thead>
             <tr>
                 <th style="display: none;">unique_customer_id</th>
+                <th>Date</th>
                 <th>Person Name</th>
                 <th>ID value (₹)</th>
                 <th>New ID value (₹)</th>
@@ -575,6 +576,16 @@ input[type="text"] {
             {% for person in result %}
             <tr>
                 <td style="display: none;">{{person.id}}</td>
+                <td style="white-space: nowrap;">
+                    {% if person.Date_of_insurance.__class__.__name__ == 'datetime' %}
+                                {{ person.Date_of_insurance.strftime('%d-%m-%Y') }}
+                            {% elif person.Date_of_insurance.__class__.__name__ == 'date' %}
+                                {{ person.Date_of_insurance.strftime('%d-%m-%Y') }}
+                            {% else %}
+                                {% set parts = person.Date_of_insurance.split('-') %}
+                                {{ parts[2] ~ '-' ~ parts[1] ~ '-' ~ parts[0] }}
+                            {% endif %}
+                </td>
                 <td>
                     <a href="{{ url_for('fullPersonDetails', person_id=person.id) }}">
                         {{ person.Customer_name }}
@@ -624,6 +635,16 @@ input[type="text"] {
                 {% for person in filter_result %}
                 <tr>
                     <td style="display: none;">{{person.id}}</td>
+                    <td style="white-space: nowrap;">
+                        {% if person.Date_of_insurance.__class__.__name__ == 'datetime' %}
+                                    {{ person.Date_of_insurance.strftime('%d-%m-%Y') }}
+                                {% elif person.Date_of_insurance.__class__.__name__ == 'date' %}
+                                    {{ person.Date_of_insurance.strftime('%d-%m-%Y') }}
+                                {% else %}
+                                    {% set parts = person.Date_of_insurance.split('-') %}
+                                    {{ parts[2] ~ '-' ~ parts[1] ~ '-' ~ parts[0] }}
+                                {% endif %}
+                    </td>
                     <td>
                         <a href="{{ url_for('fullPersonDetails', person_id=person.id) }}">
                             {{ person.Customer_name }}
