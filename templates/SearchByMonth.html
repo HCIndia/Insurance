@@ -575,7 +575,11 @@ input[type="text"] {
             {% for person in result %}
             <tr>
                 <td style="display: none;">{{person.id}}</td>
-                <td>{{ person.Customer_name }}</td>
+                <td>
+                    <a href="{{ url_for('fullPersonDetails', person_id=person.id) }}">
+                        {{ person.Customer_name }}
+                    </a>
+                </td>
                 <td>{{ person.Old_ID_value }}</td>
                 <td onclick="makeEditable(this)">{{ person.New_ID_value }}</td>
                 <td>{{ person.Old_OD_value }}</td>
@@ -620,7 +624,11 @@ input[type="text"] {
                 {% for person in filter_result %}
                 <tr>
                     <td style="display: none;">{{person.id}}</td>
-                    <td>{{ person.Customer_name }}</td>
+                    <td>
+                        <a href="{{ url_for('fullPersonDetails', person_id=person.id) }}">
+                            {{ person.Customer_name }}
+                        </a>
+                    </td>
                     <td>{{ person.Old_ID_value }}</td>
                     <td onclick="makeEditable(this)">{{ person.New_ID_value }}</td>
                     <td>{{ person.Old_OD_value }}</td>

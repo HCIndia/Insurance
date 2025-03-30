@@ -145,10 +145,13 @@ def home():
 
     return render_template("index.html")
 
-@app.route("/fullPersonDetails", methods=['GET', 'POST'])
-def fullPersonDetails():
+@app.route("/fullPersonDetails/<person_id>", methods=['GET', 'POST'])
+def fullPersonDetails(person_id):
 
-    getFPD = request.args.get('selected')
+    if person_id:
+        getFPD = person_id
+    else:
+        getFPD = request.args.get('selected')
     app.logger.info(f"FPD = {getFPD}")
     full_detail = db.session.query(PersonDetails).filter(
                             PersonDetails.id == getFPD
