@@ -56,7 +56,6 @@ class PersonDetails(db.Model):
     New_final_premium = db.Column(db.String(120))
     Ncb = db.Column(db.String(120))
     New_NCB = db.Column(db.String(120))
-    Discount = db.Column(db.String(120))
     Terms_Comp = db.Column(db.String(120))
     Terms_TP = db.Column(db.String(120))
     Insured_Company = db.Column(db.String(120))
@@ -92,7 +91,6 @@ class PersonDetails(db.Model):
             "New_final_premium": self.New_final_premium,
             "Ncb": self.Ncb,
             "New_NCB": self.New_NCB,
-            "Discount": self.Discount,
             "Terms_Comp": self.Terms_Comp,
             "Terms_TP": self.Terms_TP,
             "Insured_Company": self.Insured_Company,
@@ -245,7 +243,7 @@ def updatePerson():
     'Insurance Type': '4 Wheeler', 'Make': 'Maruti', 'Model': 'Ecco AC/Heater', 'Year of Manufacture': '2011', 
     'Registration No': 'BR-01-BB-2649', 'Old ID value (₹)': 'TP', 'New ID value (₹)': 'mko', 'Old OD value (₹)': '3416', 
     'New OD value (₹)': '9876', 'Old Final Premium (₹)': '4030', 'New Final Premium (₹)': 'NA98766', 'NCB (%)': 'NA',
-     'Discount (%)': 'NA', 'Term COMP': 'NA', 'Term TP': 'NA', 'Insured Company': 'ROYAL SUNDARAM', 'Insurer Code': 'RB', 
+     'Term COMP': 'NA', 'Term TP': 'NA', 'Insured Company': 'ROYAL SUNDARAM', 'Insurer Code': 'RB', 
      'New Company': 'NA', 'Policy No': 'UPTP462770000100', 'Add Ons': 'NA', 'CKYC No.': 'NA', 
      'Reference 1': 'C/o Carmart', 'Reference 1 Contact': 'NA', 'Reference 2': 'NA', 'Reference 2 Contact': 'NA', 'Transfer to': 'NA'}
     """
@@ -273,7 +271,6 @@ def updatePerson():
         person.New_final_premium = data.get("New Final Premium (₹)")
         person.Ncb = data.get("NCB (%)")
         person.New_NCB = data.get("New NCB (%)")
-        person.Discount = data.get("Discount (%)")
         person.Terms_Comp = data.get("Term COMP")
         person.Terms_TP = data.get("Term TP")
         person.Insured_Company = data.get("Insured Company")
@@ -324,7 +321,6 @@ def updatePersonInMonth():
         person.New_final_premium = data.get("New Final Premium (₹)")
         person.Ncb = data.get("NCB (%)")
         person.New_NCB = data.get("New NCB (%)")
-        person.Discount = data.get("Discount (%)")
         person.Insured_Company = data.get("Insured Company")
         person.Insurer_Code = data.get("Insurer Code")
         person.New_Company = data.get("New Company")
@@ -523,7 +519,6 @@ def SuccessPage():
         new_final_premium = request.form.get("new_final_premium")
         ncb = request.form.get("ncb")
         new_ncb = request.form.get("new_ncb")
-        discount = request.form.get("discount")
         terms_comp = request.form.get("terms_comp")
         terms_tp = request.form.get("terms_tp")
         insured_company = request.form.get("insured_company")
@@ -558,7 +553,7 @@ def SuccessPage():
                                     Regd_No= registration_no,Regd_No_Database= registration_no, Old_ID_value = old_id_value,New_ID_value= new_id_value,
                                     Old_OD_value=old_od_value, New_OD_value=new_od_value,
                                     Old_final_premium=old_final_premium,New_final_premium=new_final_premium,Ncb=ncb,New_NCB=new_ncb,
-                                    Discount=discount,Terms_Comp=terms_comp, Terms_TP = terms_tp, Insured_Company=insured_company,Insurer_Code = insurer_code,
+                                    Terms_Comp=terms_comp, Terms_TP = terms_tp, Insured_Company=insured_company,Insurer_Code = insurer_code,
                                     New_Company=new_company,Policy_No=policy_no,Add_Ons = add_ons, Ckyc_No= ckyc_no, 
                                     Reference_1= reference_1, Reference_Contact_1 = reference_contact_1, Reference_2 = reference_2,
                                     Reference_Contact_2 = reference_contact_2 , Transfer_to=transfer_to)
