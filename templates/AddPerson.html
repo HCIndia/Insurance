@@ -197,7 +197,7 @@
 <body>
     <div class="form-container">
         <h2>Insurance Form</h2>
-        <form action="/successPage" method="post">
+        <form action="/successPage" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Date of Insurance:</label>
                 <input type="date" name="date_of_insurance" value="{{ person_to_renew['Date_of_insurance'] if person_to_renew}}"  required>
@@ -393,6 +393,26 @@
                 <label>Transfer to:</label>
                 <input type="text" name="transfer_to"value="{{ person_to_renew['Transfer_to'] if person_to_renew}}">
             </div>
+
+            <label for="insurance-file" class="upload-label">Upload Insurance File</label>
+            <input type="file" id="insurance-file" name="insurance_file" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="insurance-file-name"></p>
+
+            <!-- Aadhaar Front -->
+            <label for="aadhaar-front" class="upload-label">Upload Aadhaar Card Front</label>
+            <input type="file" id="aadhaar-front" name="aadhaar_front" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="aadhaar-front-name"></p>
+
+            <!-- Aadhaar Back -->
+            <label for="aadhaar-back" class="upload-label">Upload Aadhaar Card Back</label>
+            <input type="file" id="aadhaar-back" name="aadhaar_back" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="aadhaar-back-name"></p>
+
+            <!-- PAN Card -->
+            <label for="pan-card" class="upload-label">Upload PAN Card</label>
+            <input type="file" id="pan-card" name="pan_card" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="pan-card-name"></p>
+            
             <button type="submit">Submit</button>
         </form>
     </div>

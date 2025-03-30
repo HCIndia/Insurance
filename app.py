@@ -395,7 +395,11 @@ def viewFiles():
     UPLOAD_FOLDER = "uploads"
     UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+session.get("FPD")
 
-    files = os.listdir(UPLOAD_FOLDER)
+    try:
+        files = os.listdir(UPLOAD_FOLDER)
+    except Exception:
+        return render_template("NoFiles.html")
+
     return render_template("ViewUploads.html",UPLOAD_FOLDER=UPLOAD_FOLDER, files=files)
 
 @app.route("/fullPersonDetails/uploadedFiles/<filename>")
@@ -499,6 +503,7 @@ def SuccessPage():
     Type_of_insurance , Customer_Contact_No , Regd_No_Database , Insurer_Code , Add_Ons , Ckyc_No , Reference_1
     Reference_Contact_1 , Reference_2 , Reference_Contact_2 ,
     """ 
+    UPLOAD_FOLDER = 'uploads'
     if request.method == 'POST':
         date_of_insurance = request.form.get("date_of_insurance")
         customer_name = request.form.get("customer_name")
@@ -532,7 +537,10 @@ def SuccessPage():
         reference_2 = request.form.get("reference_2")
         reference_contact_2 = request.form.get("reference_contact_2")
         transfer_to = request.form.get("transfer_to")
-
+        insurance_file = request.files.get("insurance_file")
+        aadhaar_front = request.files.get("aadhaar_front")
+        aadhaar_back = request.files.get("aadhaar_back")
+        pan_file = request.files.get("pan_card")
 
         if date_of_insurance:
             date_of_insurance = datetime.strptime(date_of_insurance, "%Y-%m-%d")
@@ -559,6 +567,24 @@ def SuccessPage():
         app.logger.info("One Person is Succesfully added in Database")
         db.session.commit()
         app.logger.info("Changes have been comitted")
+
+
+        print(insert_person.id)
+        id_data = str(insert_person.id)
+        UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+id_data+"/"
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
+        # Save files if they exist..
+        for file, name in [(insurance_file, "insurance"), 
+                           (aadhaar_front, "aadhaar_front"), 
+                           (aadhaar_back, "aadhaar_back"), 
+                           (pan_file, "pan_card")]:
+            if file and file.filename:
+                
+                file_path = os.path.join(UPLOAD_FOLDER,file.filename)
+                file.save(file_path)
+                print(f"{name} uploaded: {file.filename}")
+
+        app.logger.info("Documents have been saved ")
 
     return render_template("Success.html")
     
