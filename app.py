@@ -369,9 +369,13 @@ def uploadFiles():
         aadhaar_back = request.files.get("aadhaar_back")
         pan_file = request.files.get("pan_card")
 
-        id_data = session.get("uploadDataid")
-        name_data = session.get("uploadDataName")
-        session.clear()
+        if "FPD" in session:
+            id_data = session.get("FPD")
+            name_data = ""
+        else:
+            id_data = session.get("uploadDataid")
+            name_data = session.get("uploadDataName")
+            session.clear()
 
         UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+id_data+"/"
         os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
