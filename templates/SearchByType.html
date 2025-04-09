@@ -148,6 +148,8 @@ input:checked + .radio-custom::after {
     <script>
         function sendMonth() {
             var selectedMonth = document.getElementById("monthSelect").value;
+
+            sessionStorage.setItem("selectedMonth", selectedMonth);
             
             fetch("/searchByType", {
                 method: "POST",
@@ -165,6 +167,8 @@ input:checked + .radio-custom::after {
             .catch(error => console.error("Error:", error));
         }
     </script>
+    
+    
     <script>
         function redirectToPage(value) {
             window.location.href = "/fullPersonDetails?selected=" + encodeURIComponent(value);
@@ -188,11 +192,31 @@ input:checked + .radio-custom::after {
             <label class="radio-label">
                 <input type="radio" id="{{ pobj.id }}" name="regNo" value="{{ pobj.id }}" onclick="redirectToPage(this.value)">
                 <span class="radio-custom"></span>
-                {{ pobj.Date_of_insurance.strftime('%d/%m/%Y') if pobj.Date_of_insurance else 'N/A' }}, {{ pobj.Customer_name }}, {{ pobj.Regd_No }}
+                
+                {% if pobj.Date_of_insurance.__class__.__name__ == 'datetime' %}
+                    {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
+                {% elif pobj.Date_of_insurance.__class__.__name__ == 'date' %}
+                    {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
+                {% else %}
+                    {% set parts = pobj.Date_of_insurance.split('-') %}
+                    {{ parts[2] ~ '-' ~ parts[1] ~ '-' ~ parts[0] }}
+                {% endif %},
+                {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
+                
             </label>
         {% endfor %}
     </div>
 {% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var savedMonth = sessionStorage.getItem("selectedMonth");
+        if (savedMonth) {
+            var dropdown = document.getElementById("monthSelect");
+            dropdown.value = savedMonth;
+        }
+    });
+</script>
 
 </body>
 </html>

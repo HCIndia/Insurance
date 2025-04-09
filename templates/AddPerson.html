@@ -197,18 +197,18 @@
 <body>
     <div class="form-container">
         <h2>Insurance Form</h2>
-        <form action="/successPage" method="post">
+        <form action="/successPage" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Date of Insurance:</label>
                 <input type="date" name="date_of_insurance" required>
             </div>
             <div class="form-group">
                 <label>Customer Name:</label>
-                <input type="text" name="customer_name" required>
+                <input type="text" name="customer_name" value="{{ person_to_renew['Customer_name'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
                 <label>Customer Contact:</label>
-                <input type="tel" name="customer_contact_no" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" placeholder="Enter 10-digit Mobile Number" required>
+                <input type="tel" name="customer_contact_no" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" placeholder="Enter 10-digit Mobile Number" value="{{ person_to_renew['Customer_Contact_No'] if person_to_renew}}" >
             </div>
 
             <div class="form-group">
@@ -248,44 +248,28 @@
 
             <div class="form-group">
                 <label>Year of Mfg:</label>
-                <input type="number" name="year_of_mfg" pattern="[0-9]{4}" min="1900" max="2099" inputmode="numeric" required>
+                <input type="number" name="year_of_mfg" pattern="[0-9]{4}" min="1900" max="2099" inputmode="numeric" value="{{ person_to_renew['Year_of_mfg'] if person_to_renew}}" required>
                 <span id="year-error" style="color: red; display: none;">Enter a valid 4-digit year</span>
             </div>
             <div class="form-group">
                 <label>Registration No:</label>
-                <input type="text" name="registration_no" required>
+                <input type="text" name="registration_no" value="{{ person_to_renew['Regd_No'] if person_to_renew}}" required>
             </div>
             <div class="form-group">
-                <label>Old ID Value (₹):</label>
+                <label>ID Value (₹):</label>
                 <input type="number" name="old_id_value" required>
             </div>
             <div class="form-group">
-                <label>New ID Value (₹):</label>
-                <input type="number" name="new_id_value" required>
-            </div>
-            <div class="form-group">
-                <label>Old OD Value (₹):</label>
+                <label>OD Value (₹):</label>
                 <input type="number" name="old_od_value" required>
             </div>
             <div class="form-group">
-                <label>New OD Value (₹):</label>
-                <input type="number" name="new_od_value" required>
-            </div>
-            <div class="form-group">
-                <label>Old Final Premium (₹):</label>
+                <label>Final Premium (₹):</label>
                 <input type="number" name="old_final_premium" required>
             </div>
             <div class="form-group">
-                <label>New Final Premium (₹):</label>
-                <input type="number" name="new_final_premium" required>
-            </div>
-            <div class="form-group">
-                <label>NCB:</label>
+                <label>NCB (%):</label>
                 <input type="number" name="ncb" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" required>
-            </div>
-            <div class="form-group">
-                <label>Discount (%):</label>
-                <input type="number" pattern="[0-9]{3}" min="0" max="100" inputmode="numeric" name="discount" required>
             </div>
             <div class="form-group">
                 <label>Insured Company:</label>
@@ -319,28 +303,22 @@
 
             <div class="form-group">
                 <label>Insurer Code:</label>
-                <input type="text" name="insurer_code" required>
+                <input type="text" name="insurer_code" value="{{ person_to_renew['Insurer_Code'] if person_to_renew}}" required>
             </div>
-
-            <div class="form-group">
-                <label>New Company:</label>
-                <input type="text" name="new_company" required>
-            </div>
-
             <div class="form-group">
                 <label>Policy No.:</label>
-                <input type="text" name="policy_no" required>
+                <input type="text" name="policy_no" autocomplete="off" pattern="^[0-9\/\-]+$" required>
             </div>
             <div class="form-group">
                 <label>Term COMP:</label>
-                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_comp" required>
+                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_comp" value="{{ person_to_renew['Terms_Comp'] if person_to_renew}}" >
             </div>
             <div class="form-group">
                 <label>Term TP:</label>
-                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_tp" required>
+                <input type="number" pattern="[0-9]{2}" min="0" max="15" inputmode="numeric"  name="terms_tp" value="{{ person_to_renew['Terms_TP'] if person_to_renew}}" >
             </div>
             <div class="dropdown">
-                <button class="dropdown-btn" onclick="toggleDropdown()">Select Add-Ons</button>
+                <button type = "button" class="dropdown-btn" onclick="toggleDropdown()">Select Add-Ons</button>
                 <div class="dropdown-content" id="dropdown-menu">
                     <label><input type="checkbox" name="add_ons" value="24x7 Roadside Assistance"> 24x7 Roadside Assistance</label>
                     <label><input type="checkbox" name="add_ons" value="Accidental Cover"> Accidental Cover</label>
@@ -365,28 +343,48 @@
             <br>
             <div class="form-group">
                 <label>CKYC No.:</label>
-                <input type="text" name="ckyc_no" required>
+                <input type="text" name="ckyc_no" value="{{ person_to_renew['Ckyc_No'] if person_to_renew}}">
             </div>
             <div class="form-group">
                 <label>Reference 1:</label>
-                <input type="text" name="reference_1" required>
+                <input type="text" name="reference_1" value="{{ person_to_renew['Reference_1'] if person_to_renew}}" >
             </div>
             <div class="form-group">
                 <label>Reference 1 Contact:</label>
-                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric"  name="reference_contact_1" required>
+                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric"  name="reference_contact_1" value="{{ person_to_renew['Reference_Contact_1'] if person_to_renew}}" >
             </div>
             <div class="form-group">
                 <label>Reference 2:</label>
-                <input type="text" name="reference_2" required>
+                <input type="text" name="reference_2" value="{{ person_to_renew['Reference_2'] if person_to_renew}}" >
             </div>
             <div class="form-group">
                 <label>Reference 2 Contact:</label>
-                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" name="reference_contact_2" required>
+                <input type="tel" pattern="[0-9]{10}" maxlength=10 inputmode="numeric" name="reference_contact_2" value="{{ person_to_renew['Reference_Contact_2'] if person_to_renew}}" >
             </div>
             <div class="form-group">
                 <label>Transfer to:</label>
-                <input type="text" name="transfer_to" required>
+                <input type="text" name="transfer_to"value="{{ person_to_renew['Transfer_to'] if person_to_renew}}">
             </div>
+
+            <label for="insurance-file" class="upload-label">Upload Insurance File</label>
+            <input type="file" id="insurance-file" name="insurance_file" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="insurance-file-name"></p>
+
+            <!-- Aadhaar Front -->
+            <label for="aadhaar-front" class="upload-label">Upload Aadhaar Card Front</label>
+            <input type="file" id="aadhaar-front" name="aadhaar_front" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="aadhaar-front-name"></p>
+
+            <!-- Aadhaar Back -->
+            <label for="aadhaar-back" class="upload-label">Upload Aadhaar Card Back</label>
+            <input type="file" id="aadhaar-back" name="aadhaar_back" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="aadhaar-back-name"></p>
+
+            <!-- PAN Card -->
+            <label for="pan-card" class="upload-label">Upload PAN Card</label>
+            <input type="file" id="pan-card" name="pan_card" class="file-input" accept=".pdf, .jpg, .jpeg, .png">
+            <p class="file-name" id="pan-card-name"></p>
+            
             <button type="submit">Submit</button>
         </form>
     </div>

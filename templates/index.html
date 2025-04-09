@@ -176,6 +176,18 @@
         .search-button:hover {
             background-color: #0056b3;
         }
+        .home-btn {
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #000000, #959595);
+            color: white;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
 
         /* Responsive Design for Smaller Screens */
         @media (max-width: 480px) {
@@ -223,6 +235,7 @@
 <body>
 
     <div class="top-container">
+        <a href="/" class="home-btn">Home</a>
         <form class="search-container" action="/index" method="post">
             <input type="text" placeholder="Search..." name="searchPersonDet" class="search-input" required>
             <button type="submit" class="search-button">Search</button>
@@ -246,7 +259,15 @@
                         <label class="radio-label">
                             <input type="radio" id="{{ pobj.Customer_name }}+{{ pobj.Regd_No }}+{{ pobj.Type_of_insurance }}" name="regNo" value="{{ pobj.id }}" onclick="redirectToPage(this.value)">
                             <span class="radio-custom"></span>
-                            {{ pobj.Date_of_insurance.strftime('%d/%m/%Y') if pobj.Date_of_insurance else 'N/A' }}, {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
+                            {% if pobj.Date_of_insurance.__class__.__name__ == 'datetime' %}
+                                {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
+                            {% elif pobj.Date_of_insurance.__class__.__name__ == 'date' %}
+                                {{ pobj.Date_of_insurance.strftime('%d-%m-%Y') }}
+                            {% else %}
+                                {% set parts = pobj.Date_of_insurance.split('-') %}
+                                {{ parts[2] ~ '-' ~ parts[1] ~ '-' ~ parts[0] }}
+                            {% endif %},
+                            {{ pobj.Customer_name }} , {{ pobj.Regd_No }}
                         </label>
                     {% endfor %}
                 </div>

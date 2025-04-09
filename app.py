@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from typing import Final
@@ -8,7 +8,8 @@ from flask_cors import CORS
 from datetime import datetime
 import json
 import pandas as pd
-
+from sqlalchemy import or_
+import os
 
 
 app = Flask(__name__)
@@ -22,6 +23,10 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///personDetails.sqlite3'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['SQLALCHEMY_POOL_SIZE'] = 10
+app.config['SQLALCHEMY_MAX_OVERFLOW'] = 5
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 1800
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
 app.secret_key = 'MyInsAPP'
 
 logging.basicConfig(level=logging.DEBUG)
@@ -50,7 +55,7 @@ class PersonDetails(db.Model):
     Old_final_premium = db.Column(db.String(120))
     New_final_premium = db.Column(db.String(120))
     Ncb = db.Column(db.String(120))
-    Discount = db.Column(db.String(120))
+    New_NCB = db.Column(db.String(120))
     Terms_Comp = db.Column(db.String(120))
     Terms_TP = db.Column(db.String(120))
     Insured_Company = db.Column(db.String(120))
@@ -65,6 +70,42 @@ class PersonDetails(db.Model):
     Reference_Contact_2 = db.Column(db.String(120))
     Transfer_to = db.Column(db.String(120))
 
+    def to_dict(self):
+        """Convert SQLAlchemy object to a dictionary."""
+        return {
+            "id": self.id,
+            "Date_of_insurance": self.Date_of_insurance.isoformat() if self.Date_of_insurance else None,  # Convert datetime to string
+            "Type_of_insurance": self.Type_of_insurance,
+            "Customer_name": self.Customer_name,
+            "Customer_Contact_No": self.Customer_Contact_No,
+            "Make": self.Make,
+            "Model": self.Model,
+            "Year_of_mfg": self.Year_of_mfg,
+            "Regd_No": self.Regd_No,
+            "Regd_No_Database": self.Regd_No_Database,
+            "Old_ID_value": self.Old_ID_value,
+            "New_ID_value": self.New_ID_value,
+            "Old_OD_value": self.Old_OD_value,
+            "New_OD_value": self.New_OD_value,
+            "Old_final_premium": self.Old_final_premium,
+            "New_final_premium": self.New_final_premium,
+            "Ncb": self.Ncb,
+            "New_NCB": self.New_NCB,
+            "Terms_Comp": self.Terms_Comp,
+            "Terms_TP": self.Terms_TP,
+            "Insured_Company": self.Insured_Company,
+            "Insurer_Code": self.Insurer_Code,
+            "New_Company": self.New_Company,
+            "Policy_No": self.Policy_No,
+            "Add_Ons": self.Add_Ons,
+            "Ckyc_No": self.Ckyc_No,
+            "Reference_1": self.Reference_1,
+            "Reference_Contact_1": self.Reference_Contact_1,
+            "Reference_2": self.Reference_2,
+            "Reference_Contact_2": self.Reference_Contact_2,
+            "Transfer_to": self.Transfer_to
+        }
+
 @app.route("/")
 def start():
     return render_template("StartPage.html")
@@ -76,11 +117,25 @@ def home():
         if (search_Person_Detail_by_reg):
             app.logger.info(f"Got the data from form action :{search_Person_Detail_by_reg}")
         #person_object = PersonDetails.query.filter_by(Regd_No=search_Person_Detail_by_reg).first()   #exact search command 
-            person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()
-                                                 # this is partial search
-            print(f"This is from reg no search {person_object}")
+            #person_object = PersonDetails.query.filter(PersonDetails.Regd_No_Database.ilike(f'%{search_Person_Detail_by_reg}%')).all()
+            person_object = PersonDetails.query.filter(
+                or_(
+                    PersonDetails.Regd_No_Database.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Customer_Contact_No.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Reference_Contact_1.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Reference_Contact_2.ilike(f"%{search_Person_Detail_by_reg}%"),
+                )
+            ).all()
+                                                               # this is partial search
         if not person_object and search_Person_Detail_by_reg :
-            person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).order_by(PersonDetails.Date_of_insurance.desc()).all() 
+            #person_object = PersonDetails.query.filter(PersonDetails.Customer_name.ilike(f'%{search_Person_Detail_by_reg}%')).order_by(PersonDetails.Date_of_insurance.desc()).all() 
+            person_object = PersonDetails.query.filter(
+                or_(
+                    PersonDetails.Customer_name.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Reference_1.ilike(f"%{search_Person_Detail_by_reg}%"),
+                    PersonDetails.Reference_1.ilike(f"%{search_Person_Detail_by_reg}%")
+                )
+            ).order_by(PersonDetails.Date_of_insurance.desc()).all()
             print(f"This is from person search {person_object}")             
 
         if not person_object or not search_Person_Detail_by_reg :
@@ -91,13 +146,19 @@ def home():
     return render_template("index.html")
 
 @app.route("/fullPersonDetails", methods=['GET', 'POST'])
-def fullPersonDetails():
+@app.route("/fullPersonDetails/<person_id>", methods=['GET', 'POST'])
+def fullPersonDetails(person_id = None):
 
-    getFPD = request.args.get('selected')
+    if person_id:
+        getFPD = person_id
+    else:
+        getFPD = request.args.get('selected')
     app.logger.info(f"FPD = {getFPD}")
     full_detail = db.session.query(PersonDetails).filter(
                             PersonDetails.id == getFPD
                         ).first()
+
+    session["FPD"] = getFPD
 
     return render_template("FullPersonDetails.html", full_detail= full_detail)
 
@@ -110,23 +171,48 @@ def searchByMonth():
 def search():
     month = request.args.get("month")
     year = request.args.get("year")
-
-    if not month or not year:
-        return jsonify({"error": "Both month and year are required"}), 400
-
-    try:
-        month_number = datetime.strptime(month, "%B").month
-        year = int(year)
-    except ValueError:
-        return jsonify({"error": "Invalid month or year"}), 400
+    insuranceCompany = request.args.get("insuranceCompany")
+    results = None
+    # if not month or not year:
+    #     return jsonify({"error": "Both month and year are required"}), 400
+    if month and year :
+        try:
+            month_number = datetime.strptime(month, "%B").month
+            year = int(year)
+        except ValueError:
+            return jsonify({"error": "Invalid month or year"}), 400
 
     # Query database to filter by month and year
-    results = PersonDetails.query.filter(
-        db.extract('month', PersonDetails.Date_of_insurance) == month_number,
-        db.extract('year', PersonDetails.Date_of_insurance) == year
-    ).order_by(PersonDetails.Date_of_insurance).all()
-    print(results)
-    return render_template("SearchByMonth.html", result=results)
+        results = PersonDetails.query.filter(
+            db.extract('month', PersonDetails.Date_of_insurance) == month_number,
+            db.extract('year', PersonDetails.Date_of_insurance) == year
+        ).order_by(PersonDetails.Date_of_insurance).all()
+
+        if insuranceCompany:
+            results = [tfl for tfl in results if tfl.Insured_Company == insuranceCompany]
+        else:
+            session["myquery"] = [res.to_dict() for res in results]
+            session['month'] = month
+            session['year'] = year
+        
+
+    if not month and  not year and insuranceCompany :  # Apply filter only if insurance company is selected
+        if 'myquery' in session:
+            myquery = session.get('myquery')
+
+            month = session['month']
+            year= session['year'] 
+
+            filter_result = []
+            for mq in myquery:
+                if mq.get("Insured_Company") == insuranceCompany:
+                    filter_result.append(mq)
+            return render_template("SearchByMonth.html", filter_result = filter_result,month=month,year=year )
+        else:
+            results = PersonDetails.query.filter(PersonDetails.Insured_Company == insuranceCompany).order_by(PersonDetails.Date_of_insurance).all()
+
+    #print(results)
+    return render_template("SearchByMonth.html", result=results, month=month,year=year )
     
 
 @app.route("/searchByType", methods=['GET', 'POST'])
@@ -161,7 +247,7 @@ def updatePerson():
     'Insurance Type': '4 Wheeler', 'Make': 'Maruti', 'Model': 'Ecco AC/Heater', 'Year of Manufacture': '2011', 
     'Registration No': 'BR-01-BB-2649', 'Old ID value (₹)': 'TP', 'New ID value (₹)': 'mko', 'Old OD value (₹)': '3416', 
     'New OD value (₹)': '9876', 'Old Final Premium (₹)': '4030', 'New Final Premium (₹)': 'NA98766', 'NCB (%)': 'NA',
-     'Discount (%)': 'NA', 'Term COMP': 'NA', 'Term TP': 'NA', 'Insured Company': 'ROYAL SUNDARAM', 'Insurer Code': 'RB', 
+     'Term COMP': 'NA', 'Term TP': 'NA', 'Insured Company': 'ROYAL SUNDARAM', 'Insurer Code': 'RB', 
      'New Company': 'NA', 'Policy No': 'UPTP462770000100', 'Add Ons': 'NA', 'CKYC No.': 'NA', 
      'Reference 1': 'C/o Carmart', 'Reference 1 Contact': 'NA', 'Reference 2': 'NA', 'Reference 2 Contact': 'NA', 'Transfer to': 'NA'}
     """
@@ -181,21 +267,21 @@ def updatePerson():
         person.Year_of_mfg = data.get("Year of Manufacture")
         person.Regd_No = data.get("Registration No")
         person.Regd_No_Database = "".join((data.get("Registration No")).split("-"))
-        person.Old_ID_value = data.get("Old ID value (₹)")
+        person.Old_ID_value = data.get("ID value (₹)")
         person.New_ID_value = data.get("New ID value (₹)")
-        person.Old_OD_value = data.get("Old OD value (₹)")
+        person.Old_OD_value = data.get("OD value (₹)")
         person.New_OD_value = data.get("New OD value (₹)")
-        person.Old_final_premium = data.get("Old Final Premium (₹)")
+        person.Old_final_premium = data.get("Final Premium (₹)")
         person.New_final_premium = data.get("New Final Premium (₹)")
         person.Ncb = data.get("NCB (%)")
-        person.Discount = data.get("Discount (%)")
+        person.New_NCB = data.get("New NCB (%)")
         person.Terms_Comp = data.get("Term COMP")
         person.Terms_TP = data.get("Term TP")
         person.Insured_Company = data.get("Insured Company")
         person.Insurer_Code = data.get("Insurer Code")
         person.New_Company = data.get("New Company")
         person.Add_Ons = data.get("Add Ons")
-        person.Policy_No = data.get("Policy No")
+        person.Policy_No = data.get("Policy No","").strip()
         person.Ckyc_No = data.get("CKYC No.")
         person.Reference_1 = data.get("Reference 1")
         person.Reference_Contact_1 = data.get("Reference 1 Contact")
@@ -212,8 +298,136 @@ def updatePerson():
     person_updated = db.session.query(PersonDetails).filter(
                             PersonDetails.id == data.get("unique_customer_id")
                         ).first()
-    print(person_updated)
+    print(person_updated.Policy_No)
     return render_template("FullPersonDetails.html", full_detail = person_updated)
+
+
+
+@app.route("/updatePersonInMonth",  methods=['POST'])
+def updatePersonInMonth():
+
+    data = request.json  # Receive edited data as a dictionary
+    print("Received Data:", data)  # Debugging
+
+    #First query the person
+    person = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == data.get("unique_customer_id")
+                        ).first()
+    print(person)
+
+    if person:
+        person.Customer_name = data.get("Person Name")
+        person.Old_ID_value = data.get("ID value (₹)")
+        person.New_ID_value = data.get("New ID value (₹)")
+        person.Old_OD_value = data.get("OD value (₹)")
+        person.New_OD_value = data.get("New OD value (₹)")
+        person.Old_final_premium = data.get("Final Premium (₹)")
+        person.New_final_premium = data.get("New Final Premium (₹)")
+        person.Ncb = data.get("NCB (%)")
+        person.New_NCB = data.get("New NCB (%)")
+        person.Insured_Company = data.get("Insured Company")
+        person.Insurer_Code = data.get("Insurer Code")
+        person.New_Company = data.get("New Company")
+
+        db.session.commit()
+
+    db.session.refresh(person)
+
+    #Ensure fresh data is fetched by expiring the session
+    db.session.expire(person)
+
+    person_updated = db.session.query(PersonDetails).filter(
+                            PersonDetails.id == data.get("unique_customer_id")
+                        ).first()
+    print(f"Updated Person = {person_updated}")
+
+    return jsonify({"message": "success"}), 200  
+
+
+
+
+@app.route("/uploadDataPage", methods= ["GET", "POST"])
+def uploadDataPage():
+    data = request.json
+    print(data)
+
+    session['uploadDataid'] = data.get("unique_customer_id")
+    session['uploadDataName'] = data.get("Person Name")
+
+    return render_template("FileUpload.html")
+
+
+@app.route("/uploadFiles", methods=["GET", "POST"])
+def uploadFiles():
+
+    UPLOAD_FOLDER = "uploads"
+
+    if request.method == "POST":
+        # Get files from form
+        insurance_file = request.files.get("insurance_file")
+        aadhaar_front = request.files.get("aadhaar_front")
+        aadhaar_back = request.files.get("aadhaar_back")
+        pan_file = request.files.get("pan_card")
+
+        if "FPD" in session:
+            id_data = session.get("FPD")
+            name_data = ""
+        else:
+            id_data = session.get("uploadDataid")
+            name_data = session.get("uploadDataName")
+            session.clear()
+
+        UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+id_data+"/"
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
+        # Save files if they exist..
+        for file, name in [(insurance_file, "insurance"), 
+                           (aadhaar_front, "aadhaar_front"), 
+                           (aadhaar_back, "aadhaar_back"), 
+                           (pan_file, "pan_card")]:
+            if file and file.filename:
+                
+                file_path = os.path.join(UPLOAD_FOLDER,file.filename)
+                file.save(file_path)
+                print(f"{name} uploaded: {file.filename}")
+
+    return render_template("Success.html", upload_success= name_data) # Load HTML form
+
+
+@app.route("/fullPersonDetails/viewFiles", methods = ["GET","POST"])
+def viewFiles():
+
+    UPLOAD_FOLDER = "uploads"
+    UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+session.get("FPD")
+
+    try:
+        files = os.listdir(UPLOAD_FOLDER)
+        if not files:
+            return render_template("NoFiles.html")
+    except Exception:
+        return render_template("NoFiles.html")
+
+    return render_template("ViewUploads.html",UPLOAD_FOLDER=UPLOAD_FOLDER, files=files)
+
+@app.route("/fullPersonDetails/uploadedFiles/<filename>")
+def download_file(filename):
+    UPLOAD_FOLDER = "uploads"
+    UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+session.get("FPD")
+    return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=True)
+
+
+@app.route("/deleteFile/<filename>", methods=["DELETE"])
+def delete_file(filename):
+
+    UPLOAD_FOLDER = "uploads"
+    UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+session.get("FPD")
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return jsonify({"success": True, "message": "File deleted successfully"})
+    else:
+        return jsonify({"success": False, "message": "File not found"}), 404
+
 
 @app.route("/renewPage", methods= ["POST"])
 def renewPage():
@@ -226,63 +440,19 @@ def renewPage():
 
     record_to_renew = db.session.query(PersonDetails).filter(
                             PersonDetails.id == value).first()
-    return render_template("Renew.html", full_detail = record_to_renew)
 
-@app.route("/renewPerson",  methods=['POST'])
-def renewPerson():
+    session['record_to_renew'] = record_to_renew.to_dict()
 
-        data = request.json  # Receive edited data as a dictionary
-        print("Received Data:", data)  # Debugging
-
-        new_entry = PersonDetails(
-            Date_of_insurance=datetime.strptime(data["Date of Insurance"], "%d/%m/%Y") if data.get("Date of Insurance") else None,
-            Type_of_insurance=data.get("Insurance Type", ""),
-            Customer_name=data.get("Person Name", ""),
-            Customer_Contact_No=data.get("Contact No.", ""),
-            Make=data.get("Make", ""),
-            Model=data.get("Model", ""),
-            Year_of_mfg=data.get("Year of Manufacture", ""),
-            Regd_No=data.get("Registration No", ""),
-            Old_ID_value=data.get("Old ID value (₹)", ""),
-            New_ID_value=data.get("New ID value (₹)", ""),
-            Old_OD_value=data.get("Old OD value (₹)", ""),
-            New_OD_value=data.get("New OD value (₹)", ""),
-            Old_final_premium=data.get("Old Final Premium (₹)", ""),
-            New_final_premium=data.get("New Final Premium (₹)", ""),
-            Ncb=data.get("NCB (%)", ""),
-            Discount=data.get("Discount (%)", ""),
-            Terms_Comp=data.get("Term COMP", ""),
-            Terms_TP=data.get("Term TP", ""),
-            Insured_Company=data.get("Insured Company", ""),
-            Insurer_Code=data.get("Insurer Code", ""),
-            New_Company=data.get("New Company", ""),
-            Policy_No=data.get("Policy No", ""),
-            Add_Ons=data.get("Add Ons", ""),
-            Ckyc_No=data.get("CKYC No.", ""),
-            Reference_1=data.get("Reference 1", ""),
-            Reference_Contact_1=data.get("Reference 1 Contact", ""),
-            Reference_2=data.get("Reference 2", ""),
-            Reference_Contact_2=data.get("Reference 2 Contact", ""),
-            Transfer_to=data.get("Transfer to", ""),)
-
-        db.session.add(new_entry)
-        db.session.commit()
-
-        person = db.session.query(PersonDetails).filter(
-                            PersonDetails.id == new_entry.id
-                        ).first()
-    
-        return render_template("FullPersonDetails.html", full_detail = person)
-
-
+    return redirect(url_for("addPerson"))
+     
 @app.route("/addPerson")
 def addPerson():
     file_path = "1_4 Wheeler Make, Model, Fuel Type, Variant.xlsx"
     df = pd.read_excel(file_path, sheet_name="Sheet1")
-
+    
     df.ffill(inplace=True)  # Fill NaN values to maintain hierarchy
     df.loc[df["Type"].isin(["General Insurance", "Life Insurance", "Mediclaim"]), ["Make", "Model", "Fuel Type", "Variant"]] = "NA"
-
+    
     dropdown_data = {}
     for _, row in df.iterrows():
         type_ = row["Type"]
@@ -301,6 +471,15 @@ def addPerson():
             dropdown_data[type_][make][model][fuel_type] = []
 
         dropdown_data[type_][make][model][fuel_type].append(variant)
+
+    if 'record_to_renew' in session:
+        person_to_renew = session['record_to_renew']
+        session.clear()
+        if person_to_renew:
+            return render_template("AddPerson.html",
+                                    dropdown_json=json.dumps(dropdown_data),
+                                    person_to_renew = person_to_renew)
+
 
     return render_template("AddPerson.html",dropdown_json=json.dumps(dropdown_data))
 
@@ -344,6 +523,7 @@ def SuccessPage():
     Type_of_insurance , Customer_Contact_No , Regd_No_Database , Insurer_Code , Add_Ons , Ckyc_No , Reference_1
     Reference_Contact_1 , Reference_2 , Reference_Contact_2 ,
     """ 
+    UPLOAD_FOLDER = 'uploads'
     if request.method == 'POST':
         date_of_insurance = request.form.get("date_of_insurance")
         customer_name = request.form.get("customer_name")
@@ -356,19 +536,14 @@ def SuccessPage():
         year_of_mfg = request.form.get("year_of_mfg")
         registration_no = request.form.get("registration_no")
         old_id_value = request.form.get("old_id_value")
-        new_id_value = request.form.get("new_id_value")
         old_od_value = request.form.get("old_od_value")
-        new_od_value = request.form.get("new_od_value")
         old_final_premium = request.form.get("old_final_premium")
-        new_final_premium = request.form.get("new_final_premium")
         ncb = request.form.get("ncb")
-        discount = request.form.get("discount")
         terms_comp = request.form.get("terms_comp")
         terms_tp = request.form.get("terms_tp")
         insured_company = request.form.get("insured_company")
         insurer_code = request.form.get("insurer_code")
-        new_company = request.form.get("new_company")
-        policy_no = request.form.get("policy_no")
+        policy_no = request.form.get("policy_no","").strip()
         add_ons = request.form.getlist("add_ons")
         ckyc_no = request.form.get("ckyc_no")
         reference_1 = request.form.get("reference_1")
@@ -376,7 +551,10 @@ def SuccessPage():
         reference_2 = request.form.get("reference_2")
         reference_contact_2 = request.form.get("reference_contact_2")
         transfer_to = request.form.get("transfer_to")
-
+        insurance_file = request.files.get("insurance_file")
+        aadhaar_front = request.files.get("aadhaar_front")
+        aadhaar_back = request.files.get("aadhaar_back")
+        pan_file = request.files.get("pan_card")
 
         if date_of_insurance:
             date_of_insurance = datetime.strptime(date_of_insurance, "%Y-%m-%d")
@@ -391,11 +569,11 @@ def SuccessPage():
         ''' TODO Write code to convert a string to hyphen separated string based on the reg no'''
         insert_person = PersonDetails(Date_of_insurance=date_of_insurance,Type_of_insurance =type_of_insurance,
                                     Customer_name = customer_name,Customer_Contact_No = customer_contact_no,Make=make, Model = model, Year_of_mfg = year_of_mfg,
-                                    Regd_No= registration_no,Regd_No_Database= registration_no, Old_ID_value = old_id_value,New_ID_value= new_id_value,
-                                    Old_OD_value=old_od_value, New_OD_value=new_od_value,
-                                    Old_final_premium=old_final_premium,New_final_premium=new_final_premium,Ncb=ncb,
-                                    Discount=discount,Terms_Comp=terms_comp, Terms_TP = terms_tp, Insured_Company=insured_company,Insurer_Code = insurer_code,
-                                    New_Company=new_company,Policy_No=policy_no,Add_Ons = add_ons, Ckyc_No= ckyc_no, 
+                                    Regd_No= registration_no,Regd_No_Database= registration_no, Old_ID_value = old_id_value,
+                                    Old_OD_value=old_od_value,
+                                    Old_final_premium=old_final_premium,Ncb=ncb,
+                                    Terms_Comp=terms_comp, Terms_TP = terms_tp, Insured_Company=insured_company,Insurer_Code = insurer_code,
+                                    Policy_No=policy_no,Add_Ons = add_ons, Ckyc_No= ckyc_no, 
                                     Reference_1= reference_1, Reference_Contact_1 = reference_contact_1, Reference_2 = reference_2,
                                     Reference_Contact_2 = reference_contact_2 , Transfer_to=transfer_to)
         
@@ -403,6 +581,24 @@ def SuccessPage():
         app.logger.info("One Person is Succesfully added in Database")
         db.session.commit()
         app.logger.info("Changes have been comitted")
+
+
+        print(insert_person.id)
+        id_data = str(insert_person.id)
+        UPLOAD_FOLDER = UPLOAD_FOLDER+"/"+id_data+"/"
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
+        # Save files if they exist..
+        for file, name in [(insurance_file, "insurance"), 
+                           (aadhaar_front, "aadhaar_front"), 
+                           (aadhaar_back, "aadhaar_back"), 
+                           (pan_file, "pan_card")]:
+            if file and file.filename:
+                
+                file_path = os.path.join(UPLOAD_FOLDER,file.filename)
+                file.save(file_path)
+                print(f"{name} uploaded: {file.filename}")
+
+        app.logger.info("Documents have been saved ")
 
     return render_template("Success.html")
     
@@ -447,8 +643,8 @@ def loadData():
 if __name__ == "__main__":
     with app.app_context():
         
-        #db.drop_all()
+        # db.drop_all()
         db.create_all()
-        app.run(debug=True)
+        app.run(debug=True, host = "0.0.0.0")
 
 

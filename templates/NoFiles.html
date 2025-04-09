@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Files Found</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .box {
+            width: 50%;
+            padding: 30px;
+            text-align: center;
+            border: 3px dashed #007bff;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .box h3 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .box p {
+            color: #777;
+            font-size: 18px;
+        }
+    </style>
+    <script>
+        function uploadData(button) {
+                let row = button.parentElement.parentElement;
+                let rowData = {};
+                let headers = document.querySelectorAll("th"); // Get all table headers
+
+                row.querySelectorAll("td").forEach((cell, index) => {
+                    if (index >= headers.length) {
+                        console.warn("Skipping extra cell: ", cell);  // Debugging
+                        return; // Skip extra columns if they exist
+                    }
+
+                    let header = headers[index]?.innerText.trim(); // Ensure header exists
+                    if (!header) {
+                        console.warn("Header not found for index", index);  // Debugging
+                        return; // Skip if no header found
+                    }
+
+                    if (cell.style.display === "none") {  
+                        rowData["unique_customer_id"] = cell.innerText; // Capture hidden ID
+                    } else if (cell.querySelector("input")) {  
+                        rowData[header] = cell.querySelector("input").value;
+                        cell.innerText = cell.querySelector("input").value;
+                    } else {  
+                        rowData[header] = cell.innerText;
+                    }
+                });
+
+                console.log("Data to be sent:", rowData);  // Debugging
+
+                fetch('/uploadDataPage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rowData)
+                })
+            .then(response => response.text())  // ✅ Expect HTML, not JSON
+            .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+    </script>
+</head>
+<body>
+
+    <div class="box">
+        <h3>No Files Found for This User</h3>
+        <p>Please <button onclick="uploadData(this)"> Upload </button> files.</p>
+        
+    </div>
+
+</body>
+</html>
